@@ -53,5 +53,6 @@ if __name__ == '__main__':
     stats = getStats()
     rdmd = decodeReadme(contents.content)
     newreadme = generatenewReadme(stats=stats, readme=rdmd)
-    repo.update_file(path=contents.path, message="Updated with Dev Metrics",
+    if newreadme != rdmd:
+        repo.update_file(path=contents.path, message="Updated with Dev Metrics",
                      content=newreadme, sha=contents.sha, branch="master")
