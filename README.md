@@ -19,3 +19,31 @@ The lines will be our entrypoints for our metrics.
 - Get your Wakatime API Key and save it as `WAKATIME_API_KEY = <your wakatime API Key>` in your Repository Secrets
 
 That's it. The Action runs everyday at 00.00 UTC
+
+----
+Here is Sample Worflow File
+
+```yml
+name: Waka Readme
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    # Runs at 12am UTC
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Update Readme
+        uses: athul/waka-readme@master
+        with:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN}}
+```
