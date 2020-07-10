@@ -1,0 +1,25 @@
+name: 'Waka - Readme'
+author: Athil Cyriac Ajay
+description: 'Add a Wakatime Coding Activity graph in your Readme'
+
+inputs:
+  GH_TOKEN:
+    description: 'GitHub access token with Repo scope'
+    default: ${{ github.token }}
+
+  WAKATIME_API_KEY:
+    description: 'Your Wakatime API Key'
+    required: true
+
+  USERNAME:
+    description: 'Your GitHub username'
+    default: ${{ github.repository_owner }}
+
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  icon: 'info'
+  color: 'blue'
