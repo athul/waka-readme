@@ -13,18 +13,9 @@ Add a comment to your README like the follows
 
 The lines will be our entrypoints for our metrics.
 
-## How to get it
+## Using it
 
-- Clone the Repo
-- Install the dependencies `pip install -r requirements.txt`
-- Get a GitHub Access Token with a `repo` scope.
-- Get your Wakatime API Key.
-- Load env vars like
-  
-  ```text
-  GH_TOKEN = <ghtoken>
-  WAKATIME_API_KEY = <your wakatime API Key>
-  USERNAME = <github_username>
-  ```
+- Get a GitHub Access Token with a `repo` scope and save it in the Repo Secrets `GH_TOKEN = <Your GitHub Access Token>`
+- Get your Wakatime API Key and save it as `WAKATIME_API_KEY = <your wakatime API Key>` in your Repository Secrets
 
-- Run the Script with `python main.py`
+That's it. The Action runs everyday at 00.00 UTC
