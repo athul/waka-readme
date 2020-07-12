@@ -36,14 +36,12 @@ def getStats():
 
 def decodeReadme(data: str):
     decodedBytes = base64.b64decode(data)
-    decodedStr = str(decodedBytes, "utf-8")
-    return decodedStr
+    return str(decodedBytes, "utf-8")
 
 
 def generatenewReadme(stats: str, readme: str):
     statsinReadme = f"{START_COMMENT}\n{stats}\n{END_COMMENT}"
-    newReadme = re.sub(listReg, statsinReadme, readme)
-    return newReadme
+    return re.sub(listReg, statsinReadme, readme)
 
 
 if __name__ == '__main__':
