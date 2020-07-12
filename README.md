@@ -15,7 +15,7 @@ The lines will be our entrypoints for our metrics.
 
 ## Using it
 
-- Get your Wakatime API Key and save it as `WAKATIME_API_KEY = <your wakatime API Key>` in your Repository Secrets
+- Get your Wakatime API Key from your [Account Settings in Wakatime](https://wakatime.com/settings/account) and save it as `WAKATIME_API_KEY = <your wakatime API Key>` in your Repository Secrets
 
 That's it. The Action runs everyday at 00.00 UTC
 
@@ -49,7 +49,7 @@ jobs:
 
 if you're executing the workflow on another repo other than `<username>/<username>`
 
-- Get a GitHub Access Token with a `repo` scope and save it in the Repo Secrets `GH_TOKEN = <Your GitHub Access Token>`
+- You'll need to get a GitHub Access Token with a `repo` scope and save it in the Repo Secrets `GH_TOKEN = <Your GitHub Access Token>`
 
 Here is Sample Worflow File for running it
 
