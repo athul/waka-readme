@@ -7,10 +7,10 @@
 
 WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
 
-1. Head over to https://wakatime.com and create an account.
-2. Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
-3. Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
-4. Paste in your API key to start the analysis.
+- Head over to https://wakatime.com and create an account.
+- Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
+- Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
+- Paste in your API key to start the analysis.
 
 ## Update your Readme
 
@@ -80,5 +80,5 @@ jobs:
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN}}
-          USERNAME: <username> # optional, it will automatically use the username that executing the workflow
+          USERNAME: <username> # optional, it will automatically use the username that's executing the workflow
 ```
