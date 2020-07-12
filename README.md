@@ -79,6 +79,6 @@ jobs:
       - uses: athul/waka-readme@master
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN}}
-          USERNAME: <username> # optional, it will automatically use the username that's executing the workflow
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          USERNAME: <username> # optional, it will automatically use the username of the owner of the repository who's executing the workflow.
 ```
