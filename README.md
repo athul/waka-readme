@@ -1,16 +1,24 @@
 # Dev Metrics in Readme
-
-[WakaTime](https://wakatime.com) Weekly Metrics on your Profile Readme:
 ![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
 
-## New to WakaTime
 
-WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
+----
 
-- Head over to https://wakatime.com and create an account.
-- Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
-- Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
-- Paste in your API key to start the analysis.
+
+
+[WakaTime](https://wakatime.com) Weekly Metrics on your Profile Readme: 
+
+## Prep Work
+1. You need to update the markdown file(.md) with 2 comments. You can refer [here](#update-your-readme) for updating it.
+2. You'll need a Wakatime API Key. You can get that from your Wakatime Account Settings
+    - You can refer [here](#new-to-wakatime),if you're new to Wakatime
+3. **Optional** You'll need a GitHub API Token with `repo` scope from [here](https://github.com/settings/tokens) if you're running the action not in your Profile Repository
+    - You can use [this](#other-repository-not-profile) example to work it out
+4. You need to save the if the Wakatime API Key (and the GitHub API Token, if you need it) in the repository secrets. You can find that in the Settings of your Repository.
+5. You can follow either of the Two Examples according to your needs to get started with. 
+> I strongly suggest you to run the Action in your Profile Repo since you won't be needing a GitHub Access Token
+
+This Action will run everyday at 00.00 UTC
 
 ## Update your Readme
 
@@ -23,11 +31,14 @@ Add a comment to your `README.md` like this:
 
 These lines will be our entry-points for the dev metrics.
 
-## Using it
+## New to WakaTime
 
-Save your WakaTime API Key as `WAKATIME_API_KEY = <your wakatime API Key>` in your [Repository Secrets](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
+WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
 
-That's it! The Action runs everyday at 00.00 UTC
+- Head over to https://wakatime.com and create an account.
+- Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
+- Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
+- Paste in your API key to start the analysis.
 
 ### Profile Repository
 
