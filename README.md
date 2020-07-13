@@ -1,10 +1,7 @@
 # Dev Metrics in Readme
 ![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
 
-
 ----
-
-
 
 [WakaTime](https://wakatime.com) Weekly Metrics on your Profile Readme: 
 
@@ -12,9 +9,12 @@
 1. You need to update the markdown file(.md) with 2 comments. You can refer [here](#update-your-readme) for updating it.
 2. You'll need a Wakatime API Key. You can get that from your Wakatime Account Settings
     - You can refer [here](#new-to-wakatime),if you're new to Wakatime
+    - 
 3. **Optional** You'll need a GitHub API Token with `repo` scope from [here](https://github.com/settings/tokens) if you're running the action not in your Profile Repository
     - You can use [this](#other-repository-not-profile) example to work it out
-4. You need to save the if the Wakatime API Key (and the GitHub API Token, if you need it) in the repository secrets. You can find that in the Settings of your Repository.
+4. You need to save the Wakatime API Key (and the GitHub API Token, if you need it) in the repository secrets. You can find that in the Settings of your Repository.Be sure to save those as the following.
+    - Wakatime-api-key as `WAKATIME_API_KEY = <your wakatime API Key>`and
+    - The GitHub Access Token as `GH_TOKEN=<your github access token>`
 5. You can follow either of the Two Examples according to your needs to get started with. 
 > I strongly suggest you to run the Action in your Profile Repo since you won't be needing a GitHub Access Token
 
