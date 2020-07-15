@@ -37,7 +37,7 @@ These lines will be our entry-points for the dev metrics.
 
 WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
 
-- Head over to https://wakatime.com and create an account.
+- Head over to <https://wakatime.com> and create an account.
 - Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
 - Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
 - Paste in your API key to start the analysis.
