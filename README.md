@@ -1,21 +1,23 @@
 # Dev Metrics in Readme
+
 ![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
 
 ----
 
-[WakaTime](https://wakatime.com) Weekly Metrics on your Profile Readme: 
+[WakaTime](https://wakatime.com) Weekly Metrics on your Profile Readme:
 
 ## Prep Work
+
 1. You need to update the markdown file(.md) with 2 comments. You can refer [here](#update-your-readme) for updating it.
-2. You'll need a Wakatime API Key. You can get that from your Wakatime Account Settings
-    - You can refer [here](#new-to-wakatime),if you're new to Wakatime
-    - 
+2. You'll need a WakaTime API Key. You can get that from your WakaTime Account Settings
+    - You can refer [here](#new-to-wakatime), if you're new to WakaTime
 3. **Optional** You'll need a GitHub API Token with `repo` scope from [here](https://github.com/settings/tokens) if you're running the action not in your Profile Repository
     - You can use [this](#other-repository-not-profile) example to work it out
-4. You need to save the Wakatime API Key (and the GitHub API Token, if you need it) in the repository secrets. You can find that in the Settings of your Repository.Be sure to save those as the following.
-    - Wakatime-api-key as `WAKATIME_API_KEY = <your wakatime API Key>`and
+4. You need to save the WakaTime API Key (and the GitHub API Token, if you need it) in the repository secrets. You can find that in the Settings of your Repository.Be sure to save those as the following.
+    - WakaTime-api-key as `WAKATIME_API_KEY = <your wakatime API Key>`and
     - The GitHub Access Token as `GH_TOKEN=<your github access token>`
-5. You can follow either of the Two Examples according to your needs to get started with. 
+5. You can follow either of the Two Examples according to your needs to get started with.
+
 > I strongly suggest you to run the Action in your Profile Repo since you won't be needing a GitHub Access Token
 
 This Action will run everyday at 00.00 UTC
@@ -35,7 +37,7 @@ These lines will be our entry-points for the dev metrics.
 
 WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
 
-- Head over to https://wakatime.com and create an account.
+- Head over to <https://wakatime.com> and create an account.
 - Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
 - Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
 - Paste in your API key to start the analysis.
@@ -72,7 +74,7 @@ jobs:
 
 You'll need to get a [GitHub Access Token](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token) with a `repo` scope and save it in the Repo Secrets `GH_TOKEN = <Your GitHub Access Token>`
 
-Here is Sample Worflow File for running it:
+Here is Sample Workflow File for running it:
 
 ```yml
 name: Waka Readme
