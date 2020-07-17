@@ -13,12 +13,18 @@ from github import Github
 START_COMMENT = '<!--START_SECTION:waka-->'
 END_COMMENT = '<!--END_SECTION:waka-->'
 listReg = f"{START_COMMENT}[\\s\\S]+{END_COMMENT}"
-this_week = datetime.datetime.now().strftime('%W')
 
 user = os.getenv('INPUT_USERNAME')
 waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 
+def this_week():
+    '''Returns current week span'''
+    week_number = datetime.date.today().isocalendar()[1]
+    month = datetime.date.today().strftime('%B')
+    week_start = datetime.datetime.today().day - datetime.datetime.today().weekday()
+    week_end = week_start + 5
+    return f"Week #{week_number} : {month} {week_start} - {week_end}"
 
 def make_graph(percent: float):
     '''Make progress graph from API graph'''
@@ -37,10 +43,10 @@ def get_stats():
     for l in lang_data[:5]:
         ln = len(l['name'])
         ln_text = len(l['text'])
-        op = f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {l['percent']}"
+        op = f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {l['percent']}%"
         data_list.append(op)
     data = ' \n'.join(data_list)
-    return '```text\n'+'Week #'+this_week+'\n'+data+'\n```'
+    return '```text\n'+this_week()+'\n\n'+data+'\n```'
 
 
 def decode_readme(data: str):
