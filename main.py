@@ -41,8 +41,9 @@ def get_stats():
     for l in lang_data[:5]:
         ln = len(l['name'])
         ln_text = len(l['text'])
-        op = f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {l['percent']} %"
-        data_list.append(op)
+        fmt_percent = format(l['percent'], '0.2f').zfill(5) # to provide a neat finish.
+        data_list.append(
+            f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {fmt_percent} %")
     data = ' \n'.join(data_list)
     return '```text\n'+this_week()+'\n\n'+data+'\n```'
 
