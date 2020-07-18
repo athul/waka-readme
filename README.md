@@ -95,3 +95,27 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           USERNAME: <username> # optional, it will automatically use the username of the owner of the repository who's executing the workflow.
 ```
+
+## Extras
+
+1. If you want to add the week in the Header of your stats, you can add `HEAD_FLAG: true` in your workflow file like this
+
+```yml
+- uses: athul/waka-readme@master
+        with:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          USERNAME: <username>
+          SHOW_TITLE: true
+```
+
+`SHOW_TITLE` flag can be set to true if you want to display the week number and days in the readme, by default it will be false. Here is an example output with `SHOW_TITLE` set to true.
+
+```text
+Week: 10 July, 2020 - 17 July, 2020
+Python      8 hrs 52 mins       ███████████████████░░░░░░   75.87 % 
+Go          1 hr 15 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   10.79 % 
+Markdown    52 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   07.43 % 
+Docker      16 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   02.32 % 
+YAML        7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.07 %
+```

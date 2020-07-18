@@ -15,6 +15,12 @@ inputs:
   USERNAME:
     description: 'Your GitHub username'
     default: ${{ github.repository_owner }}
+    required: false
+
+  SHOW_TITLE:
+    description: "Displays the week number and days in Readme as title"
+    default: false
+    required: false
 
 
 runs:
