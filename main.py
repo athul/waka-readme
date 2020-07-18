@@ -20,10 +20,9 @@ ghtoken = os.getenv('INPUT_GH_TOKEN')
 
 def this_week():
     '''Returns a week's streak'''
-    month = datetime.date.today().strftime('%B')
-    week_end = datetime.datetime.today().day - 1
-    week_start = week_end - 7
-    return f"Week : {month} {week_start} - {month} {week_end}"
+    week_end = datetime.datetime.today() - datetime.timedelta(days=1)
+    week_start = week_end - datetime.timedelta(days=7)
+    return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
 
 def make_graph(percent: float):
     '''Make progress graph from API graph'''
