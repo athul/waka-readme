@@ -48,7 +48,7 @@ def get_stats() -> str:
             f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {fmt_percent} %")
     print("Graph Generated")
     data = ' \n'.join(data_list)
-    if show_title == 'false':
+    if show_title == 'true':
         print("Stats with Weeks in Title Generated")
         return '```text\n'+this_week()+'\n\n'+data+'\n```'
     else:
