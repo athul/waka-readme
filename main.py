@@ -19,12 +19,11 @@ waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 
 def this_week():
-    '''Returns current week span'''
-    week_number = datetime.date.today().isocalendar()[1]
+    '''Returns a week's streak'''
     month = datetime.date.today().strftime('%B')
-    week_start = datetime.datetime.today().day - datetime.datetime.today().weekday()
-    week_end = week_start + 5
-    return f"Week #{week_number} : {month} {week_start} - {week_end}"
+    week_end = datetime.datetime.today().day - 1
+    week_start = week_end - 7
+    return f"Week : {month} {week_start} - {month} {week_end}"
 
 def make_graph(percent: float):
     '''Make progress graph from API graph'''
