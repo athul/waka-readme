@@ -7,8 +7,7 @@ import os
 import base64
 import datetime
 import requests
-from github import Github
-from github import GithubException
+from github import Github, GithubException
 
 START_COMMENT = '<!--START_SECTION:waka-->'
 END_COMMENT = '<!--END_SECTION:waka-->'
@@ -73,13 +72,14 @@ def generate_new_readme(stats: str, readme: str) ->str:
 
 if __name__ == '__main__':
     g = Github(ghtoken)
-    repo = g.get_repo(f"{user}/{user}")
+    try:
+        repo = g.get_repo(f"{user}/{user}")
+    except GithubException:
+        print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
     contents = repo.get_readme()
     waka_stats = get_stats()
     rdmd = decode_readme(contents.content)
     new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
     if new_readme != rdmd:
-        try:
-            repo.update_file(path=contents.path, message='Updated with Dev Metrics', content=new_readme, sha=contents.sha, branch='master')
-        except GithubException:
-            print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
+        repo.update_file(path=contents.path, message='Updated with Dev Metrics', content=new_readme, sha=contents.sha, branch='master')
+        
