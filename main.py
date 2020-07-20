@@ -7,6 +7,7 @@ import os
 import base64
 import datetime
 import requests
+import sys
 from github import Github, GithubException
 
 START_COMMENT = '<!--START_SECTION:waka-->'
@@ -41,6 +42,7 @@ def get_stats() -> str:
         lang_data = data['data']['languages']
     except KeyError:
         print("Please Add your Wakatime API Key to the Repository Secrets")
+        sys.exit(1)
     data_list = []
     for l in lang_data[:5]:
         ln = len(l['name'])
@@ -76,6 +78,7 @@ if __name__ == '__main__':
         repo = g.get_repo(f"{user}/{user}")
     except GithubException:
         print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
+        sys.exit(1)
     contents = repo.get_readme()
     waka_stats = get_stats()
     rdmd = decode_readme(contents.content)
