@@ -7,8 +7,7 @@ import os
 import base64
 import datetime
 import requests
-from github import Github
-
+from github import Github, GithubException
 
 START_COMMENT = '<!--START_SECTION:waka-->'
 END_COMMENT = '<!--END_SECTION:waka-->'
@@ -38,7 +37,10 @@ def get_stats() -> str:
     '''Gets API data and returns markdown progress'''
     data = requests.get(
         f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}").json()
-    lang_data = data['data']['languages']
+    try:
+        lang_data = data['data']['languages']
+    except KeyError:
+        print("Please Add your Wakatime API Key to the Repository Secrets")
     data_list = []
     for l in lang_data[:5]:
         ln = len(l['name'])
@@ -70,11 +72,14 @@ def generate_new_readme(stats: str, readme: str) ->str:
 
 if __name__ == '__main__':
     g = Github(ghtoken)
-    repo = g.get_repo(f"{user}/{user}")
+    try:
+        repo = g.get_repo(f"{user}/{user}")
+    except GithubException:
+        print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
     contents = repo.get_readme()
     waka_stats = get_stats()
     rdmd = decode_readme(contents.content)
     new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
     if new_readme != rdmd:
-        repo.update_file(path=contents.path, message='Updated with Dev Metrics',
-                         content=new_readme, sha=contents.sha, branch='master')
+        repo.update_file(path=contents.path, message='Updated with Dev Metrics', content=new_readme, sha=contents.sha, branch='master')
+        
