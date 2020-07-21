@@ -19,12 +19,14 @@ waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
 
+
 def this_week() -> str:
     '''Returns a week's streak'''
     week_end = datetime.datetime.today() - datetime.timedelta(days=1)
     week_start = week_end - datetime.timedelta(days=7)
     print("Week's header Created")
     return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
+
 
 def make_graph(percent: float) -> str:
     '''Make progress graph from API graph'''
@@ -38,18 +40,23 @@ def get_stats() -> str:
     '''Gets API data and returns markdown progress'''
     data = requests.get(
         f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}").json()
+
     try:
         lang_data = data['data']['languages']
     except KeyError:
         print("Please Add your Wakatime API Key to the Repository Secrets")
         sys.exit(1)
+
     data_list = []
+    lang_data = data['data']['languages']
+    pad = len(max([l['name'] for l in lang_data[:5]], key=len))
     for l in lang_data[:5]:
         ln = len(l['name'])
         ln_text = len(l['text'])
-        fmt_percent = format(l['percent'], '0.2f').zfill(5) # to provide a neat finish.
+        # to provide a neat finish.
+        fmt_percent = format(l['percent'], '0.2f').zfill(5)
         data_list.append(
-            f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {fmt_percent} %")
+            f"{l['name']}{' '*(pad + 3 - ln)}{l['text']}{' '*(16-ln_text)}{make_graph(l['percent'])}   {fmt_percent} %")
     print("Graph Generated")
     data = ' \n'.join(data_list)
     if show_title == 'true':
@@ -66,7 +73,7 @@ def decode_readme(data: str) -> str:
     return str(decoded_bytes, 'utf-8')
 
 
-def generate_new_readme(stats: str, readme: str) ->str:
+def generate_new_readme(stats: str, readme: str) -> str:
     '''Generate a new Readme.md'''
     stats_in_readme = f"{START_COMMENT}\n{stats}\n{END_COMMENT}"
     return re.sub(listReg, stats_in_readme, readme)
