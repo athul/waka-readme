@@ -4,8 +4,8 @@ WakaTime progress visualizer
 
 import re
 import os
-import sys
 import base64
+import sys
 import datetime
 import requests
 from github import Github, GithubException
@@ -40,7 +40,6 @@ def get_stats() -> str:
     '''Gets API data and returns markdown progress'''
     data = requests.get(
         f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}").json()
-
     try:
         lang_data = data['data']['languages']
     except KeyError:
@@ -48,7 +47,11 @@ def get_stats() -> str:
         sys.exit(1)
 
     data_list = []
-    pad = len(max([l['name'] for l in lang_data[:5]], key=len))
+    try:
+        pad = len(max([l['name'] for l in lang_data[:5]], key=len))
+    except ValueError:
+        print("The Data seems to be empty. Please wait for a day for the data to be filled in.")
+        return '```text\nNo Activity tracked this Week\n```'
     for lang in lang_data[:5]:
         lth = len(lang['name'])
         ln_text = len(lang['text'])
