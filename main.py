@@ -4,10 +4,10 @@ WakaTime progress visualizer
 
 import re
 import os
+import sys
 import base64
 import datetime
 import requests
-import sys
 from github import Github, GithubException
 
 START_COMMENT = '<!--START_SECTION:waka-->'
@@ -19,12 +19,14 @@ waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
 
+
 def this_week() -> str:
-    '''Returns a week's streak'''
+    '''Returns a week streak'''
     week_end = datetime.datetime.today() - datetime.timedelta(days=1)
     week_start = week_end - datetime.timedelta(days=7)
-    print("Week's header Created")
+    print("Week header created")
     return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
+
 
 def make_graph(percent: float) -> str:
     '''Make progress graph from API graph'''
@@ -38,18 +40,22 @@ def get_stats() -> str:
     '''Gets API data and returns markdown progress'''
     data = requests.get(
         f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}").json()
+
     try:
         lang_data = data['data']['languages']
     except KeyError:
-        print("Please Add your Wakatime API Key to the Repository Secrets")
+        print("Please Add your WakaTime API Key to the Repository Secrets")
         sys.exit(1)
+
     data_list = []
-    for l in lang_data[:5]:
-        ln = len(l['name'])
-        ln_text = len(l['text'])
-        fmt_percent = format(l['percent'], '0.2f').zfill(5) # to provide a neat finish.
+    pad = len(max([l['name'] for l in lang_data[:5]], key=len))
+    for lang in lang_data[:5]:
+        lth = len(lang['name'])
+        ln_text = len(lang['text'])
+        # following line provides a neat finish
+        fmt_percent = format(lang['percent'], '0.2f').zfill(5)
         data_list.append(
-            f"{l['name']}{' '*(12-ln)}{l['text']}{' '*(20-ln_text)}{make_graph(l['percent'])}   {fmt_percent} %")
+            f"{lang['name']}{' '*(pad + 3 - lth)}{lang['text']}{' '*(16 - ln_text)}{make_graph(lang['percent'])}   {fmt_percent} %")
     print("Graph Generated")
     data = ' \n'.join(data_list)
     if show_title == 'true':
@@ -66,7 +72,7 @@ def decode_readme(data: str) -> str:
     return str(decoded_bytes, 'utf-8')
 
 
-def generate_new_readme(stats: str, readme: str) ->str:
+def generate_new_readme(stats: str, readme: str) -> str:
     '''Generate a new Readme.md'''
     stats_in_readme = f"{START_COMMENT}\n{stats}\n{END_COMMENT}"
     return re.sub(listReg, stats_in_readme, readme)
@@ -84,5 +90,5 @@ if __name__ == '__main__':
     rdmd = decode_readme(contents.content)
     new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
     if new_readme != rdmd:
-        repo.update_file(path=contents.path, message='Updated with Dev Metrics', content=new_readme, sha=contents.sha, branch='master')
-        
+        repo.update_file(path=contents.path, message='Updated with Dev Metrics',
+                         content=new_readme, sha=contents.sha, branch='master')
