@@ -4,7 +4,6 @@ WakaTime progress visualizer
 
 import re
 import os
-import sys
 import base64
 import datetime
 import requests
@@ -45,10 +44,14 @@ def get_stats() -> str:
         lang_data = data['data']['languages']
     except KeyError:
         print("Please Add your WakaTime API Key to the Repository Secrets")
-        sys.exit(1)
+        
 
     data_list = []
-    pad = len(max([l['name'] for l in lang_data[:5]], key=len))
+    try:
+        pad = len(max([l['name'] for l in lang_data[:5]], key=len))
+    except ValueError:
+        print("The Data seems to be empty. Please wait for a day for the data to be filled in.")
+
     for lang in lang_data[:5]:
         lth = len(lang['name'])
         ln_text = len(lang['text'])
@@ -84,7 +87,6 @@ if __name__ == '__main__':
         repo = g.get_repo(f"{user}/{user}")
     except GithubException:
         print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
-        sys.exit(1)
     contents = repo.get_readme()
     waka_stats = get_stats()
     rdmd = decode_readme(contents.content)
