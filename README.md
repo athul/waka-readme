@@ -56,7 +56,7 @@ Please follow the steps below:
   name: Waka Readme
 
   on:
-    workflow_dispatch
+    workflow_dispatch:
     schedule:
       # Runs at 12am UTC
       - cron: '0 0 * * *'
