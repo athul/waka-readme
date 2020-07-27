@@ -111,6 +111,17 @@ jobs:
           USERNAME: <username> # optional, it will automatically use the username of the owner of the repository who's executing the workflow.
 ```
 
+## Tests
+### Running Tests
+To run tests simply execute the following in the directory containing main.py: 
+```python
+python -m unittest discover
+```
+### Contributing Tests
+These tests uses the python Unit testing framework, [unittest](https://docs.python.org/3/library/unittest.html)
+
+Since this project is contained all within one file, 'main.py'. You can simply add a function to the TestMain class in tests/test_main.py, similar to the test_graph function.
+
 ## Extras
 
 1. If you want to add the week in the Header of your stats, you can add `HEAD_FLAG: true` in your workflow file like this
