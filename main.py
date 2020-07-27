@@ -70,7 +70,7 @@ def get_stats() -> str:
 
 
 def decode_readme(data: str) -> str:
-    '''Decode the contets of old readme'''
+    '''Decode the contents of old readme'''
     decoded_bytes = base64.b64decode(data)
     return str(decoded_bytes, 'utf-8')
 
