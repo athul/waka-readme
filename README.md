@@ -1,4 +1,4 @@
-# Dev Metrics in Readme
+# Dev Metrics in Readme   [![Build Status](https://travis-ci.com/athul/waka-readme.svg?branch=master)](https://travis-ci.com/athul/waka-readme)
 
 ![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
 
