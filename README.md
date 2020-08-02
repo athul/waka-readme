@@ -145,3 +145,16 @@ Markdown    52 mins             █░░░░░░░░░░░░░░░
 Docker      16 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   02.32 % 
 YAML        7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.07 %
 ```
+
+2. You can specify a commit message to overrdie the default _"Updated the Graph with new Metrics"_. Here is how you do it
+
+```yml
+- uses: athul/waka-readme@master
+        with:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          USERNAME: <username>
+          COMMIT_MESSAGE: Updated the Readme
+```
+
+If no commit message is specified in the `yml` file, it defaults to _"Updated the Graph with new Metrics"_
