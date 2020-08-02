@@ -21,6 +21,11 @@ inputs:
     description: "Displays the week number and days in Readme as title"
     default: false
     required: false
+    
+  COMMIT_MESSAGE:
+    description: "Add a commit message of your choice"
+    default: "Updated the Graph with new Metrics"
+    required: false
 
 
 runs:

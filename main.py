@@ -18,6 +18,7 @@ user = os.getenv('INPUT_USERNAME')
 waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
+commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
 
 
 def this_week() -> str:
@@ -93,5 +94,5 @@ if __name__ == '__main__':
     rdmd = decode_readme(contents.content)
     new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
     if new_readme != rdmd:
-        repo.update_file(path=contents.path, message='Updated with Dev Metrics',
+        repo.update_file(path=contents.path, message=commit_message,
                          content=new_readme, sha=contents.sha, branch='master')
