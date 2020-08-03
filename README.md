@@ -158,3 +158,6 @@ YAML        7 mins              ░░░░░░░░░░░░░░░░
 ```
 
 If no commit message is specified in the `yml` file, it defaults to _"Updated the Graph with new Metrics"_
+
+## Why only the language stats and not other data from the API?
+I am a fan of minimal designs and the profile readme is a great way to show off your skills and interests. The WakaTime API, gets us a **lot of data** about a person's **coding activity including the editors and Operating Systems you used and the projects you worked on**. Some of these projects maybe secretive and should not be shown out to the public. Using up more data via the Wakatime API will clutter the profile readme and hinder your chances on displaying what you provide **value to the community** like the pinned Repositories. I believe that **Coding Stats is nerdiest of all** since you can tell the community that you are *__exercising these languages or learning a new language__*, this will also show that you spend some amount of time to learn and exercise your development skills. That's what matters in the end :heart:
