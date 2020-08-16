@@ -31,10 +31,13 @@ def this_week() -> str:
 
 def make_graph(percent: float) -> str:
     '''Make progress graph from API graph'''
-    done_block = '█'
-    empty_block = '░'
-    pc_rnd = round(percent)
-    return f"{done_block*int(pc_rnd/4)}{empty_block*int(25-int(pc_rnd/4))}"
+    blocks = "░▒▓█"
+    graph = blocks[3] * int(percent / 4 + 1 / 6)
+    remainder_block = int((percent + 2 / 3) % 4 * 3 / 4)
+    if remainder_block > 0:
+        graph += blocks[remainder_block]
+    graph += blocks[0] * (25 - len(graph))
+    return graph
 
 
 def get_stats() -> str:

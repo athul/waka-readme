@@ -9,22 +9,20 @@ class TestMain(unittest.TestCase):
 
     def test_make_graph(self):
         '''Tests the make_graph function'''
-        self.assertEqual(make_graph(0), "░░░░░░░░░░░░░░░░░░░░░░░░░",
-                         "0% should return ░░░░░░░░░░░░░░░░░░░░░░░░░")
-        self.assertEqual(make_graph(100), "█████████████████████████",
-                         "100% should return █████████████████████████")
-        self.assertEqual(make_graph(50), "████████████░░░░░░░░░░░░░",
-                         "50% should return ████████████░░░░░░░░░░░░░")
-        self.assertEqual(make_graph(25), "██████░░░░░░░░░░░░░░░░░░░",
-                         "25% should return ██████░░░░░░░░░░░░░░░░░░░")
-        self.assertEqual(make_graph(75), "██████████████████░░░░░░░",
-                         "75% should return ██████████████████░░░░░░░")
-        self.assertEqual(make_graph(3.14), "░░░░░░░░░░░░░░░░░░░░░░░░░",
-                         "3.14% should return ░░░░░░░░░░░░░░░░░░░░░░░░░")
-        self.assertEqual(make_graph(9.901), "██░░░░░░░░░░░░░░░░░░░░░░░",
-                         "9.901% should return ██░░░░░░░░░░░░░░░░░░░░░░░")
-        self.assertEqual(make_graph(87.5), "██████████████████████░░░",
-                         "87.5% should return ██████████████████████░░░")
+        def test(percent: float, result: str):
+            self.assertEqual(make_graph(percent), result, f"{percent}% should return {result}")
+        test(0, "░░░░░░░░░░░░░░░░░░░░░░░░░")
+        test(100, "█████████████████████████")
+        test(50, "████████████▒░░░░░░░░░░░░")
+        test(50.001, "████████████▓░░░░░░░░░░░░")
+        test(25, "██████▒░░░░░░░░░░░░░░░░░░")
+        test(75, "██████████████████▓░░░░░░")
+        test(3.14, "▓░░░░░░░░░░░░░░░░░░░░░░░░")
+        test(9.901, "██▒░░░░░░░░░░░░░░░░░░░░░░")
+        test(87.334, "██████████████████████░░░")
+        test(87.333, "█████████████████████▓░░░")
+        test(4.666, "█░░░░░░░░░░░░░░░░░░░░░░░░")
+        test(4.667, "█▒░░░░░░░░░░░░░░░░░░░░░░░")
 
 
 if __name__ == '__main__':
