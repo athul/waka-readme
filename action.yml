@@ -12,9 +12,9 @@ inputs:
     description: 'Your Wakatime API Key'
     required: true
 
-  USERNAME:
-    description: 'Your GitHub username'
-    default: ${{ github.repository_owner }}
+  REPOSITORY:
+    description: 'Your GitHub repository'
+    default: ${{ github.repository }}
     required: false
 
   SHOW_TITLE:

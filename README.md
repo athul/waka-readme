@@ -108,7 +108,7 @@ jobs:
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          USERNAME: <username> # optional, it will automatically use the username of the owner of the repository who's executing the workflow.
+          REPOSITORY: <username/username> # optional, By default, it will automatically use the repository who's executing the workflow.
 ```
 
 ## Tests
@@ -131,7 +131,6 @@ Since this project is contained all within one file, 'main.py'. You can simply a
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          USERNAME: <username>
           SHOW_TITLE: true
 ```
 
@@ -153,7 +152,6 @@ YAML        7 mins              ░░░░░░░░░░░░░░░░
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          USERNAME: <username>
           COMMIT_MESSAGE: Updated the Readme
 ```
 

@@ -14,7 +14,7 @@ START_COMMENT = '<!--START_SECTION:waka-->'
 END_COMMENT = '<!--END_SECTION:waka-->'
 listReg = f"{START_COMMENT}[\\s\\S]+{END_COMMENT}"
 
-user = os.getenv('INPUT_USERNAME')
+repository = os.getenv('INPUT_REPOSITORY')
 waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
@@ -88,7 +88,7 @@ def generate_new_readme(stats: str, readme: str) -> str:
 if __name__ == '__main__':
     g = Github(ghtoken)
     try:
-        repo = g.get_repo(f"{user}/{user}")
+        repo = g.get_repo(repository)
     except GithubException:
         print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
         sys.exit(1)
