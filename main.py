@@ -19,6 +19,7 @@ waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
 commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
+blocks = os.getenv("INPUT_BLOCKS")
 
 
 def this_week() -> str:
@@ -29,11 +30,11 @@ def this_week() -> str:
     return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
 
 
-def make_graph(percent: float) -> str:
+def make_graph(percent: float, blocks: str) -> str:
     '''Make progress graph from API graph'''
-    blocks = "░▒▓█"
-    graph = blocks[3] * int(percent / 4 + 1 / 6)
-    remainder_block = int((percent + 2 / 3) % 4 * 3 / 4)
+    graph = blocks[len(blocks)-1] * int(percent / 4 + 1 / 6)
+    remainder_block = int((percent + (len(blocks)-2) /
+                           (len(blocks)-1)) % 4 * (len(blocks)-1) / len(blocks))
     if remainder_block > 0:
         graph += blocks[remainder_block]
     graph += blocks[0] * (25 - len(graph))
@@ -64,7 +65,7 @@ def get_stats() -> str:
         # following line provides a neat finish
         fmt_percent = format(lang['percent'], '0.2f').zfill(5)
         data_list.append(
-            f"{lang['name']}{' '*(pad + 3 - lth)}{lang['text']}{' '*(16 - ln_text)}{make_graph(lang['percent'])}   {fmt_percent} % ")
+            f"{lang['name']}{' '*(pad + 3 - lth)}{lang['text']}{' '*(16 - ln_text)}{make_graph(lang['percent'], blocks)}   {fmt_percent} % ")
     print("Graph Generated")
     data = '\n'.join(data_list)
     if show_title == 'true':
@@ -93,6 +94,9 @@ if __name__ == '__main__':
         repo = g.get_repo(repository)
     except GithubException:
         print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
+        sys.exit(1)
+    if len(blocks) < 1:
+        print("Invalid blocks string. Please provide provide a string with 2 or more characters. Eg. '░▒▓█'")
         sys.exit(1)
     contents = repo.get_readme()
     waka_stats = get_stats()
