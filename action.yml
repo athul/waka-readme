@@ -1,19 +1,19 @@
-name: 'Waka - Readme'
+name: "Waka - Readme"
 author: Athil Cyriac Ajay
-description: 'Add a Wakatime Coding Activity graph in your Readme'
+description: "Add a Wakatime Coding Activity graph in your Readme"
 
 inputs:
   GH_TOKEN:
-    description: 'GitHub access token with Repo scope'
+    description: "GitHub access token with Repo scope"
     required: true
     default: ${{ github.token }}
 
   WAKATIME_API_KEY:
-    description: 'Your Wakatime API Key'
+    description: "Your Wakatime API Key"
     required: true
 
   REPOSITORY:
-    description: 'Your GitHub repository'
+    description: "Your GitHub repository"
     default: ${{ github.repository }}
     required: false
 
@@ -21,17 +21,21 @@ inputs:
     description: "Displays the week number and days in Readme as title"
     default: false
     required: false
-    
+
   COMMIT_MESSAGE:
     description: "Add a commit message of your choice"
     default: "Updated the Graph with new Metrics"
     required: false
 
+  BLOCKS:
+    description: "Add the progress blocks of your choice"
+    default: "░▒▓█"
+    required: false
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
 
 branding:
-  icon: 'info'
-  color: 'blue'
+  icon: "info"
+  color: "blue"
