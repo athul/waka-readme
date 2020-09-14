@@ -104,4 +104,4 @@ if __name__ == '__main__':
     new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
     if new_readme != rdmd:
         repo.update_file(path=contents.path, message=commit_message,
-                         content=new_readme, sha=contents.sha, branch='master')
+                         content=new_readme, sha=contents.sha)
