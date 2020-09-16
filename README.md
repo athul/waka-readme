@@ -130,7 +130,7 @@ Since this project is contained all within one file, 'main.py'. You can simply a
 
 ## Extras
 
-1. If you want to add the week in the Header of your stats, you can add `HEAD_FLAG: true` in your workflow file like this
+1. If you want to add the week in the Header of your stats, you can add `SHOW_TITLE: true` in your workflow file like this
 
 ```yml
 - uses: athul/waka-readme@master
