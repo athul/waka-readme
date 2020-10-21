@@ -1,2 +1,5 @@
 #generated when running the tests
 __pycache__/
+
+# Local VS code configurations
+.vscode/
