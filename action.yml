@@ -29,7 +29,7 @@ inputs:
 
   BLOCKS:
     description: "Add the progress blocks of your choice"
-    default: ".text-green"
+    default: "⬜🟨🟧🟩"
     required: false
 
 runs:
