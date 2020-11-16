@@ -12,6 +12,7 @@ from github import Github, GithubException
 
 START_COMMENT = '<!--START_SECTION:waka-->'
 END_COMMENT = '<!--END_SECTION:waka-->'
+GRAPH_LENGTH = 25
 listReg = f"{START_COMMENT}[\\s\\S]+{END_COMMENT}"
 
 repository = os.getenv('INPUT_REPOSITORY')
@@ -32,12 +33,14 @@ def this_week() -> str:
 
 def make_graph(percent: float, blocks: str) -> str:
     '''Make progress graph from API graph'''
-    graph = blocks[len(blocks)-1] * int(percent / 4 + 1 / 6)
-    remainder_block = int((percent + (len(blocks)-2) /
-                           (len(blocks)-1)) % 4 * (len(blocks)-1) / len(blocks))
+    if len(blocks) < 2:
+        raise "The BLOCKS need to have at least two characters."
+    divs = len(blocks) - 1
+    graph = blocks[-1] * int(percent / 100 * GRAPH_LENGTH + 0.5 / divs)
+    remainder_block = int((percent / 100 * GRAPH_LENGTH - len(graph)) * divs + 0.5)
     if remainder_block > 0:
         graph += blocks[remainder_block]
-    graph += blocks[0] * (25 - len(graph))
+    graph += blocks[0] * (GRAPH_LENGTH - len(graph))
     return graph
 
 
