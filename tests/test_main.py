@@ -1,13 +1,16 @@
 '''
 Tests for the main.py
 '''
+from unittest.mock import patch
 import unittest
+import datetime
 import os
+from pprint import pprint
 
 try:
     # For travis build which uses
     # python -m unittest discover
-    from main import make_graph
+    from main import make_graph, generate_new_readme
 except Exception as e:
     print("Error: missing 'main.py'\nTrying ablsolute import...")
 
@@ -50,6 +53,24 @@ class TestMain(unittest.TestCase):
             for j, graph in enumerate(graphs):
                 test(percents[j], blocks[i], graph)
 
+    def test_generate_new_readme(self):
+        '''Tests generate_new_readme method from main.py'''
+        dummy_readme = '''My Readme Start
+        <!--START_SECTION:waka-->
+        <!--END_SECTION:waka-->
+        My Readme End'''
+        dummy_stats = '''```text
+        Python     24 hrs 15 mins  █████████████████████████   100.00 %
+        ```'''
+        expected_generated_readme = '''My Readme Start
+        <!--START_SECTION:waka-->\n```text
+        Python     24 hrs 15 mins  █████████████████████████   100.00 %
+        ```\n<!--END_SECTION:waka-->
+        My Readme End
+        '''
+        expected_generated_readme = expected_generated_readme.strip()
+        actual_generated_readme = generate_new_readme(dummy_stats, dummy_readme)
+        self.assertEqual(actual_generated_readme, expected_generated_readme)
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -58,9 +79,9 @@ if __name__ == '__main__':
         # python test/test_main.py
         sys.path.append(os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))))
-        from main import make_graph
+        from main import make_graph, generate_new_readme
     else:
         # Later on if WakaReadme is implemetaion as package
         # python -m tests/test_main
-        from ..main import make_graph
+        from ..main import make_graph, generate_new_readme
     unittest.main()
