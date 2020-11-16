@@ -1,16 +1,15 @@
 '''
 Tests for the main.py
 '''
-from unittest.mock import patch
 import unittest
 import datetime
+import base64
 import os
-from pprint import pprint
 
 try:
     # For travis build which uses
     # python -m unittest discover
-    from main import make_graph, generate_new_readme
+    from main import make_graph, generate_new_readme, decode_readme
 except Exception as e:
     print("Error: missing 'main.py'\nTrying ablsolute import...")
 
@@ -72,6 +71,13 @@ class TestMain(unittest.TestCase):
         actual_generated_readme = generate_new_readme(dummy_stats, dummy_readme)
         self.assertEqual(actual_generated_readme, expected_generated_readme)
 
+    def test_decode_readme(self):
+        '''Tests decode_readme method from main.py'''
+        dummy_data = base64.b64encode(bytes('Some Data From GitHub', 'utf-8'))
+        expected_result = 'Some Data From GitHub'
+        actual_result = decode_readme(dummy_data)
+        self.assertEqual(actual_result, expected_result)
+
 if __name__ == '__main__':
     if __package__ is None:
         import sys
@@ -79,9 +85,9 @@ if __name__ == '__main__':
         # python test/test_main.py
         sys.path.append(os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))))
-        from main import make_graph, generate_new_readme
+        from main import make_graph, generate_new_readme, decode_readme
     else:
         # Later on if WakaReadme is implemetaion as package
         # python -m tests/test_main
-        from ..main import make_graph, generate_new_readme
+        from ..main import make_graph, generate_new_readme, decode_readme
     unittest.main()
