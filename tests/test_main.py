@@ -83,6 +83,13 @@ class TestMain(unittest.TestCase):
         actual_generated_readme = generate_new_readme(dummy_stats, dummy_readme)
         self.assertEqual(actual_generated_readme, expected_generated_readme)
 
+    def test_decode_readme(self):
+        '''Tests decode_readme method from main.py'''
+        dummy_data = base64.b64encode(bytes('Some Data From GitHub', 'utf-8'))
+        expected_result = 'Some Data From GitHub'
+        actual_result = decode_readme(dummy_data)
+        self.assertEqual(actual_result, expected_result)
+
 if __name__ == '__main__':
     if __package__ is None:
         import sys
