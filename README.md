@@ -10,6 +10,8 @@
 
 [WakaTime](https://wakatime.com) Weekly Metrics on your Profile Readme:
 
+**Forum**: [GitHub Discussions](https://github.com/athul/waka-readme/discussions)
+
 ## Prep Work
 
 1. You need to update the markdown file(.md) with 2 comments. You can refer [here](#update-your-readme) for updating it.
