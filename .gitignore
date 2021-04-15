@@ -3,3 +3,6 @@ __pycache__/
 
 # Local VS code configurations
 .vscode/
+
+# Python virtual env
+venv

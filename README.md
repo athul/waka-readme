@@ -48,6 +48,8 @@ WakaTime gives you an idea of the time you really spent on coding. This helps yo
 - Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
 - Paste in your API key to start the analysis.
 
+Alternatively, you can also choose to fetch data from third-party WakaTime-compatible services like [Wakapi](https://wakapi.dev) or [Hakatime](https://github.com/mujx/hakatime) instead. For details, see [extras](#extras) section below.
+
 ### Profile Repository
 
 _If you're executing the workflow on your Profile Repository (`<username>/<username>`)_
@@ -186,6 +188,15 @@ Go          1 hr 15 mins        ⣿⣿⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀
 Markdown    52 mins             ⣿⣿⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   07.43 %
 Docker      16 mins             ⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   02.32 %
 YAML        7 mins              ⣄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.07 %
+```
+
+4. As an alternative to official WakaTime, _waka-readme_ also integrates with WakaTime-compatible services like [Wakapi](https://wakapi.dev) and [Hakatime](https://github.com/mujx/hakatime). To use one of these, adapt the API URL accordingly and use the respective service's API key instead:
+
+```yml
+- uses: athul/waka-readme@master
+        with:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          API_BASE_URL: https://wakapi.dev/api
 ```
 
 ## Why only the language stats and not other data from the API?

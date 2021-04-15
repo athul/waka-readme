@@ -17,6 +17,7 @@ listReg = f"{START_COMMENT}[\\s\\S]+{END_COMMENT}"
 
 repository = os.getenv('INPUT_REPOSITORY')
 waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
+api_base_url = os.getenv('INPUT_API_BASE_URL')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
 commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
@@ -46,8 +47,12 @@ def make_graph(percent: float, blocks: str) -> str:
 
 def get_stats() -> str:
     '''Gets API data and returns markdown progress'''
+    encoded_key: str = str(base64.b64encode(waka_key.encode('utf-8')), 'utf-8')
     data = requests.get(
-        f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}").json()
+        f"{api_base_url.rstrip('/')}/v1/users/current/stats/last_7_days",
+        headers={
+            "Authorization": f"Basic {encoded_key}"
+        }).json()
     try:
         lang_data = data['data']['languages']
     except KeyError:
