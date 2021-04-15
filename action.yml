@@ -12,6 +12,11 @@ inputs:
     description: "Your Wakatime API Key"
     required: true
 
+  API_BASE_URL:
+    description: "Aternative API base URL when using a third-party WakaTime backend"
+    default: "https://wakatime.com/api"
+    required: false
+
   REPOSITORY:
     description: "Your GitHub repository"
     default: ${{ github.repository }}
