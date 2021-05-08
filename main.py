@@ -104,7 +104,7 @@ if __name__ == '__main__':
         print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
         sys.exit(1)
     if len(blocks) < 1:
-        print("Invalid blocks string. Please provide provide a string with 2 or more characters. Eg. '░▒▓█'")
+        print("Invalid blocks string. Please provide a string with 2 or more characters. Eg. '░▒▓█'")
         sys.exit(1)
     contents = repo.get_readme()
     waka_stats = get_stats()

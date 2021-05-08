@@ -54,7 +54,7 @@ Alternatively, you can also choose to fetch data from third-party WakaTime-compa
 
 _If you're executing the workflow on your Profile Repository (`<username>/<username>`)_
 
-> You wouldn't need an GitHub Access Token since GitHub Actions already makes one for you.
+> You wouldn't need a GitHub Access Token since GitHub Actions already makes one for you.
 
 Please follow the steps below:
 
