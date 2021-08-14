@@ -11,7 +11,7 @@ try:
     # python -m unittest discover
     from main import make_graph, generate_new_readme, decode_readme
 except Exception as e:
-    print("Error: missing 'main.py'\nTrying ablsolute import...")
+    print("Error: missing 'main.py'\nTrying absolute import...")
 
 class TestMain(unittest.TestCase):
 
