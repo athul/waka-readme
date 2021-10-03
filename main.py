@@ -13,6 +13,7 @@ from github import Github, GithubException
 START_COMMENT = '<!--START_SECTION:waka-->'
 END_COMMENT = '<!--END_SECTION:waka-->'
 GRAPH_LENGTH = 25
+TEXT_LENGTH = 16
 listReg = f"{START_COMMENT}[\\s\\S]+{END_COMMENT}"
 
 repository = os.getenv('INPUT_REPOSITORY')
@@ -22,6 +23,7 @@ ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
 commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
 blocks = os.getenv("INPUT_BLOCKS")
+show_time = os.getenv("INPUT_SHOW_TIME")
 
 
 def this_week() -> str:
@@ -32,16 +34,16 @@ def this_week() -> str:
     return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
 
 
-def make_graph(percent: float, blocks: str) -> str:
+def make_graph(percent: float, blocks: str, length: int = GRAPH_LENGTH) -> str:
     '''Make progress graph from API graph'''
     if len(blocks) < 2:
         raise "The BLOCKS need to have at least two characters."
     divs = len(blocks) - 1
-    graph = blocks[-1] * int(percent / 100 * GRAPH_LENGTH + 0.5 / divs)
-    remainder_block = int((percent / 100 * GRAPH_LENGTH - len(graph)) * divs + 0.5)
+    graph = blocks[-1] * int(percent / 100 * length + 0.5 / divs)
+    remainder_block = int((percent / 100 * length - len(graph)) * divs + 0.5)
     if remainder_block > 0:
         graph += blocks[remainder_block]
-    graph += blocks[0] * (GRAPH_LENGTH - len(graph))
+    graph += blocks[0] * (length - len(graph))
     return graph
 
 
@@ -59,6 +61,13 @@ def get_stats() -> str:
         print("Please Add your WakaTime API Key to the Repository Secrets")
         sys.exit(1)
 
+    if show_time == 'true':
+        print("Will show time on graph")
+        ln_graph = GRAPH_LENGTH
+    else:
+        print("Hide time on graph")
+        ln_graph = GRAPH_LENGTH + TEXT_LENGTH
+
     data_list = []
     try:
         pad = len(max([l['name'] for l in lang_data[:5]], key=len))
@@ -68,12 +77,17 @@ def get_stats() -> str:
     for lang in lang_data[:5]:
         if lang['hours'] == 0 and lang['minutes'] == 0:
             continue
+
         lth = len(lang['name'])
-        ln_text = len(lang['text'])
+        text = ""
+        if show_time == 'true':
+            ln_text = len(lang['text'])
+            text = f"{lang['text']}{' '*(TEXT_LENGTH - ln_text)}"
+
         # following line provides a neat finish
         fmt_percent = format(lang['percent'], '0.2f').zfill(5)
         data_list.append(
-            f"{lang['name']}{' '*(pad + 3 - lth)}{lang['text']}{' '*(16 - ln_text)}{make_graph(lang['percent'], blocks)}   {fmt_percent} % ")
+            f"{lang['name']}{' '*(pad + 3 - lth)}{text}{make_graph(lang['percent'], blocks, ln_graph)}   {fmt_percent} % ")
     print("Graph Generated")
     data = '\n'.join(data_list)
     if show_title == 'true':
