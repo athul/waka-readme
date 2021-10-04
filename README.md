@@ -61,35 +61,35 @@ Please follow the steps below:
 1. Go to your `<username>/<username>/actions`, hit `New workflow`, `set up a workflow yourself`, delete all the default content github made for you.
 2. Copy the following code and paste it to your new workflow you created at step 1:
 
-```yml
-name: Waka Readme
+    ```yml
+    name: Waka Readme
 
-on:
-  workflow_dispatch:
-  schedule:
-    # Runs at 12am UTC
-    - cron: "0 0 * * *"
+    on:
+      workflow_dispatch:
+      schedule:
+        # Runs at 12am UTC
+        - cron: "0 0 * * *"
 
-jobs:
-  update-readme:
-    name: Update this repo's README
-    runs-on: ubuntu-latest
-    steps:
-      - uses: athul/waka-readme@master
-        with:
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-```
+    jobs:
+      update-readme:
+        name: Update this repo's README
+        runs-on: ubuntu-latest
+        steps:
+          - uses: athul/waka-readme@master
+            with:
+              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+    ```
 
-3. Go to your repo secrets by hitting `Settings => Secrets` tab in your profile repo. You can also enter the url https://github.com/USERNAME/USERNAME/settings/secrets . Please replace the `USERNAME` with your own username.
+3. Go to your repo secrets by hitting `Settings => Secrets` tab in your profile repo. You can also enter the url <https://github.com/USERNAME/USERNAME/settings/secrets> . Please replace the `USERNAME` with your own username.
 4. Create a new `Secret`. `Name`: `WAKATIME_API_KEY`, `Value`: Paste the Wakatime API key here.
 <img width="1241" alt="Screen Shot 2021-05-30 at 21 44 41" src="https://user-images.githubusercontent.com/31362988/120106631-71956680-c190-11eb-84a8-95ff780738da.png">
 If you don't know what is the key, please go to [Account Settings in WakaTime](https://wakatime.com/settings/account) to find your API Key there.
 5. Add a comment to your `README.md` like this:
 
-```md
-<!--START_SECTION:waka-->
-<!--END_SECTION:waka-->
-```
+    ```md
+    <!--START_SECTION:waka-->
+    <!--END_SECTION:waka-->
+    ```
 
 6. Go to Workflows menu (mentioned in step 1), click `Waka Readme`, click `Run workflow`.
 7. Go to your profile page. you will be able to see it.
@@ -126,7 +126,7 @@ jobs:
 
 ### Running Tests
 
-To run tests simply execute the following in the directory containing main.py:
+To run tests simply execute the following in the directory containing `main.py`:
 
 ```python
 python -m unittest discover
@@ -134,72 +134,72 @@ python -m unittest discover
 
 ### Contributing Tests
 
-These tests uses the python Unit testing framework, [unittest](https://docs.python.org/3/library/unittest.html)
+These tests uses the [python's unit testing framework](https://docs.python.org/3/library/unittest.html).
 
-Since this project is contained all within one file, 'main.py'. You can simply add a function to the TestMain class in tests/test_main.py, similar to the test_graph function.
+Since this project is contained all within one file, `main.py`. You can simply add a function to the `TestMain` class in `tests/test_main.py`, similar to the `test_graph` function.
 
 ## Extras
 
 1. If you want to add the week in the Header of your stats, you can add `SHOW_TITLE: true` in your workflow file like this
 
-```yml
-- uses: athul/waka-readme@master
-        with:
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          SHOW_TITLE: true
-```
+    ```yml
+    - uses: athul/waka-readme@master
+            with:
+              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+              GH_TOKEN: ${{ secrets.GH_TOKEN }}
+              SHOW_TITLE: true
+    ```
 
-`SHOW_TITLE` flag can be set to true if you want to display the week number and days in the readme, by default it will be false. Here is an example output with `SHOW_TITLE` set to true.
+    `SHOW_TITLE` flag can be set to true if you want to display the week number and days in the readme, by default it will be false. Here is an example output with `SHOW_TITLE` set to true.
 
-```text
-Week: 11 July, 2020 - 17 July, 2020
-Python      8 hrs 52 mins       ███████████████████░░░░░░   75.87 %
-Go          1 hr 15 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   10.79 %
-Markdown    52 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   07.43 %
-Docker      16 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   02.32 %
-YAML        7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.07 %
-```
+    ```text
+    Week: 11 July, 2020 - 17 July, 2020
+    Python      8 hrs 52 mins       ███████████████████░░░░░░   75.87 %
+    Go          1 hr 15 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   10.79 %
+    Markdown    52 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   07.43 %
+    Docker      16 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   02.32 %
+    YAML        7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.07 %
+    ```
 
 2. You can specify a commit message to override the default _"Updated the Graph with new Metrics"_. Here is how you do it
 
-```yml
-- uses: athul/waka-readme@master
-        with:
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          COMMIT_MESSAGE: Updated the Readme
-```
+    ```yml
+    - uses: athul/waka-readme@master
+            with:
+              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+              GH_TOKEN: ${{ secrets.GH_TOKEN }}
+              COMMIT_MESSAGE: Updated the Readme
+    ```
 
-If no commit message is specified in the `yml` file, it defaults to _"Updated the Graph with new Metrics"_
+    If no commit message is specified in the `yml` file, it defaults to _"Updated the Graph with new Metrics"_
 
 3. You can change the block characters to match with the style of your readme. By default the one show in the graphs before is used. Here is how you do it
 
-```yml
-- uses: athul/waka-readme@master
-        with:
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          BLOCKS: ⣀⣄⣤⣦⣶⣷⣿
-```
+    ```yml
+    - uses: athul/waka-readme@master
+            with:
+              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+              BLOCKS: ⣀⣄⣤⣦⣶⣷⣿
+    ```
 
-This will change the graphs to something like this:
+    This will change the graphs to something like this:
 
-```text
-Python      8 hrs 52 mins       ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⣀⣀⣀⣀⣀   75.87 %
-Go          1 hr 15 mins        ⣿⣿⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   10.79 %
-Markdown    52 mins             ⣿⣿⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   07.43 %
-Docker      16 mins             ⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   02.32 %
-YAML        7 mins              ⣄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.07 %
-```
+    ```text
+    Python      8 hrs 52 mins       ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⣀⣀⣀⣀⣀   75.87 %
+    Go          1 hr 15 mins        ⣿⣿⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   10.79 %
+    Markdown    52 mins             ⣿⣿⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   07.43 %
+    Docker      16 mins             ⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   02.32 %
+    YAML        7 mins              ⣄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.07 %
+    ```
 
 4. As an alternative to official WakaTime, _waka-readme_ also integrates with WakaTime-compatible services like [Wakapi](https://wakapi.dev) and [Hakatime](https://github.com/mujx/hakatime). To use one of these, **adapt the API URL accordingly and use the respective service's API key** instead:
 
-```yml
-- uses: athul/waka-readme@master
-        with:
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          API_BASE_URL: https://wakapi.dev/api
-```
+    ```yml
+    - uses: athul/waka-readme@master
+            with:
+              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+              API_BASE_URL: https://wakapi.dev/api
+    ```
 
 ## Why only the language stats and not other data from the API?
 
