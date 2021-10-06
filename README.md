@@ -211,7 +211,6 @@ Since this project is contained all within one file, `main.py`. You can simply a
     - uses: athul/waka-readme@master
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           SHOW_TIME: false
 ```
 
