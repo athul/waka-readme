@@ -205,6 +205,27 @@ Since this project is contained all within one file, `main.py`. You can simply a
               API_BASE_URL: https://wakapi.dev/api
     ```
 
+5. If you don't like to share how much time you spent in each language, you can add `SHOW_TIME: false` in your workflow file like this
+
+```yml
+    - uses: athul/waka-readme@master
+        with:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          SHOW_TIME: false
+```
+
+`SHOW_TIME` flag can be set to false if you don't want to display the time spent in the readme, by default it will be false. Here is an example output with `SHOW_TITLE` set to true.
+
+```text
+Week: 11 July, 2020 - 17 July, 2020
+PHP          ████████████████████▒░░░░░░░░░░░░░░░░░░░░   49.98 %
+Twig         ████▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   11.07 %
+YAML         ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   09.77 %
+JavaScript   ██▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   06.34 %
+Other        ██▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   05.87 %
+```
+
 ## Why only the language stats and not other data from the API?
 
 I am a fan of minimal designs and the profile readme is a great way to show off your skills and interests. The WakaTime API, gets us a **lot of data** about a person's **coding activity including the editors and Operating Systems you used and the projects you worked on**. Some of these projects maybe secretive and should not be shown out to the public. Using up more data via the Wakatime API will clutter the profile readme and hinder your chances on displaying what you provide **value to the community** like the pinned Repositories. I believe that **Coding Stats is nerdiest of all** since you can tell the community that you are _**exercising these languages or learning a new language**_, this will also show that you spend some amount of time to learn and exercise your development skills. That's what matters in the end :heart:
