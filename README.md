@@ -214,7 +214,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
           SHOW_TIME: false
 ```
 
-`SHOW_TIME` flag can be set to false if you don't want to display the time spent in the readme, by default it will be false. Here is an example output with `SHOW_TITLE` set to true.
+`SHOW_TIME` flag can be set to false if you don't want to display the time spent in the readme, by default it will be true. Here is an example output with `SHOW_TIME` set to false.
 
 ```text
 Week: 11 July, 2020 - 17 July, 2020
