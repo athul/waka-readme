@@ -37,6 +37,11 @@ inputs:
     default: "░▒▓█"
     required: false
 
+  SHOW_TIME:
+    description: "Displays the amount of time spent in each language"
+    default: true
+    required: false
+
 runs:
   using: "docker"
   image: "Dockerfile"
