@@ -34,64 +34,10 @@ Add a comment to your `README.md` like this:
 
 ```md
 <!--START_SECTION:waka-->
-<!--END_SECTION:waka-->
+```text
+No Activity tracked this Week
 ```
-
-These lines will be our entry-points for the dev metrics.
-
-## New to WakaTime
-
-WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
-
-- Head over to <https://wakatime.com> and create an account.
-- Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
-- Install the [WakaTime plugin](https://wakatime.com/plugins) in your favourite editor / IDE.
-- Paste in your API key to start the analysis.
-
-Alternatively, you can also choose to fetch data from third-party WakaTime-compatible services like [Wakapi](https://wakapi.dev) or [Hakatime](https://github.com/mujx/hakatime) instead. For details, see [extras](#extras) section below.
-
-### Profile Repository
-
-_If you're executing the workflow on your Profile Repository (`<username>/<username>`)_
-
-> You wouldn't need a GitHub Access Token since GitHub Actions already makes one for you.
-
-Please follow the steps below:
-
-1. Go to your `<username>/<username>/actions`, hit `New workflow`, `set up a workflow yourself`, delete all the default content github made for you.
-2. Copy the following code and paste it to your new workflow you created at step 1:
-
-    ```yml
-    name: Waka Readme
-
-    on:
-      workflow_dispatch:
-      schedule:
-        # Runs at 12am UTC
-        - cron: "0 0 * * *"
-
-    jobs:
-      update-readme:
-        name: Update this repo's README
-        runs-on: ubuntu-latest
-        steps:
-          - uses: athul/waka-readme@master
-            with:
-              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-    ```
-
-3. Go to your repo secrets by hitting `Settings => Secrets` tab in your profile repo. You can also enter the url <https://github.com/USERNAME/USERNAME/settings/secrets> . Please replace the `USERNAME` with your own username.
-4. Create a new `Secret`. `Name`: `WAKATIME_API_KEY`, `Value`: Paste the Wakatime API key here.
-
-  <img width="1241" alt="Screen Shot 2021-05-30 at 21 44 41" src="https://user-images.githubusercontent.com/31362988/120106631-71956680-c190-11eb-84a8-95ff780738da.png">
-
-  If you don't know what is the key, please go to [Wakatime API](https://wakatime.com/api-key) to find your API Key there.
-
-   1. Add a comment to your `README.md` like this:
-
-       ```md
-       <!--START_SECTION:waka-->
-       <!--END_SECTION:waka-->
+<!--END_SECTION:waka-->
        ```
 
    2. Go to Workflows menu (mentioned in step 1), click `Waka Readme`, click `Run workflow`.
