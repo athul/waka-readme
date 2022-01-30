@@ -80,7 +80,7 @@ Please follow the steps below:
               WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
     ```
 
-3. Go to your repo secrets by hitting `Settings => Secrets` tab in your profile repo. You can also enter the url <https://github.com/USERNAME/USERNAME/settings/secrets> . Please replace the `USERNAME` with your own username.
+3. Go to your repo secrets by hitting `Settings => Secrets` tab in your profile repo. You can also enter the url <https://github.com/USERNAME/USERNAME/settings/secrets/actions/new> . Please replace the `USERNAME` with your own username.
 4. Create a new `Secret`. `Name`: `WAKATIME_API_KEY`, `Value`: Paste the Wakatime API key here.
 
   <img width="1241" alt="Screen Shot 2021-05-30 at 21 44 41" src="https://user-images.githubusercontent.com/31362988/120106631-71956680-c190-11eb-84a8-95ff780738da.png">
