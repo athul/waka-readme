@@ -20,6 +20,7 @@ waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
 api_base_url = os.getenv('INPUT_API_BASE_URL')
 ghtoken = os.getenv('INPUT_GH_TOKEN')
 show_title = os.getenv("INPUT_SHOW_TITLE")
+show_total = os.getenv("INPUT_SHOW_TOTAL")
 commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
 blocks = os.getenv("INPUT_BLOCKS")
 
@@ -55,6 +56,7 @@ def get_stats() -> str:
         }).json()
     try:
         lang_data = data['data']['languages']
+        total_data = data['data']['human_readable_total']
     except KeyError:
         print("Please Add your WakaTime API Key to the Repository Secrets")
         sys.exit(1)
@@ -76,12 +78,15 @@ def get_stats() -> str:
             f"{lang['name']}{' '*(pad + 3 - lth)}{lang['text']}{' '*(16 - ln_text)}{make_graph(lang['percent'], blocks)}   {fmt_percent} % ")
     print("Graph Generated")
     data = '\n'.join(data_list)
+
+    return_text = '```text\n'
     if show_title == 'true':
         print("Stats with Weeks in Title Generated")
-        return '```text\n'+this_week()+'\n\n'+data+'\n```'
-    else:
-        print("Usual Stats Generated")
-        return '```text\n'+data+'\n```'
+        return_text += this_week()+'\n\n'
+    if show_total == 'true':
+        print("add Total time")
+        return_text += 'Total: ' + total_data+'\n\n'
+    return return_text + data+'\n```'
 
 
 def decode_readme(data: str) -> str:
