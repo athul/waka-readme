@@ -41,6 +41,11 @@ inputs:
     description: "Displays the amount of time spent in each language"
     default: true
     required: false
+  
+  TIME_RANGE:
+    description: "Time range of the queried statistics"
+    default: "last_7_days"
+    required: false
 
 runs:
   using: "docker"
