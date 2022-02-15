@@ -41,6 +41,11 @@ inputs:
     description: "Displays the amount of time spent in each language"
     default: true
     required: false
+  
+  SHOW_TOTAL:
+    description: "Displays weekly [total] coding time"
+    default: true
+    required: false
 
 runs:
   using: "docker"
