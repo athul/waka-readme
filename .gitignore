@@ -6,3 +6,6 @@ __pycache__/
 
 # Python virtual env
 venv
+
+# asdf local tool version
+.tool-versions

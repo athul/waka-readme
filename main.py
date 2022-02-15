@@ -35,16 +35,17 @@ def this_week() -> str:
     return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
 
 
-def make_graph(percent: float, blocks: str, length: int = GRAPH_LENGTH) -> str:
+def make_graph(percent: float, ip_blocks: str, length: int = GRAPH_LENGTH) -> str:
     '''Make progress graph from API graph'''
-    if len(blocks) < 2:
-        raise "The BLOCKS need to have at least two characters."
-    divs = len(blocks) - 1
-    graph = blocks[-1] * int(percent / 100 * length + 0.5 / divs)
+    # already addressed in main
+    # if len(ip_blocks) < 2:
+    #     raise "The ip_blocks need to have at least two characters."
+    divs = len(ip_blocks) - 1
+    graph = ip_blocks[-1] * int(percent / 100 * length + 0.5 / divs)
     remainder_block = int((percent / 100 * length - len(graph)) * divs + 0.5)
     if remainder_block > 0:
-        graph += blocks[remainder_block]
-    graph += blocks[0] * (length - len(graph))
+        graph += ip_blocks[remainder_block]
+    graph += ip_blocks[0] * (length - len(graph))
     return graph
 
 
@@ -120,10 +121,11 @@ if __name__ == '__main__':
     try:
         repo = g.get_repo(repository)
     except GithubException:
-        print("Authentication Error. Try saving a GitHub Token in your Repo Secrets or Use the GitHub Actions Token, which is automatically used by the action.")
+        print("Authentication Error. Try saving a GitHub Token in your Repo Secrets" +
+              " or Use the GitHub Actions Token, which is automatically used by the action.")
         sys.exit(1)
     if len(blocks) < 1:
-        print("Invalid blocks string. Please provide a string with 2 or more characters. Eg. '░▒▓█'")
+        print("Invalid string blocks. Please provide string with 2 or more characters. Eg. '░▒▓█'")
         sys.exit(1)
     contents = repo.get_readme()
     waka_stats = get_stats()
