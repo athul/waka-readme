@@ -1,13 +1,20 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
+name = "pypi"
+
+[packages]
+certifi = "*"
+chardet = "*"
+deprecated = "*"
+idna = "*"
+requests = "*"
+urllib3 = "*"
+wrapt = "*"
+PyGithub = "*"
+PyJWT = "*"
 
 [dev-packages]
 
-[packages]
-requests = "*"
-pygithub = "*"
-
 [requires]
-python_version = "3.7"
+python_version = "3.9"
