@@ -45,6 +45,10 @@ inputs:
   TIME_RANGE:
     description: "Time range of the queried statistics"
     default: "last_7_days"
+    
+  SHOW_TOTAL:
+    description: "Displays weekly [total] coding time"
+    default: true
     required: false
 
 runs:
