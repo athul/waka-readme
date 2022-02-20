@@ -33,7 +33,7 @@ def title(start: str, end: str) -> str:
     start_date = datetime.datetime.strptime(start, '%Y-%m-%dT%H:%M:%SZ')
     end_date = datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ')
     print("Title created")
-    return f"From: {start_date.strftime('%d %B, %Y')} - {end_date.strftime('%d %B, %Y')}"
+    return f"From: {start_date.strftime('%d %B, %Y')} - To: {end_date.strftime('%d %B, %Y')}\n\n"
 
 
 def make_graph(percent: float, ip_blocks: str, length: int = GRAPH_LENGTH) -> str:
@@ -58,14 +58,23 @@ def get_stats(range: str = 'last_7_days') -> str:
         headers={
             "Authorization": f"Basic {encoded_key}"
         }).json()
+
+    if 'errors' in data and 'Unauthorized.' in data['errors']:
+        print("Please Add your correct WakaTime API Key to the Repository Secrets")
+        sys.exit(1)
+    elif 'error' in data and data['error'] == 'Invalid time range':
+        print("Please Input the correct time range (e.g. last_7_days, last_30_days)")
+        sys.exit(1)
+
     try:
         start = data['data']['start']
         end = data['data']['end']
         lang_data = data['data']['languages']
         total_data = data['data']['human_readable_total']
     except KeyError:
-        print("Please Add your WakaTime API Key to the Repository Secrets")
+        print("Unknown KeyError")
         sys.exit(1)
+
     if show_time == 'true':
         print("Will show time on graph")
         ln_graph = GRAPH_LENGTH
