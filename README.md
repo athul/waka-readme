@@ -135,7 +135,17 @@ Since this project is contained all within one file, `main.py`. You can simply a
 
 ## Extras
 
-1. If you want to add the week in the Header of your stats, you can add `SHOW_TITLE: true` (by default it will be `false`) in your workflow file like this
+1. You can specify the time range in the parameter (default `last_7_days`):
+
+    ```yml
+    - uses: athul/waka-readme@master
+          with:
+            WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+            TIME_RANGE: last_30_days
+    ```
+    See [Wakatime API docs](https://wakatime.com/developers#stats) for more possible values.
+
+2. If you want to add the week in the Header of your stats, you can add `SHOW_TITLE: true` (by default it will be `false`) in your workflow file like this
 
    ```yml
    - uses: athul/waka-readme@master
@@ -148,7 +158,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
    Here is an example output with `SHOW_TITLE` set to `true`.
 
    ```text
-   Week: 11 July, 2020 - 17 July, 2020
+   From: 12 February, 2022 - To: 19 February, 2022
 
    Python      8 hrs 52 mins       ███████████████████░░░░░░   75.87 %
    Go          1 hr 15 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   10.79 %
@@ -157,7 +167,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
    YAML        7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.07 %
    ```
 
-2. You can specify a commit message to override the default _"Updated the Graph with new Metrics"_. Here is how you do it
+3. You can specify a commit message to override the default _"Updated the Graph with new Metrics"_. Here is how you do it
 
    ```yml
    - uses: athul/waka-readme@master
@@ -169,7 +179,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
 
    If no commit message is specified in the `yml` file, it defaults to _"Updated the Graph with new Metrics"_
 
-3. You can change the block characters to match with the style of your readme. By default the one show in the graphs before is used. Here is how you do it
+4. You can change the block characters to match with the style of your readme. By default the one show in the graphs before is used. Here is how you do it
 
    ```yml
    - uses: athul/waka-readme@master
@@ -188,7 +198,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
    YAML        7 mins              ⣄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.07 %
    ```
 
-4. As an alternative to official WakaTime, _waka-readme_ also integrates with WakaTime-compatible services like [Wakapi](https://wakapi.dev) and [Hakatime](https://github.com/mujx/hakatime). To use one of these, **adapt the API URL accordingly and use the respective service's API key** instead:
+5. As an alternative to official WakaTime, _waka-readme_ also integrates with WakaTime-compatible services like [Wakapi](https://wakapi.dev) and [Hakatime](https://github.com/mujx/hakatime). To use one of these, **adapt the API URL accordingly and use the respective service's API key** instead:
 
    ```yml
    - uses: athul/waka-readme@master
@@ -197,7 +207,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
              API_BASE_URL: https://wakapi.dev/api
    ```
 
-5. If you do not like to share how much time you spent on each language, you can add `SHOW_TIME: false` (by default it will be `true`) in your workflow file like so:
+6. If you do not like to share how much time you spent on each language, you can add `SHOW_TIME: false` (by default it will be `true`) in your workflow file like so:
 
    ```yml
        - uses: athul/waka-readme@master
@@ -209,7 +219,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
    Here is an example output with `SHOW_TIME` set to `false`.
 
    ```text
-   Week: 11 July, 2020 - 17 July, 2020
+   From: 12 February, 2022 - To: 19 February, 2022
 
    PHP          ████████████████████▒░░░░░░░░░░░░░░░░░░░░   49.98 %
    Twig         ████▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   11.07 %
