@@ -48,7 +48,9 @@ inputs:
     
   SHOW_TOTAL:
     description: "Displays weekly [total] coding time"
-    default: true
+    default: false
+    # default is set to false since users can choose whether to show the total time
+    # on their readme
     required: false
 
 runs:
