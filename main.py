@@ -25,14 +25,15 @@ show_total = os.getenv("INPUT_SHOW_TOTAL")
 commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
 blocks = os.getenv("INPUT_BLOCKS")
 show_time = os.getenv("INPUT_SHOW_TIME")
+time_range = os.getenv("INPUT_TIME_RANGE")
 
 
-def this_week() -> str:
-    '''Returns a week streak'''
-    week_end = datetime.datetime.today() - datetime.timedelta(days=1)
-    week_start = week_end - datetime.timedelta(days=6)
-    print("Week header created")
-    return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
+def title(start: str, end: str) -> str:
+    '''Returns a title of time range'''
+    start_date = datetime.datetime.strptime(start, '%Y-%m-%dT%H:%M:%SZ')
+    end_date = datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ')
+    print("Title created")
+    return f"From: {start_date.strftime('%d %B, %Y')} - To: {end_date.strftime('%d %B, %Y')}\n\n"
 
 
 def make_graph(percent: float, ip_blocks: str, length: int = GRAPH_LENGTH) -> str:
@@ -49,19 +50,29 @@ def make_graph(percent: float, ip_blocks: str, length: int = GRAPH_LENGTH) -> st
     return graph
 
 
-def get_stats() -> str:
+def get_stats(range: str = 'last_7_days') -> str:
     '''Gets API data and returns markdown progress'''
     encoded_key: str = str(base64.b64encode(waka_key.encode('utf-8')), 'utf-8')
     data = requests.get(
-        f"{api_base_url.rstrip('/')}/v1/users/current/stats/last_7_days",
+        f"{api_base_url.rstrip('/')}/v1/users/current/stats/{range}",
         headers={
             "Authorization": f"Basic {encoded_key}"
         }).json()
+
+    if 'errors' in data and 'Unauthorized.' in data['errors']:
+        print("Please Add your correct WakaTime API Key to the Repository Secrets")
+        sys.exit(1)
+    elif 'error' in data and data['error'] == 'Invalid time range':
+        print("Please Input the correct time range (e.g. last_7_days, last_30_days)")
+        sys.exit(1)
+
     try:
+        start = data['data']['start']
+        end = data['data']['end']
         lang_data = data['data']['languages']
         total_data = data['data']['human_readable_total']
     except KeyError:
-        print("Please Add your WakaTime API Key to the Repository Secrets")
+        print("Unknown KeyError")
         sys.exit(1)
 
     if show_time == 'true':
@@ -96,8 +107,9 @@ def get_stats() -> str:
 
     return_text = '```text\n'
     if show_title == 'true':
-        print("Stats with Weeks in Title Generated")
-        return_text += this_week()+'\n\n'
+        print("Stats with Time Range in Title Generated")
+        range_title = title(start, end)
+        return_text += range_title
     if show_total == 'true':
         print("add Total time")
         return_text += 'Total: ' + total_data+'\n\n'
@@ -128,7 +140,7 @@ if __name__ == '__main__':
         print("Invalid string blocks. Please provide string with 2 or more characters. Eg. '░▒▓█'")
         sys.exit(1)
     contents = repo.get_readme()
-    waka_stats = get_stats()
+    waka_stats = get_stats(time_range)
     rdmd = decode_readme(contents.content)
     new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
     if new_readme != rdmd:
