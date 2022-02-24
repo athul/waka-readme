@@ -1,148 +1,331 @@
-'''
-WakaTime progress visualizer
-'''
+"""
+WakaReadme : WakaTime progress visualizer
+=========================================
 
+Wakatime Weekly Metrics on your Profile Readme.
+
+Title:
+------
+
+```txt
+From: 15 February, 2022 - To: 22 February, 2022
+````
+
+Byline:
+-------
+
+```txt
+Total: 34 hrs 43 mins
+```
+
+Body:
+-----
+
+```txt
+Python     27 hrs 29 mins  ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣀⣀⣀⣀⣀   77.83 %
+YAML       2 hrs 14 mins   ⣿⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   06.33 %
+Markdown   1 hr 54 mins    ⣿⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   05.39 %
+TOML       1 hr 48 mins    ⣿⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   05.11 %
+Other      35 mins         ⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.68 %
+```
+
+#### Contents = Title + Byline + Body
+"""
+
+# standard
+from distutils.util import strtobool
+from dataclasses import dataclass
+from datetime import datetime
+from base64 import b64encode
+import logging as logger
+from typing import Any
+import sys
 import re
 import os
-import base64
-import sys
-import datetime
+
+# external
+from github import GithubException, Github
 import requests
-from github import Github, GithubException
-
-START_COMMENT = '<!--START_SECTION:waka-->'
-END_COMMENT = '<!--END_SECTION:waka-->'
-GRAPH_LENGTH = 25
-TEXT_LENGTH = 16
-listReg = f"{START_COMMENT}[\\s\\S]+{END_COMMENT}"
-
-repository = os.getenv('INPUT_REPOSITORY')
-waka_key = os.getenv('INPUT_WAKATIME_API_KEY')
-api_base_url = os.getenv('INPUT_API_BASE_URL')
-ghtoken = os.getenv('INPUT_GH_TOKEN')
-show_title = os.getenv("INPUT_SHOW_TITLE")
-show_total = os.getenv("INPUT_SHOW_TOTAL")
-commit_message = os.getenv("INPUT_COMMIT_MESSAGE")
-blocks = os.getenv("INPUT_BLOCKS")
-show_time = os.getenv("INPUT_SHOW_TIME")
-time_range = os.getenv("INPUT_TIME_RANGE")
 
 
-def title(start: str, end: str) -> str:
-    '''Returns a title of time range'''
-    start_date = datetime.datetime.strptime(start, '%Y-%m-%dT%H:%M:%SZ')
-    end_date = datetime.datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ')
-    print("Title created")
-    return f"From: {start_date.strftime('%d %B, %Y')} - To: {end_date.strftime('%d %B, %Y')}\n\n"
+@dataclass
+class WakaConstants:
+    """
+    WakaConstants
+    -------------
+    """
+    prefix_length: int = 16
+    graph_length: int = 25
+    start_comment: str = '<!--START_SECTION:waka-->'
+    end_comment: str = '<!--END_SECTION:waka-->'
+    waka_block_pattern: str = f'{start_comment}[\\s\\S]+{end_comment}'
 
 
-def make_graph(percent: float, ip_blocks: str, length: int = GRAPH_LENGTH) -> str:
-    '''Make progress graph from API graph'''
-    # already addressed in main
-    # if len(ip_blocks) < 2:
-    #     raise "The ip_blocks need to have at least two characters."
-    divs = len(ip_blocks) - 1
-    graph = ip_blocks[-1] * int(percent / 100 * length + 0.5 / divs)
-    remainder_block = int((percent / 100 * length - len(graph)) * divs + 0.5)
-    if remainder_block > 0:
-        graph += ip_blocks[remainder_block]
-    graph += ip_blocks[0] * (length - len(graph))
-    return graph
+class WakaInput:
+    """
+    WakaInput Env Vars
+    ------------------
+    """
+
+    def __init__(self) -> None:
+        """
+        WakaInput Initialize
+        --------------------
+        """
+        # mapped environment variables
+        # # required
+        self.gh_token: str = os.getenv('INPUT_GH_TOKEN')
+        self.waka_key: str = os.getenv('INPUT_WAKATIME_API_KEY')
+        self.api_base_url: str = os.getenv('INPUT_API_BASE_URL')
+        self.repository: str = os.getenv('INPUT_REPOSITORY')
+        # # depends
+        self.commit_message: str = os.getenv("INPUT_COMMIT_MESSAGE")
+        # # optional
+        self.show_title: str | bool = os.getenv("INPUT_SHOW_TITLE")
+        self.block_style: str = os.getenv("INPUT_BLOCKS")
+        self.time_range: str = os.getenv("INPUT_TIME_RANGE")
+        self.show_time: str | bool = os.getenv("INPUT_SHOW_TIME")
+        self.show_total_time: str | bool = os.getenv("INPUT_SHOW_TOTAL")
+
+    def validate_input(self) -> bool:
+        """
+        WakaInput Validate
+        ------------------
+        """
+
+        if not (self.gh_token or self.waka_key or self.api_base_url or self.repository):
+            logger.error('Invalid required input(s)')
+            return False
+
+        if len(self.commit_message) < 1:
+            logger.error('Invalid commit message')
+            return False
+
+        try:
+            self.show_title: bool = bool(strtobool(self.show_title))
+            self.show_time: bool = bool(strtobool(self.show_time))
+            self.show_total_time: bool = bool(strtobool(self.show_total_time))
+        except (ValueError, AttributeError) as err:
+            logger.error(err)
+            return False
+
+        if len(self.block_style) < 2:
+            logger.warning('Invalid block length')
+            logger.debug('Using default blocks: ░▒▓█')
+
+        # 'all_time' is un-documented, should it be used?
+        if self.time_range not in {
+            'last_7_days', 'last_30_days', 'last_6_months', 'last_year', 'all_time'
+        }:
+            logger.warning('Invalid time range')
+            logger.debug('Using default time range: last_7_days')
+            self.time_range: str = 'last_7_days'
+
+        return True
 
 
-def get_stats(range: str = 'last_7_days') -> str:
-    '''Gets API data and returns markdown progress'''
-    encoded_key: str = str(base64.b64encode(waka_key.encode('utf-8')), 'utf-8')
-    data = requests.get(
-        f"{api_base_url.rstrip('/')}/v1/users/current/stats/{range}",
-        headers={
-            "Authorization": f"Basic {encoded_key}"
-        }).json()
+def make_title(dawn: str, dusk: str, /) -> str:
+    """
+    WakaReadme Title
+    ----------------
 
-    if 'errors' in data and 'Unauthorized.' in data['errors']:
-        print("Please Add your correct WakaTime API Key to the Repository Secrets")
+    Makes title for WakaReadme.
+    """
+    logger.debug('Making title')
+    if not (dawn or dusk):
+        logger.error('Cannot find start/end date')
         sys.exit(1)
-    elif 'error' in data and data['error'] == 'Invalid time range':
-        print("Please Input the correct time range (e.g. last_7_days, last_30_days)")
-        sys.exit(1)
-
+    api_dfm, msg_dfm = '%Y-%m-%dT%H:%M:%SZ', '%d %B %Y'
     try:
-        start = data['data']['start']
-        end = data['data']['end']
-        lang_data = data['data']['languages']
-        total_data = data['data']['human_readable_total']
-    except KeyError:
-        print("Unknown KeyError")
+        start_date = datetime.strptime(dawn, api_dfm).strftime(msg_dfm)
+        end_date = datetime.strptime(dusk, api_dfm).strftime(msg_dfm)
+    except ValueError as err:
+        logger.critical(err)
+        sys.exit(1)
+    logger.debug('Title was made')
+    return f'From: {start_date} - To: {end_date}'
+
+
+def make_graph(
+    block_style: str, percent: float, gr_len: str, /,
+    *, lg_nm: str = ''
+) -> str:
+    """
+    WakaReadme Graph
+    ----------------
+
+    Makes time graph from the API's data.
+    """
+    # pylint: disable=logging-fstring-interpolation
+    logger.debug(f'Generating graph for {lg_nm or "..."}')
+    markers: int = len(block_style) - 1
+    proportion: float = percent / 100 * gr_len
+    graph_bar: str = block_style[-1] * int(proportion + 0.5 / markers)
+    remainder_block: int = int(
+        (proportion - len(graph_bar)) * markers + 0.5
+    )
+    graph_bar += block_style[remainder_block] if remainder_block > 0 else ''
+    graph_bar += block_style[0] * (gr_len - len(graph_bar))
+    logger.debug(f'{lg_nm or "..."} graph generated')
+    return graph_bar
+
+
+def prep_content(stats: dict | None, /) -> str:
+    """
+    WakaReadme Prepare Markdown
+    ---------------------------
+
+    Prepared markdown content from the fetched statistics
+    ```
+    """
+    contents: str = ''
+
+    # Check if any data exists
+    if not (lang_info := stats.get('languages')):
+        logger.debug('The data seems to be empty. Please wait for a day')
+        contents += 'No activity tracked this week'
+        return contents
+
+    # make title
+    if wk_i.show_title:
+        contents += make_title(stats.get('start'), stats.get('end')) + '\n\n'
+
+    # make byline
+    if wk_i.show_total_time and (
+        total_time := stats.get('human_readable_total')
+    ):
+        contents += f'Total Time: {total_time}\n\n'
+
+    # make content
+    logger.debug('Making contents')
+    pad_len = len(
+        max((str(l.get('name')) for l in lang_info), key=len)
+        # comment if it feels way computationally expensive
+    )
+    for idx, lang in enumerate(lang_info):
+        lang_name: str = lang.get('name')
+        # >>> add languages to filter here <<<
+        # if lang_name in {...}: continue
+        lang_time: str = lang.get('text') if wk_i.show_time else ''
+        lang_ratio: float = lang.get('percent')
+        lang_bar: str = make_graph(
+            wk_i.block_style, lang_ratio, wk_c.graph_length,
+            lg_nm=lang_name
+        )
+        contents += (
+            f'{lang_name.ljust(pad_len)}   ' +
+            f'{lang_time: <16}{lang_bar}   ' +
+            f'{lang_ratio:.2f}'.zfill(5) + ' %\n'
+        )
+        if idx >= 5 or lang_name == 'Other':
+            break
+
+    logger.debug('Contents were made')
+    return contents.rstrip('\n')
+
+
+def fetch_stats() -> Any:
+    """
+    WakaReadme Fetch Stats
+    ----------------------
+
+    Retruns statistics as JSON string
+    """
+    logger.debug('Fetching WakaTime statistics')
+    encoded_key: str = str(b64encode(bytes(wk_i.waka_key, 'utf-8')), 'utf-8')
+    try:
+        stat_data = requests.get(
+            url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
+            headers={'Authorization': f'Basic {encoded_key}'}
+        ).json()
+    except requests.RequestException as rq_exp:
+        logger.critical(rq_exp)
         sys.exit(1)
 
-    if show_time == 'true':
-        print("Will show time on graph")
-        ln_graph = GRAPH_LENGTH
-    else:
-        print("Hide time on graph")
-        ln_graph = GRAPH_LENGTH + TEXT_LENGTH
+    # would this be a little too restrictive?
+    if err := (stat_data.get('error') or stat_data.get('errors')):
+        logger.error(err)
+        sys.exit(1)
 
-    data_list = []
-    try:
-        pad = len(max([l['name'] for l in lang_data[:5]], key=len))
-    except ValueError:
-        print("The Data seems to be empty. Please wait for a day for the data to be filled in.")
-        return '```text\nNo Activity tracked this Week\n```'
-    for lang in lang_data[:5]:
-        if lang['hours'] == 0 and lang['minutes'] == 0:
-            continue
-
-        lth = len(lang['name'])
-        text = ""
-        if show_time == 'true':
-            ln_text = len(lang['text'])
-            text = f"{lang['text']}{' '*(TEXT_LENGTH - ln_text)}"
-
-        # following line provides a neat finish
-        fmt_percent = format(lang['percent'], '0.2f').zfill(5)
-        data_list.append(
-            f"{lang['name']}{' '*(pad + 3 - lth)}{text}{make_graph(lang['percent'], blocks, ln_graph)}   {fmt_percent} % ")
-    print("Graph Generated")
-    data = '\n'.join(data_list)
-
-    return_text = '```text\n'
-    if show_title == 'true':
-        print("Stats with Time Range in Title Generated")
-        range_title = title(start, end)
-        return_text += range_title
-    if show_total == 'true':
-        print("add Total time")
-        return_text += 'Total: ' + total_data+'\n\n'
-    return return_text + data+'\n```'
+    logger.debug('Fetched WakaTime statistics')
+    return stat_data.get('data')
 
 
-def decode_readme(data: str) -> str:
-    '''Decode the contents of old readme'''
-    decoded_bytes = base64.b64decode(data)
-    return str(decoded_bytes, 'utf-8')
+def churn(old_readme: str, /) -> str | None:
+    """
+    WakaReadme Churn
+    ----------------
+
+    Composes WakaTime stats within markdown code snippet
+    """
+    if not (waka_stats := fetch_stats()):
+        logger.error('Unable to fetch data')
+        sys.exit(1)
+    generated_content = prep_content(waka_stats)
+    print('\n', generated_content, '\n', sep='')
+    new_readme = re.sub(
+        pattern=wk_c.waka_block_pattern,
+        repl=f'{wk_c.start_comment}```txt\n{generated_content}\n```{wk_c.end_comment}',
+        string=old_readme
+    )
+    # return None # un-comment when testing with --dev
+    # to avoid writing back to Github
+    return None if new_readme == old_readme else new_readme
 
 
-def generate_new_readme(stats: str, readme: str) -> str:
-    '''Generate a new Readme.md'''
-    stats_in_readme = f"{START_COMMENT}\n{stats}\n{END_COMMENT}"
-    return re.sub(listReg, stats_in_readme, readme)
+def genesis() -> None:
+    """Run Program"""
+    logger.debug('Conneting to GitHub')
+    gh_connect = Github(wk_i.gh_token)
+    gh_repo = gh_connect.get_repo(wk_i.repository)
+    readme_file = gh_repo.get_readme()
+    logger.debug('Decoding readme contents')
+    readme_contents = str(readme_file.decoded_content, encoding='utf-8')
+    if new_content := churn(readme_contents):
+        logger.debug('Updating readme')
+        gh_repo.update_file(
+            path=readme_file.path,
+            message=wk_i.commit_message,
+            content=new_content,
+            sha=readme_file.sha
+        )
+        logger.info('Updated waka stats successfully')
+        return
+    logger.info('No changes were made')
+
+
+# configure logger
+logger.getLogger('urllib3').setLevel(logger.WARNING)
+logger.getLogger('github.Requester').setLevel(logger.WARNING)
+logger.basicConfig(
+    datefmt='%Y-%m-%d %H:%M:%S',
+    format='[%(asctime)s] ln. %(lineno)-3d %(levelname)-8s %(message)s',
+    level=logger.DEBUG
+)
+try:
+    if len(sys.argv) == 2 and sys.argv[1] == '--dev':
+        # get env-vars from .env file for development
+        from dotenv import load_dotenv
+        # comment this out to disable colored logging
+        from loguru import logger
+        load_dotenv()
+except ImportError as im_err:
+    logger.warning(im_err)
 
 
 if __name__ == '__main__':
-    g = Github(ghtoken)
+    # initial setup
+    wk_c = WakaConstants()
+    wk_i = WakaInput()
+    logger.debug('Initialize WakaReadme')
+    if not wk_i.validate_input():
+        logger.error('Environment variables are misconfigured')
+        sys.exit(1)
+    logger.debug('Input validation complete')
+    # run
     try:
-        repo = g.get_repo(repository)
-    except GithubException:
-        print("Authentication Error. Try saving a GitHub Token in your Repo Secrets" +
-              " or Use the GitHub Actions Token, which is automatically used by the action.")
+        genesis()
+    except GithubException as gh_exp:
+        logger.critical(gh_exp)
         sys.exit(1)
-    if len(blocks) < 1:
-        print("Invalid string blocks. Please provide string with 2 or more characters. Eg. '░▒▓█'")
-        sys.exit(1)
-    contents = repo.get_readme()
-    waka_stats = get_stats(time_range)
-    rdmd = decode_readme(contents.content)
-    new_readme = generate_new_readme(stats=waka_stats, readme=rdmd)
-    if new_readme != rdmd:
-        repo.update_file(path=contents.path, message=commit_message,
-                         content=new_readme, sha=contents.sha)
+    print('Thanks for using WakaReadme!')

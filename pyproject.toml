@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "waka-readme"
+version = "0.1.5"
+description = "Wakatime Weekly Metrics on your Profile Readme."
+authors = ["Athul Cyriac Ajay <athul8720@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.27.1"
+PyGithub = "^1.55"
+
+[tool.poetry.dev-dependencies]
+autopep8 = "^1.6.0"
+pylint = "^2.12.2"
+python-dotenv = "^0.19.2"
+loguru = "^0.6.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
