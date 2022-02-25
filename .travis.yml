@@ -1,9 +1,10 @@
+dist: focal
 language: python
-python:
-  - "3.10"
+python: '3.10.2'
 install:
   - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - --version 1.1.13
-  - poetry shell
+  - echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.poetry/bin"
+  - source $HOME/.poetry/env
   - poetry install
 script:
   - poetry run python -m unittest discover

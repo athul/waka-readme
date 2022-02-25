@@ -39,7 +39,7 @@ These lines will be the entry-points for dev metrics.
 
 ## New to WakaTime?
 
-WakaTime gives you an idea of the time you really spent on coding. This helps you boost your productivity and competitive edge.
+WakaTime gives you an idea of the time you spent on coding. This helps you boost your productivity and competitive edge.
 
 - Head over to <https://wakatime.com> and create an account.
 - Get your WakaTime API Key from your [Account Settings in WakaTime](https://wakatime.com/settings/account).
@@ -117,35 +117,18 @@ jobs:
           REPOSITORY: <username/username> # optional, By default, it will automatically use the repository which is executing the workflow.
 ```
 
-## Tests
-
-### Running Tests
-
-To run tests simply execute the following in the directory containing `main.py`:
-
-```python
-python -m unittest discover
-```
-
-### Contributing Tests
-
-These tests uses the [python's unit testing framework](https://docs.python.org/3/library/unittest.html).
-
-Since this project is contained all within one file, `main.py`. You can simply add a function to the `TestMain` class in `tests/test_main.py`, similar to the `test_graph` function.
-
 ## Extras
 
-1. You can specify the time range in the parameter (default `last_7_days`):
+1. As an alternative to official WakaTime, _waka-readme_ also integrates with WakaTime-compatible services like [Wakapi](https://wakapi.dev) and [Hakatime](https://github.com/mujx/hakatime). To use one of these, **adapt the API URL accordingly and use the respective service's API key** instead:
 
-    ```yml
-    - uses: athul/waka-readme@master
-          with:
-            WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-            TIME_RANGE: last_30_days
-    ```
-    See [Wakatime API docs](https://wakatime.com/developers#stats) for more possible values.
+   ```yml
+   - uses: athul/waka-readme@master
+           with:
+             WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+             API_BASE_URL: https://wakapi.dev/api
+   ```
 
-2. If you want to add the week in the Header of your stats, you can add `SHOW_TITLE: true` (by default it will be `false`) in your workflow file like this
+2. If you want to add a title for your stats, by setting `SHOW_TITLE: true` (which by default is `false`) in your workflow file like this
 
    ```yml
    - uses: athul/waka-readme@master
@@ -167,7 +150,18 @@ Since this project is contained all within one file, `main.py`. You can simply a
    YAML        7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.07 %
    ```
 
-3. You can specify a commit message to override the default _"Updated the Graph with new Metrics"_. Here is how you do it
+3. You can specify the time range in the parameter (default `last_7_days`):
+
+   ```yml
+   - uses: athul/waka-readme@master
+         with:
+           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+           TIME_RANGE: last_30_days
+   ```
+
+   See [Wakatime API docs](https://wakatime.com/developers#stats) for more possible values.
+
+4. You can specify a commit message to override the default _"Updated the Graph with new Metrics"_. Here is how you do it
 
    ```yml
    - uses: athul/waka-readme@master
@@ -179,7 +173,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
 
    If no commit message is specified in the `yml` file, it defaults to _"Updated the Graph with new Metrics"_
 
-4. You can change the block characters to match with the style of your readme. By default the one show in the graphs before is used. Here is how you do it
+5. You can change the block characters to match with the style of your readme. By default the one show in the graphs before is used. Here is how you do it.
 
    ```yml
    - uses: athul/waka-readme@master
@@ -188,7 +182,7 @@ Since this project is contained all within one file, `main.py`. You can simply a
              BLOCKS: ⣀⣄⣤⣦⣶⣷⣿
    ```
 
-   It will change the graph to something like this:
+   Requires `BLOCKS` to be of at least 2 characters in length. It will change the graph to something like this:
 
    ```text
    Python      8 hrs 52 mins       ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⣀⣀⣀⣀⣀   75.87 %
@@ -198,16 +192,29 @@ Since this project is contained all within one file, `main.py`. You can simply a
    YAML        7 mins              ⣄⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.07 %
    ```
 
-5. As an alternative to official WakaTime, _waka-readme_ also integrates with WakaTime-compatible services like [Wakapi](https://wakapi.dev) and [Hakatime](https://github.com/mujx/hakatime). To use one of these, **adapt the API URL accordingly and use the respective service's API key** instead:
+6. If you want to add total time in stats, by setting `SHOW_TOTAL: true` (which by default is `false`) in your workflow file like this:
 
    ```yml
    - uses: athul/waka-readme@master
            with:
              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-             API_BASE_URL: https://wakapi.dev/api
+             GH_TOKEN: ${{ secrets.GH_TOKEN }}
+             SHOW_TOTAL: true
    ```
 
-6. If you do not like to share how much time you spent on each language, you can add `SHOW_TIME: false` (by default it will be `true`) in your workflow file like so:
+   It will change the graph to something like this:
+
+   ```text
+   Total Time: 44 hrs 27 mins
+
+   Python       36 hrs 28 mins  ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣀⣀⣀⣀⣀   80.09 %
+   YAML         2 hrs 30 mins   ⣿⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   05.52 %
+   TOML         1 hr 36 mins    ⣷⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   03.54 %
+   Docker       1 hr 11 mins    ⣶⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   02.61 %
+   Other        1 hr 4 mins     ⣶⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   02.37 %
+   ```
+
+7. If you do not like to share how much time you spent on each language, you can add `SHOW_TIME: false` (by default it will be `true`) in your workflow file like so:
 
    ```yml
        - uses: athul/waka-readme@master
@@ -227,6 +234,8 @@ Since this project is contained all within one file, `main.py`. You can simply a
    JavaScript   ██▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   06.34 %
    Other        ██▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   05.87 %
    ```
+
+> You can find all the options in [action.yml](action.yml) and an example workflow [here](https://github.com/athul/athul/blob/master/.github/workflows/update-readme.yml).
 
 ## Why only the language stats and not other data from the API?
 
