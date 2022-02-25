@@ -1,7 +1,9 @@
 language: python
 python:
-  - "3.7"
+  - "3.10"
 install:
-  - pip install -r requirements.txt
+  - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - --version 1.1.13
+  - poetry shell
+  - poetry install
 script:
-  - python -m unittest discover
+  - poetry run python -m unittest discover
