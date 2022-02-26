@@ -2,7 +2,7 @@
 WakaReadme : WakaTime progress visualizer
 =========================================
 
-Wakatime Weekly Metrics on your Profile Readme.
+Wakatime Metrics on your Profile Readme.
 
 Title:
 ------
@@ -47,6 +47,10 @@ import os
 from github import GithubException, Github
 import requests
 
+
+# pylint: disable=logging-fstring-interpolation
+
+################### data ###################
 
 @dataclass
 class WakaConstants:
@@ -124,6 +128,8 @@ class WakaInput:
         return True
 
 
+################### logic ###################
+
 def make_title(dawn: str, dusk: str, /) -> str:
     """
     WakaReadme Title
@@ -140,7 +146,7 @@ def make_title(dawn: str, dusk: str, /) -> str:
         start_date = datetime.strptime(dawn, api_dfm).strftime(msg_dfm)
         end_date = datetime.strptime(dusk, api_dfm).strftime(msg_dfm)
     except ValueError as err:
-        logger.critical(err)
+        logger.error(err)
         sys.exit(1)
     logger.debug('Title was made')
     return f'From: {start_date} - To: {end_date}'
@@ -156,7 +162,6 @@ def make_graph(
 
     Makes time graph from the API's data.
     """
-    # pylint: disable=logging-fstring-interpolation
     logger.debug(f'Generating graph for {lg_nm or "..."}')
     markers: int = len(block_style) - 1
     proportion: float = percent / 100 * gr_len
@@ -182,8 +187,8 @@ def prep_content(stats: dict | None, /) -> str:
 
     # Check if any data exists
     if not (lang_info := stats.get('languages')):
-        logger.debug('The data seems to be empty. Please wait for a day')
-        contents += 'No activity tracked this week'
+        logger.debug('The data seems to be empty, please wait for a day')
+        contents += 'No activity tracked'
         return contents
 
     # make title
@@ -201,6 +206,7 @@ def prep_content(stats: dict | None, /) -> str:
     pad_len = len(
         max((str(l.get('name')) for l in lang_info), key=len)
         # comment if it feels way computationally expensive
+        # and then don't for get to set pad_len to say 13 :)
     )
     for idx, lang in enumerate(lang_info):
         lang_name: str = lang.get('name')
@@ -231,24 +237,32 @@ def fetch_stats() -> Any:
 
     Retruns statistics as JSON string
     """
+    tries, statistic = 3, {}
     logger.debug('Fetching WakaTime statistics')
     encoded_key: str = str(b64encode(bytes(wk_i.waka_key, 'utf-8')), 'utf-8')
-    try:
-        stat_data = requests.get(
-            url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
-            headers={'Authorization': f'Basic {encoded_key}'}
-        ).json()
-    except requests.RequestException as rq_exp:
-        logger.critical(rq_exp)
-        sys.exit(1)
 
-    # would this be a little too restrictive?
-    if err := (stat_data.get('error') or stat_data.get('errors')):
+    with requests.Session() as rqs:
+        # why session? read @
+        # https://docs.python-requests.org/en/latest/user/advanced/#session-objects
+        while tries > 0:
+            resp = rqs.get(
+                url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
+                headers={'Authorization': f'Basic {encoded_key}'}
+            )
+            logger.debug(
+                f'API response at trial #{4 - tries}: {resp.status_code} {resp.reason}'
+            )
+            if resp.status_code == 200 and (statistic := resp.json()):
+                logger.debug('Fetched WakaTime statistics')
+                break
+            logger.debug('Retrying ...')
+            tries -= 1
+
+    if err := (statistic.get('error') or statistic.get('errors')):
         logger.error(err)
         sys.exit(1)
 
-    logger.debug('Fetched WakaTime statistics')
-    return stat_data.get('data')
+    return statistic.get('data')
 
 
 def churn(old_readme: str, /) -> str | None:
@@ -258,8 +272,12 @@ def churn(old_readme: str, /) -> str | None:
 
     Composes WakaTime stats within markdown code snippet
     """
-    if not (waka_stats := fetch_stats()):
-        logger.error('Unable to fetch data')
+    try:
+        if not (waka_stats := fetch_stats()):
+            logger.error('Unable to fetch data, please rerun workflow')
+            sys.exit(1)
+    except requests.RequestException as rq_exp:
+        logger.critical(rq_exp)
         sys.exit(1)
     generated_content = prep_content(waka_stats)
     print('\n', generated_content, '\n', sep='')
@@ -268,8 +286,8 @@ def churn(old_readme: str, /) -> str | None:
         repl=f'{wk_c.start_comment}```txt\n{generated_content}\n```{wk_c.end_comment}',
         string=old_readme
     )
-    # return None # un-comment when testing with --dev
-    # to avoid writing back to Github
+    # return None  # un-comment when testing with --dev
+    # to avoid accidentally writing back to Github
     return None if new_readme == old_readme else new_readme
 
 
@@ -293,6 +311,8 @@ def genesis() -> None:
         return
     logger.info('No changes were made')
 
+
+################### driver ###################
 
 # configure logger
 logger.getLogger('urllib3').setLevel(logger.WARNING)

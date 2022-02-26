@@ -235,7 +235,9 @@ jobs:
    Other        ██▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   05.87 %
    ```
 
-> You can find all the options in [action.yml](action.yml) and an example workflow [here](https://github.com/athul/athul/blob/master/.github/workflows/update-readme.yml).
+> You can find all the options in [action.yml](action.yml) and a sample workflow [here](https://github.com/athul/athul/blob/master/.github/workflows/update-readme.yml).
+>
+> Tip 💡: Add `on: workflow_dispatch:` to enable manual runs. [See](https://github.com/joe733/joe733/blob/master/.github/workflows/waka.yml#L4).
 
 ## Why only the language stats and not other data from the API?
 

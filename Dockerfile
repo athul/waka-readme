@@ -21,6 +21,7 @@ WORKDIR /src
 # RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 RUN pip install pipx
 RUN pipx install "poetry==$POETRY_VERSION"
+RUN pipx ensurepath
 
 # install dependencies
 COPY pyproject.toml poetry.lock /src/
@@ -28,4 +29,4 @@ RUN poetry install --no-dev --no-root --no-interaction --no-ansi
 
 # copy and run program
 COPY main.py /src/
-RUN python /src/main.py
+CMD [ "python", "/src/main.py" ]

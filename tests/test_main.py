@@ -31,7 +31,7 @@ class TestData:
     def populate(self) -> None:
         """Populate Test Data"""
         # for future tests
-        # with open(file='tests/template.json', mode='rt', encoding='utf-8') as wkf:
+        # with open(file='tests/sample_data.json', mode='rt', encoding='utf-8') as wkf:
         #     self.waka_json = loads(wkf.read())
 
         self.bar_percent = (
