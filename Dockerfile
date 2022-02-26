@@ -1,4 +1,4 @@
-FROM python:3.10.2-slim-bullseye as base
+FROM python:3.10.2-slim-bullseye
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
@@ -11,11 +11,8 @@ ENV PYTHONFAULTHANDLER=1 \
     # poetry:
     POETRY_VERSION=1.1.13 \
     POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     PATH="$PATH:/root/.local/bin"
-
-WORKDIR /src
 
 # install poetry
 # RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
@@ -24,9 +21,9 @@ RUN pipx install "poetry==$POETRY_VERSION"
 RUN pipx ensurepath
 
 # install dependencies
-COPY pyproject.toml poetry.lock /src/
+COPY pyproject.toml poetry.lock /
 RUN poetry install --no-dev --no-root --no-interaction --no-ansi
 
 # copy and run program
-COPY main.py /src/
-CMD [ "python", "/src/main.py" ]
+ADD main.py /main.py
+CMD [ "poetry", "run", "python", "/main.py" ]

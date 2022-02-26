@@ -33,11 +33,11 @@ Other      35 mins         ⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀�
 """
 
 # standard
-from distutils.util import strtobool
 from dataclasses import dataclass
 from datetime import datetime
 from base64 import b64encode
 import logging as logger
+from time import sleep
 from typing import Any
 import sys
 import re
@@ -106,9 +106,9 @@ class WakaInput:
             return False
 
         try:
-            self.show_title: bool = bool(strtobool(self.show_title))
-            self.show_time: bool = bool(strtobool(self.show_time))
-            self.show_total_time: bool = bool(strtobool(self.show_total_time))
+            self.show_title: bool = strtobool(self.show_title)
+            self.show_time: bool = strtobool(self.show_time)
+            self.show_total_time: bool = strtobool(self.show_total_time)
         except (ValueError, AttributeError) as err:
             logger.error(err)
             return False
@@ -126,6 +126,32 @@ class WakaInput:
             self.time_range: str = 'last_7_days'
 
         return True
+
+
+def strtobool(val: str) -> bool:
+    """
+    strtobool
+    ---------
+
+    PEP 632 https://www.python.org/dev/peps/pep-0632/ is depreciating distutils
+
+    Following code is somewhat shamelessly copied from the original source.
+
+    Convert a string representation of truth to True or False.
+
+    - True values are `'y', 'yes', 't', 'true', 'on', and '1'`
+    - False values are `'n', 'no', 'f', 'false', 'off', and '0'`
+    - Raises `ValueError` if `val` is anything else.
+    """
+    val = val.lower()
+
+    if val in {'y', 'yes', 't', 'true', 'on', '1'}:
+        return True
+
+    if val in {'n', 'no', 'f', 'false', 'off', '0'}:
+        return False
+
+    raise ValueError(f'invalid truth value for {val}')
 
 
 ################### logic ###################
@@ -250,12 +276,13 @@ def fetch_stats() -> Any:
                 headers={'Authorization': f'Basic {encoded_key}'}
             )
             logger.debug(
-                f'API response at trial #{4 - tries}: {resp.status_code} {resp.reason}'
+                f'API response @ trial #{4 - tries}: {resp.status_code} {resp.reason}'
             )
             if resp.status_code == 200 and (statistic := resp.json()):
                 logger.debug('Fetched WakaTime statistics')
                 break
-            logger.debug('Retrying ...')
+            logger.debug('Retrying in 3s ...')
+            sleep(3)
             tries -= 1
 
     if err := (statistic.get('error') or statistic.get('errors')):
@@ -283,7 +310,7 @@ def churn(old_readme: str, /) -> str | None:
     print('\n', generated_content, '\n', sep='')
     new_readme = re.sub(
         pattern=wk_c.waka_block_pattern,
-        repl=f'{wk_c.start_comment}```txt\n{generated_content}\n```{wk_c.end_comment}',
+        repl=f'{wk_c.start_comment}\n\n```text\n{generated_content}\n```\n\n{wk_c.end_comment}',
         string=old_readme
     )
     # return None  # un-comment when testing with --dev
