@@ -1,19 +1,19 @@
 name: "Waka - Readme"
-author: Athil Cyriac Ajay
+author: Athul Cyriac Ajay
 description: "Add a Wakatime Coding Activity graph in your Readme"
 
 inputs:
   GH_TOKEN:
     description: "GitHub access token with Repo scope"
-    required: true
     default: ${{ github.token }}
+    required: true
 
   WAKATIME_API_KEY:
     description: "Your Wakatime/Wakapi/Hakatime API Key"
     required: true
 
   API_BASE_URL:
-    description: "Aternative API base URL when using a third-party WakaTime backend"
+    description: "Alternative API base URL when using a third-party WakaTime-ish backend"
     default: "https://wakatime.com/api"
     required: false
 
@@ -22,14 +22,16 @@ inputs:
     default: ${{ github.repository }}
     required: false
 
-  SHOW_TITLE:
-    description: "Displays the week number and days in Readme as title"
-    default: false
-    required: false
-
   COMMIT_MESSAGE:
     description: "Add a commit message of your choice"
     default: "Updated the Graph with new Metrics"
+    required: false
+
+  # content tweaks
+
+  SHOW_TITLE:
+    description: "Displays the week number and days in Readme as title"
+    default: "false"
     required: false
 
   BLOCKS:
@@ -37,20 +39,19 @@ inputs:
     default: "░▒▓█"
     required: false
 
-  SHOW_TIME:
-    description: "Displays the amount of time spent in each language"
-    default: true
-    required: false
-  
   TIME_RANGE:
     description: "Time range of the queried statistics"
     default: "last_7_days"
-    
+    required: false
+
+  SHOW_TIME:
+    description: "Displays the amount of time spent for each language"
+    default: "true"
+    required: false
+
   SHOW_TOTAL:
-    description: "Displays weekly [total] coding time"
-    default: false
-    # default is set to false since users can choose whether to show the total time
-    # on their readme
+    description: "Displays total coding time"
+    default: "false"
     required: false
 
 runs:

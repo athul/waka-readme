@@ -1,0 +1,28 @@
+name: WakaReadme
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - --version 1.1.13
+          echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.poetry/bin"
+          source $HOME/.poetry/env
+          poetry install
+      - name: Run unit tests
+        run: |
+          poetry run python -m unittest discover
