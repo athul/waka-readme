@@ -326,7 +326,7 @@ def genesis() -> None:
     # location of readme file = profile-readme/README.md
     readme_file = gh_repo.get_contents(
         path='profile-readme/README.md',
-        ref=wk_i.branch
+        ref='main'
     )
     logger.debug('Done')
     logger.debug('Decoding readme contents')
