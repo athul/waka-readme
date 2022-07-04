@@ -54,6 +54,19 @@ inputs:
     default: "false"
     required: false
 
+  # location configuration
+
+  README_PATH:
+    description: "Path to the README file"
+    default: ""
+    required: false
+    
+  REPO_BRANCH:
+    description: "Repository branch to use"
+    default: ""
+    required: false
+  
+
 runs:
   using: "docker"
   image: "Dockerfile"
