@@ -235,6 +235,15 @@ jobs:
    Other        ██▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   05.87 %
    ```
 
+8. If your readme file is symlinked or is in another location, you can point to it by adding `README_PATH: <your path here>` (by default it will be the readme in the root directory) in your workflow file like so:
+
+  ```yml
+      - uses: athul/waka-readme@master
+            with:
+              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+              README_PATH: 'profile-readme/README.md'
+  ```
+
 > You can find all the options in [action.yml](action.yml) and a sample workflow [here](https://github.com/athul/athul/blob/master/.github/workflows/update-readme.yml).
 >
 > Tip 💡: Add `on: workflow_dispatch:` to enable manual runs. [See](https://github.com/joe733/joe733/blob/master/.github/workflows/waka.yml#L4).
