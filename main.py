@@ -91,7 +91,6 @@ class WakaInput:
         self.show_time: str | bool = os.getenv("INPUT_SHOW_TIME")
         self.show_total_time: str | bool = os.getenv("INPUT_SHOW_TOTAL")
         self.readme_path: str = os.getenv("INPUT_README_PATH")
-        self.repo_branch: str = os.getenv("INPUT_REPO_BRANCH")
 
     def validate_input(self) -> bool:
         """
@@ -325,12 +324,12 @@ def genesis() -> None:
     logger.debug('Conneting to GitHub')
     gh_connect = Github(wk_i.gh_token)
     gh_repo = gh_connect.get_repo(wk_i.repository)
-    if not (wk_i.readme_path or wk_i.repo_branch):
+    if not (wk_i.readme_path):
         readme_file = gh_repo.get_readme()
     else: 
         readme_file = gh_repo.get_contents(
             path=wk_i.readme_path,
-            ref=wk_i.repo_branch
+            ref='main'
         )
     logger.debug('Done')
     logger.debug('Decoding readme contents')
