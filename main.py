@@ -323,7 +323,12 @@ def genesis() -> None:
     logger.debug('Conneting to GitHub')
     gh_connect = Github(wk_i.gh_token)
     gh_repo = gh_connect.get_repo(wk_i.repository)
-    readme_file = gh_repo.get_readme()
+    # location of readme file = profile-readme/README.md
+    readme_file = gh_repo.get_contents(
+        path='profile-readme/README.md',
+        ref=wk_i.branch
+    )
+    logger.debug('Done')
     logger.debug('Decoding readme contents')
     readme_contents = str(readme_file.decoded_content, encoding='utf-8')
     if new_content := churn(readme_contents):
