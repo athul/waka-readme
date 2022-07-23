@@ -261,7 +261,7 @@ def fetch_stats() -> Any:
     WakaReadme Fetch Stats
     ----------------------
 
-    Retruns statistics as JSON string
+    Returns statistics as JSON string
     """
     tries, statistic = 3, {}
     logger.debug('Fetching WakaTime statistics')

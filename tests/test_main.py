@@ -1,8 +1,10 @@
 '''
 Tests for the main.py
 '''
+
 from importlib import import_module
 from dataclasses import dataclass
+from itertools import product
 # from inspect import cleandoc
 # from json import loads
 import unittest
@@ -96,12 +98,13 @@ class TestMain(unittest.TestCase):
 
     def test_make_graph(self) -> None:
         """Test graph maker"""
-        for idx, grb in enumerate(tds.graph_blocks):
-            for jdy, bpc in enumerate(tds.bar_percent):
-                self.assertEqual(
-                    prime.make_graph(grb, bpc, 25),
-                    tds.waka_graphs[idx][jdy]
-                )
+        for (idx, grb), (jdy, bpc) in product(
+            enumerate(tds.graph_blocks), enumerate(tds.bar_percent)
+        ):
+            self.assertEqual(
+                prime.make_graph(grb, bpc, 25),
+                tds.waka_graphs[idx][jdy]
+            )
 
     def test_make_title(self) -> None:
         """Test title maker"""
