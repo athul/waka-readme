@@ -52,7 +52,7 @@ import requests
 
 ################### data ###################
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class WakaConstants:
     """
     WakaConstants
@@ -80,16 +80,25 @@ class WakaInput:
         # # required
         self.gh_token: str = os.getenv('INPUT_GH_TOKEN')
         self.waka_key: str = os.getenv('INPUT_WAKATIME_API_KEY')
-        self.api_base_url: str = os.getenv('INPUT_API_BASE_URL')
+        self.api_base_url: str = os.getenv(
+            'INPUT_API_BASE_URL', 'https://wakatime.com/api'
+        )
         self.repository: str = os.getenv('INPUT_REPOSITORY')
         # # depends
-        self.commit_message: str = os.getenv("INPUT_COMMIT_MESSAGE")
+        self.commit_message: str = os.getenv(
+            'INPUT_COMMIT_MESSAGE', 'Updated WakaReadme graph with new metrics'
+        )
         # # optional
-        self.show_title: str | bool = os.getenv("INPUT_SHOW_TITLE")
-        self.block_style: str = os.getenv("INPUT_BLOCKS")
-        self.time_range: str = os.getenv("INPUT_TIME_RANGE")
-        self.show_time: str | bool = os.getenv("INPUT_SHOW_TIME")
-        self.show_total_time: str | bool = os.getenv("INPUT_SHOW_TOTAL")
+        self.show_title: str | bool = os.getenv('INPUT_SHOW_TITLE', 'False')
+        self.block_style: str = os.getenv('INPUT_BLOCKS', '░▒▓█')
+        self.time_range: str = os.getenv('INPUT_TIME_RANGE', 'last_7_days')
+        self.show_time: str | bool = os.getenv('INPUT_SHOW_TIME', 'False')
+        self.show_total_time: str | bool = os.getenv(
+            'INPUT_SHOW_TOTAL', 'False'
+        )
+        self.show_masked_time: str | bool = os.getenv(
+            'INPUT_SHOW_MASKED_TIME', 'False'
+        )
 
     def validate_input(self) -> bool:
         """
@@ -102,19 +111,24 @@ class WakaInput:
             return False
 
         if len(self.commit_message) < 1:
-            logger.error('Invalid commit message')
+            logger.error(
+                'Commit message length must be greater than 1 character long'
+            )
             return False
 
         try:
             self.show_title: bool = strtobool(self.show_title)
             self.show_time: bool = strtobool(self.show_time)
             self.show_total_time: bool = strtobool(self.show_total_time)
+            self.show_masked_time: bool = strtobool(self.show_masked_time)
         except (ValueError, AttributeError) as err:
             logger.error(err)
             return False
 
         if len(self.block_style) < 2:
-            logger.warning('Invalid block length')
+            logger.warning(
+                'Block length should be greater than 2 characters long'
+            )
             logger.debug('Using default blocks: ░▒▓█')
 
         # 'all_time' is un-documented, should it be used?
@@ -226,12 +240,17 @@ def prep_content(stats: dict | None, /) -> str:
         total_time := stats.get('human_readable_total')
     ):
         contents += f'Total Time: {total_time}\n\n'
+    # # overrides 'human_readable_total'
+    if wk_i.show_masked_time and (
+        total_time := stats.get('human_readable_total_including_other_language')
+    ):
+        contents += f'Total Time: {total_time}\n\n'
 
     # make content
     logger.debug('Making contents')
     pad_len = len(
-        max((str(l.get('name')) for l in lang_info), key=len)
         # comment if it feels way computationally expensive
+        max((str(l.get('name')) for l in lang_info), key=len)
         # and then don't for get to set pad_len to say 13 :)
     )
     for idx, lang in enumerate(lang_info):
@@ -271,6 +290,8 @@ def fetch_stats() -> Any:
         # why session? read @
         # https://docs.python-requests.org/en/latest/user/advanced/#session-objects
         while tries > 0:
+            # TODO: instead of manual retry use requests.adapters.Retry with back-off and
+            # requests.adapters.HTTPAdapter: see https://stackoverflow.com/questions/15431044/
             resp = rqs.get(
                 url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
                 headers={'Authorization': f'Basic {encoded_key}'}
@@ -313,8 +334,10 @@ def churn(old_readme: str, /) -> str | None:
         repl=f'{wk_c.start_comment}\n\n```text\n{generated_content}\n```\n\n{wk_c.end_comment}',
         string=old_readme
     )
-    # return None  # un-comment when testing with --dev
-    # to avoid accidentally writing back to Github
+    if len(sys.argv) == 2 and sys.argv[1] == '--dev':
+        # to avoid accidentally writing back to Github
+        # when developing and testing WakaReadme
+        return None
     return None if new_readme == old_readme else new_readme
 
 
