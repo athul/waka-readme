@@ -44,8 +44,12 @@ import re
 import os
 
 # external
+# # github
 from github import GithubException, Github
-import requests
+# # requests
+from requests.exceptions import RequestException
+from requests.adapters import HTTPAdapter, Retry
+from requests.sessions import Session
 
 
 # pylint: disable=logging-fstring-interpolation
@@ -188,7 +192,7 @@ def make_title(dawn: str, dusk: str, /) -> str:
     except ValueError as err:
         logger.error(err)
         sys.exit(1)
-    logger.debug('Title was made')
+    logger.debug('Title was made\n')
     return f'From: {start_date} - To: {end_date}'
 
 
@@ -202,7 +206,7 @@ def make_graph(
 
     Makes time graph from the API's data.
     """
-    logger.debug(f'Generating graph for {lg_nm or "..."}')
+    logger.debug(f'Generating graph for "{lg_nm or "..."}"')
     markers: int = len(block_style) - 1
     proportion: float = percent / 100 * gr_len
     graph_bar: str = block_style[-1] * int(proportion + 0.5 / markers)
@@ -236,13 +240,13 @@ def prep_content(stats: dict | None, /) -> str:
         contents += make_title(stats.get('start'), stats.get('end')) + '\n\n'
 
     # make byline
-    if wk_i.show_total_time and (
-        total_time := stats.get('human_readable_total')
-    ):
-        contents += f'Total Time: {total_time}\n\n'
-    # # overrides 'human_readable_total'
     if wk_i.show_masked_time and (
         total_time := stats.get('human_readable_total_including_other_language')
+    ):
+        # overrides 'human_readable_total'
+        contents += f'Total Time: {total_time}\n\n'
+    elif wk_i.show_total_time and (
+        total_time := stats.get('human_readable_total')
     ):
         contents += f'Total Time: {total_time}\n\n'
 
@@ -271,7 +275,7 @@ def prep_content(stats: dict | None, /) -> str:
         if idx >= 5 or lang_name == 'Other':
             break
 
-    logger.debug('Contents were made')
+    logger.debug('Contents were made\n')
     return contents.rstrip('\n')
 
 
@@ -282,34 +286,39 @@ def fetch_stats() -> Any:
 
     Returns statistics as JSON string
     """
-    tries, statistic = 3, {}
-    logger.debug('Fetching WakaTime statistics')
+    attempts, statistic, retries = 2, {}, Retry(  # for auto retry
+        total=5,
+        backoff_factor=0.5,
+        status_forcelist=[500, 502, 503, 504],
+    )
     encoded_key: str = str(b64encode(bytes(wk_i.waka_key, 'utf-8')), 'utf-8')
 
-    with requests.Session() as rqs:
-        # why session? read @
-        # https://docs.python-requests.org/en/latest/user/advanced/#session-objects
-        while tries > 0:
-            # TODO: instead of manual retry use requests.adapters.Retry with back-off and
-            # requests.adapters.HTTPAdapter: see https://stackoverflow.com/questions/15431044/
+    # making a request
+    with Session() as rqs:
+        rqs.mount('http://', HTTPAdapter(max_retries=retries))
+        rqs.mount('https://', HTTPAdapter(max_retries=retries))
+
+        while attempts > 0:
+            logger.debug('Fetching WakaTime statistics')
             resp = rqs.get(
                 url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
-                headers={'Authorization': f'Basic {encoded_key}'}
+                headers={'Authorization': f'Basic {encoded_key}'},
             )
             logger.debug(
-                f'API response @ trial #{4 - tries}: {resp.status_code} {resp.reason}'
+                f'API response @ trial #{3 - attempts}: {resp.status_code} • {resp.reason}'
             )
             if resp.status_code == 200 and (statistic := resp.json()):
                 logger.debug('Fetched WakaTime statistics')
                 break
             logger.debug('Retrying in 3s ...')
             sleep(3)
-            tries -= 1
+            attempts -= 1
 
     if err := (statistic.get('error') or statistic.get('errors')):
         logger.error(err)
         sys.exit(1)
 
+    print()
     return statistic.get('data')
 
 
@@ -320,21 +329,25 @@ def churn(old_readme: str, /) -> str | None:
 
     Composes WakaTime stats within markdown code snippet
     """
+    # getting content
     try:
         if not (waka_stats := fetch_stats()):
             logger.error('Unable to fetch data, please rerun workflow')
             sys.exit(1)
-    except requests.RequestException as rq_exp:
+    except RequestException as rq_exp:
         logger.critical(rq_exp)
         sys.exit(1)
+
+    # processing content
     generated_content = prep_content(waka_stats)
-    print('\n', generated_content, '\n', sep='')
+    print(generated_content, '\n', sep='')
     new_readme = re.sub(
         pattern=wk_c.waka_block_pattern,
         repl=f'{wk_c.start_comment}\n\n```text\n{generated_content}\n```\n\n{wk_c.end_comment}',
         string=old_readme
     )
     if len(sys.argv) == 2 and sys.argv[1] == '--dev':
+        logger.debug('Detected run in `dev` mode.')
         # to avoid accidentally writing back to Github
         # when developing and testing WakaReadme
         return None
@@ -347,23 +360,23 @@ def genesis() -> None:
     gh_connect = Github(wk_i.gh_token)
     gh_repo = gh_connect.get_repo(wk_i.repository)
     readme_file = gh_repo.get_readme()
-    logger.debug('Decoding readme contents')
+    logger.debug('Decoding readme contents\n')
     readme_contents = str(readme_file.decoded_content, encoding='utf-8')
     if new_content := churn(readme_contents):
-        logger.debug('Updating readme')
+        logger.debug('WakaReadme stats has changed')
         gh_repo.update_file(
             path=readme_file.path,
             message=wk_i.commit_message,
             content=new_content,
             sha=readme_file.sha
         )
-        logger.info('Updated waka stats successfully')
+        logger.info('Stats updated successfully')
         return
-    logger.info('No changes were made')
+    logger.info('WakaReadme was not updated')
 
 
 ################### driver ###################
-
+print()
 # configure logger
 logger.getLogger('urllib3').setLevel(logger.WARNING)
 logger.getLogger('github.Requester').setLevel(logger.WARNING)
@@ -395,7 +408,11 @@ if __name__ == '__main__':
     # run
     try:
         genesis()
+    except KeyboardInterrupt:
+        print()
+        logger.error('Interrupt signal received')
+        sys.exit(1)
     except GithubException as gh_exp:
         logger.critical(gh_exp)
         sys.exit(1)
-    print('Thanks for using WakaReadme!')
+    print('\nThanks for using WakaReadme!')

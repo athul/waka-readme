@@ -24,7 +24,7 @@ inputs:
 
   COMMIT_MESSAGE:
     description: "Add a commit message of your choice"
-    default: "Updated WakaReadme graph with new metrics"
+    default: "Updated waka-readme graph with new metrics"
     required: false
 
   # content tweaks
