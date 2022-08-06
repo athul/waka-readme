@@ -24,7 +24,7 @@ inputs:
 
   COMMIT_MESSAGE:
     description: "Add a commit message of your choice"
-    default: "Updated the Graph with new Metrics"
+    default: "Updated WakaReadme graph with new metrics"
     required: false
 
   # content tweaks
@@ -51,6 +51,11 @@ inputs:
 
   SHOW_TOTAL:
     description: "Displays total coding time"
+    default: "false"
+    required: false
+
+  SHOW_MASKED_TIME:
+    description: "Displays total coding time including unclassified languages"
     default: "false"
     required: false
 
