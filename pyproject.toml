@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "waka-readme"
-version = "0.1.5"
+version = "0.1.6"
 description = "Wakatime Weekly Metrics on your Profile Readme."
 authors = ["Athul Cyriac Ajay <athul8720@gmail.com>"]
 license = "MIT"
