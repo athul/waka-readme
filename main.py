@@ -299,7 +299,7 @@ def fetch_stats() -> Any:
             logger.debug(
                 f'API response @ trial #{4 - tries}: {resp.status_code} {resp.reason}'
             )
-            if resp.status_code == 200 and (statistic := resp.json()):
+            if resp.status_code < 300 and (statistic := resp.json()):
                 logger.debug('Fetched WakaTime statistics')
                 break
             logger.debug('Retrying in 3s ...')
