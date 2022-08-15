@@ -34,6 +34,7 @@ Other      35 mins         ⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀�
 
 # standard
 from dataclasses import dataclass
+from random import SystemRandom
 from datetime import datetime
 from base64 import b64encode
 import logging as logger
@@ -44,12 +45,13 @@ import re
 import os
 
 # external
-# # github
-from github import GithubException, Github
 # # requests
 from requests.exceptions import RequestException
-from requests.adapters import HTTPAdapter, Retry
-from requests.sessions import Session
+from requests import get as rq_get
+# # github
+from github import GithubException, Github
+# # faker
+from faker import Faker
 
 
 # pylint: disable=logging-fstring-interpolation
@@ -286,33 +288,33 @@ def fetch_stats() -> Any:
 
     Returns statistics as JSON string
     """
-    attempts, statistic, retries = 2, {}, Retry(  # for auto retry
-        total=5,
-        backoff_factor=0.5,
-        status_forcelist=[500, 502, 503, 504],
-    )
+    attempts, statistic = 4, {}
     encoded_key: str = str(b64encode(bytes(wk_i.waka_key, 'utf-8')), 'utf-8')
+    logger.debug(
+        f'Pulling WakaTime stats from {" ".join(wk_i.time_range.split("_"))}'
+    )
 
-    # making a request
-    with Session() as rqs:
-        rqs.mount('http://', HTTPAdapter(max_retries=retries))
-        rqs.mount('https://', HTTPAdapter(max_retries=retries))
-
-        while attempts > 0:
-            logger.debug('Fetching WakaTime statistics')
-            resp = rqs.get(
-                url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
-                headers={'Authorization': f'Basic {encoded_key}'},
-            )
-            logger.debug(
-                f'API response @ trial #{3 - attempts}: {resp.status_code} • {resp.reason}'
-            )
-            if resp.status_code == 200 and (statistic := resp.json()):
-                logger.debug('Fetched WakaTime statistics')
-                break
-            logger.debug('Retrying in 3s ...')
-            sleep(3)
-            attempts -= 1
+    while attempts > 0:
+        fake_ua: str = cryptogenic.choice(
+            [str(fake.user_agent()) for _ in range(5)]
+        )
+        # making a request
+        resp = rq_get(
+            url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
+            headers={
+                'Authorization': f'Basic {encoded_key}',
+                'User-Agent': fake_ua,
+            },
+        )
+        logger.debug(
+            f'API response @ trial #{5 - attempts}: {resp.status_code} • {resp.reason}'
+        )
+        if resp.status_code == 200 and (statistic := resp.json()):
+            logger.debug('Fetched WakaTime statistics')
+            break
+        logger.debug(f'Retrying in {30 * (5 - attempts )}s ...')
+        sleep(30 * (5 - attempts))
+        attempts -= 1
 
     if err := (statistic.get('error') or statistic.get('errors')):
         logger.error(err)
@@ -330,12 +332,8 @@ def churn(old_readme: str, /) -> str | None:
     Composes WakaTime stats within markdown code snippet
     """
     # getting content
-    try:
-        if not (waka_stats := fetch_stats()):
-            logger.error('Unable to fetch data, please rerun workflow')
-            sys.exit(1)
-    except RequestException as rq_exp:
-        logger.critical(rq_exp)
+    if not (waka_stats := fetch_stats()):
+        logger.error('Unable to fetch data, please rerun workflow')
         sys.exit(1)
 
     # processing content
@@ -377,9 +375,15 @@ def genesis() -> None:
 
 ################### driver ###################
 print()
-# configure logger
-logger.getLogger('urllib3').setLevel(logger.WARNING)
+# hush existing loggers
+# pylint: disable = no-member # see: https://stackoverflow.com/q/20965287
+for lgr_name in logger.root.manager.loggerDict:
+    # to disable log propagation completely set '.propagate = False'
+    logger.getLogger(lgr_name).setLevel(logger.WARNING)
+# pylint: enable = no-member
+# somehow github.Requester gets missed out from loggerDict
 logger.getLogger('github.Requester').setLevel(logger.WARNING)
+# configure logger
 logger.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
     format='[%(asctime)s] ln. %(lineno)-3d %(levelname)-8s %(message)s',
@@ -397,7 +401,12 @@ except ImportError as im_err:
 
 
 if __name__ == '__main__':
-    # initial setup
+    # faker data preparation
+    fake = Faker()
+    Faker.seed(0)
+    cryptogenic = SystemRandom()
+
+    # initial waka-readme setup
     wk_c = WakaConstants()
     wk_i = WakaInput()
     logger.debug('Initialize WakaReadme')
@@ -405,6 +414,7 @@ if __name__ == '__main__':
         logger.error('Environment variables are misconfigured')
         sys.exit(1)
     logger.debug('Input validation complete')
+
     # run
     try:
         genesis()
@@ -412,7 +422,7 @@ if __name__ == '__main__':
         print()
         logger.error('Interrupt signal received')
         sys.exit(1)
-    except GithubException as gh_exp:
-        logger.critical(gh_exp)
+    except (GithubException, RequestException) as rq_exp:
+        logger.critical(rq_exp)
         sys.exit(1)
     print('\nThanks for using WakaReadme!')
