@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.10
@@ -19,8 +18,8 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - --version 1.1.13
-          echo "##vso[task.setvariable variable=PATH]${PATH}:$HOME/.poetry/bin"
+          curl -sSL https://install.python-poetry.org | python -
+          export PATH="$HOME/.poetry/bin:${PATH}"
           source $HOME/.poetry/env
           poetry install
       - name: Run unit tests

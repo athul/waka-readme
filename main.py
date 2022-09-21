@@ -112,8 +112,8 @@ class WakaInput:
         ------------------
         """
 
-        if not (self.gh_token or self.waka_key or self.api_base_url or self.repository):
-            logger.error('Invalid required input(s)')
+        if not (self.gh_token and self.waka_key and self.api_base_url and self.repository):
+            logger.error('Invalid required input(s), refer README')
             return False
 
         if len(self.commit_message) < 1:
@@ -295,19 +295,20 @@ def fetch_stats() -> Any:
     )
 
     while attempts > 0:
-        fake_ua: str = cryptogenic.choice(
+        resp_message, fake_ua = None, cryptogenic.choice(
             [str(fake.user_agent()) for _ in range(5)]
         )
         # making a request
-        resp = rq_get(
+        if (resp := rq_get(
             url=f'{wk_i.api_base_url.rstrip("/")}/v1/users/current/stats/{wk_i.time_range}',
             headers={
                 'Authorization': f'Basic {encoded_key}',
                 'User-Agent': fake_ua,
             },
-        )
+        )).status_code != 200:
+            resp_message = f'• {resp.json().get("message")}'
         logger.debug(
-            f'API response @ trial #{5 - attempts}: {resp.status_code} • {resp.reason}'
+            f'API response #{5 - attempts}: {resp.status_code} • {resp.reason} {resp_message or ""}'
         )
         if resp.status_code == 200 and (statistic := resp.json()):
             logger.debug('Fetched WakaTime statistics')
@@ -354,7 +355,7 @@ def churn(old_readme: str, /) -> str | None:
 
 def genesis() -> None:
     """Run Program"""
-    logger.debug('Conneting to GitHub')
+    logger.debug('Connecting to GitHub')
     gh_connect = Github(wk_i.gh_token)
     gh_repo = gh_connect.get_repo(wk_i.repository)
     readme_file = gh_repo.get_readme()
@@ -407,9 +408,9 @@ if __name__ == '__main__':
     cryptogenic = SystemRandom()
 
     # initial waka-readme setup
+    logger.debug('Initialize WakaReadme')
     wk_c = WakaConstants()
     wk_i = WakaInput()
-    logger.debug('Initialize WakaReadme')
     if not wk_i.validate_input():
         logger.error('Environment variables are misconfigured')
         sys.exit(1)
