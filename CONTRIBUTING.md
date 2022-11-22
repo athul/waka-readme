@@ -2,74 +2,104 @@
 
 ![python_ver](https://img.shields.io/badge/python-%5E3.10-blue.svg)
 
-First off, thank you! Please follow along. 
+> First off, thank you! Please follow along.
 
-> **_You need to fork this repository and clone it, onto your system._**
+**You need to _fork_ this repository and _clone_ it, onto your system.**
 
-## Using docker (recommended)
+## Using Docker/Podman (recommended)
 
-> Assumes you've already installed & configured latest version of [docker](https://www.docker.com/).
+> Assumes you've already installed & configured latest version of [docker](https://www.docker.com/) or [podman](https://podman.io/).
+>
+> Replace `docker` with `podman` everywhere, if you're using the latter.
 
 1. **Inside the cloned folder**, run:
 
    ```console
    $ git archive -o 'waka-readme.tar.gz' HEAD
-   $ docker build . -t 'waka-readme:dev' -f 'DockerfileDev'
+   $ docker build . -f containerfile -t 'waka-readme:dev'
    ```
 
    to build an image. (Image is identified as `<name>:<tag>`)
 
 2. Then create containers and use them as dev environments.
-    - Temporary:
 
-        ```console
-        $ docker run --rm -it --name 'WakaReadme' 'waka-readme:dev' bash
-        ```
+   - Temporary:
 
-    - or Persistent
+     ```console
+     $ docker run --rm -it --name 'WakaReadmeDev' 'waka-readme:dev' bash
+     ```
 
-        ```console
-        $ docker run --detach --name 'WakaReadme' 'waka-readme:dev'
-        $ docker exec -it 'WakaReadme' bash
-        ```
+   - or Persistent
 
-        where `WakaReadme` is the docker container name.
+     ```console
+     $ docker run --detach --name 'WakaReadmeDev' 'waka-readme:dev'
+     ```
+
+   where `WakaReadmeDev` is the docker container name. Then execute `bash` in the container:
+
+     ```console
+     $ docker exec -it 'WakaReadmeDev' bash
+     ```
 
 3. For development, you can attach code editor of your choice to this container.
 4. Export environnement variables with edits, as required:
 
-    ```console
-    // inside container
+   ```console
+   // inside container, create a file `.env`
+   # micro .env
+   ```
 
-    # export INPUT_GH_TOKEN='<GITHUB TOKEN>' \
-    && export INPUT_WAKATIME_API_KEY='<WAKATIME API KEY>' \
-    && export INPUT_API_BASE_URL='https://wakatime.com/api' \
-    && export INPUT_REPOSITORY='<REPOSITORY SLUG>' \
-    && export INPUT_COMMIT_MESSAGE='<COMMIT MESSAGE>' \
-    && export INPUT_SHOW_TITLE='True' \
-    && export INPUT_BLOCKS='->' \
-    && export INPUT_SHOW_TIME='True' \
-    && export INPUT_SHOW_TOTAL='True' \
-    && export INPUT_TIME_RANGE='last_7_days' \
-    && export INPUT_SHOW_MASKED_TIME='True'
-    ```
+   paste (`Ctrl+Shift+V`) the following contents:
 
-    and execute program with:
+   ```env
+   INPUT_GH_TOKEN='<GITHUB TOKEN>'
+   INPUT_WAKATIME_API_KEY='<WAKATIME API KEY>'
+   INPUT_API_BASE_URL='https://wakatime.com/api'
+   INPUT_REPOSITORY='<REPOSITORY SLUG>'
+   INPUT_COMMIT_MESSAGE='<COMMIT MESSAGE>'
+   INPUT_SHOW_TITLE='True'
+   INPUT_BLOCKS='->'
+   INPUT_SHOW_TIME='True'
+   INPUT_SHOW_TOTAL='True'
+   INPUT_TIME_RANGE='last_7_days'
+   INPUT_SHOW_MASKED_TIME='True'
+   ```
 
-    ```console
-    # poetry shell
-    (venv)# python -m main --dev
-    ```
+   and execute program with:
+
+   ```console
+   # poetry shell
+   # set -a && . ./.env && set +a # optional
+   (venv)# python -m main --dev
+   ```
 
 5. Later, to remove stop and remove the container:
 
-    ```console
-    // exit container
-    # exit
+   ```console
+   // exit container
+   # exit
 
-    $ docker container stop 'WakaReadme'
-    $ docker container rm 'WakaReadme'
-    ```
+   $ docker container stop 'WakaReadmeDev'
+   $ docker container rm 'WakaReadmeDev'
+   ```
+
+---
+
+> **NOTE** With VSCode on Windows
+>
+> Add these to `.vscode/settings.json`
+>
+> ```json
+> {
+>   "terminal.integrated.commandsToSkipShell": [
+>    "-workbench.action.quickOpenView"
+>   ]
+> }
+> ```
+>
+> To quit the `micro` editor from the vscode terminal.
+
+---
 
 ## Manual
 
@@ -86,22 +116,23 @@ First off, thank you! Please follow along.
 
 2. Put environment variables in a `.env` file
 
-    ```env
-    INPUT_GH_TOKEN='<GITHUB TOKEN>'
-    INPUT_WAKATIME_API_KEY='<WAKATIME API KEY>'
-    INPUT_API_BASE_URL='https://wakatime.com/api'
-    INPUT_REPOSITORY='<REPOSITORY SLUG>'
-    INPUT_COMMIT_MESSAGE='<COMMIT MESSAGE>'
-    INPUT_SHOW_TITLE='True'
-    INPUT_BLOCKS='->'
-    INPUT_SHOW_TIME='True'
-    INPUT_SHOW_TOTAL='True'
-    INPUT_TIME_RANGE='last_7_days'
-    INPUT_SHOW_MASKED_TIME='True'
-    ```
+   ```env
+   INPUT_GH_TOKEN='<GITHUB TOKEN>'
+   INPUT_WAKATIME_API_KEY='<WAKATIME API KEY>'
+   INPUT_API_BASE_URL='https://wakatime.com/api'
+   INPUT_REPOSITORY='<REPOSITORY SLUG>'
+   INPUT_COMMIT_MESSAGE='<COMMIT MESSAGE>'
+   INPUT_SHOW_TITLE='True'
+   INPUT_BLOCKS='->'
+   INPUT_SHOW_TIME='True'
+   INPUT_SHOW_TOTAL='True'
+   INPUT_TIME_RANGE='last_7_days'
+   INPUT_SHOW_MASKED_TIME='True'
+   ```
 
 3. Execute program in development mode with:
 
-    ```console
-    (venv)$ python -m main --dev
-    ```
+   ```console
+   $ set -a && . ./.env && set +a # optional
+   (venv)$ python -m main --dev
+   ```
