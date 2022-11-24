@@ -141,7 +141,6 @@ I am a fan of minimal designs and the profile readme is a great way to show off 
 
 [wakapi]: https://wakapi.dev
 [hakatime]: https://github.com/mujx/hakatime
-[workflow_dispatch]: https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
 [waka_plugins]: https://wakatime.com/plugins
 [waka_help]: https://wakatime.com/help/editors
 [profile_readme]: https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme

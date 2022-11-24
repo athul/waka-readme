@@ -20,7 +20,7 @@ ENV PYTHONFAULTHANDLER=1 \
 ADD waka-readme.tar.gz .
 
 # install poetry & dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y curl git \
+RUN apt-get update && apt-get install --no-install-recommends -y curl git micro \
     && curl -sSL https://install.python-poetry.org | python - \
     && poetry install --no-root --no-ansi
 
