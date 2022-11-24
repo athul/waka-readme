@@ -11,6 +11,10 @@ inputs:
   WAKATIME_API_KEY:
     description: "Your Wakatime/Wakapi/Hakatime API Key"
     required: true
+    
+  SECTION_NAME:
+    description: "Section name for data to appear in readme"
+    required: false
 
   API_BASE_URL:
     description: "Alternative API base URL when using a third-party WakaTime-ish backend"
