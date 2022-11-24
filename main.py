@@ -66,8 +66,8 @@ class WakaConstants:
     """
     prefix_length: int = 16
     graph_length: int = 25
-    start_comment: str = '<!--START_SECTION:waka-->'
-    end_comment: str = '<!--END_SECTION:waka-->'
+    start_comment: str = f'<!--START_SECTION:{os.getenv('SECTION_NAME')}-->'
+    end_comment: str = f'<!--END_SECTION:{os.getenv('SECTION_NAME')}-->'
     waka_block_pattern: str = f'{start_comment}[\\s\\S]+{end_comment}'
 
 
