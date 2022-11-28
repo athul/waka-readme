@@ -30,7 +30,7 @@ Alternatively, you can also fetch data from WakaTime compatible services like [W
 
 A GitHub repository and a README file is required. We'll be making use of readme in the [profile repository][profile_readme]\*.
 
-- Save the README file after copy-pasting the following special comments. Your dev-metics will show up in between.
+- Save the README file after copy-pasting the following special comments. Your dev-metics will show up in between. `waka` here can be replaced by any string as long as you set the `SECTION_NAME` environment variable [as per the Tweaks section](tweaks).
 
     ```md
 
@@ -78,6 +78,7 @@ There are many flags that you can tweak to suit your taste!
 | ------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `API_BASE_URL`     | `https://wakatime.com/api`                   | `https://wakatime.com/api`, `https://wakapi.dev/api`, `https://hakatime.mtx-dev.xyz/api` | Integration with WakaTime compatible services like [Wakapi][wakapi] & [Hakatime][hakatime] are possible |
 | `REPOSITORY`       | `<gh_username>/<gh_username>`                | `<gh_username>/<repo_name>`                                                              | Waka-readme stats will appear on the provided repository                                                |
+| `SECTION_NAME`       | `waka`                | `any string`                                                              | The generator will look for this section to fill up the readme.                                                |
 | `COMMIT_MESSAGE`   | `Updated waka-readme graph with new metrics` | anything else!                                                                           | Messaged used when committing updated stats                                                             |
 | `SHOW_TITLE`       | `false`                                      | `false`, `true`                                                                          | Add title to waka-readme stats blob                                                                     |
 | `BLOCKS`           | `░▒▓█`                                       | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, you can be creative!                                           | Ascii art used to build stats graph                                                                     |
