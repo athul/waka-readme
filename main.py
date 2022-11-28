@@ -66,9 +66,15 @@ class WakaConstants:
     """
     prefix_length: int = 16
     graph_length: int = 25
-    start_comment: str = '<!--START_SECTION:waka-->'
-    end_comment: str = '<!--END_SECTION:waka-->'
+    section: str = os.getenv("INPUT_SECTION_NAME", "waka")
+    start_comment: str = f'<!--START_SECTION:{section}-->'
+    end_comment: str = f'<!--END_SECTION:{section}-->'
     waka_block_pattern: str = f'{start_comment}[\\s\\S]+{end_comment}'
+
+    def validate_constants(self) -> bool:
+        if not (self.section):
+            logger.error('Invalid section name input, refer README')
+            return False
 
 
 class WakaInput:
@@ -336,7 +342,7 @@ def churn(old_readme: str, /) -> str | None:
     if not (waka_stats := fetch_stats()):
         logger.error('Unable to fetch data, please rerun workflow')
         sys.exit(1)
-
+        
     # processing content
     generated_content = prep_content(waka_stats)
     print(generated_content, '\n', sep='')
@@ -350,6 +356,7 @@ def churn(old_readme: str, /) -> str | None:
         # to avoid accidentally writing back to Github
         # when developing and testing WakaReadme
         return None
+    
     return None if new_readme == old_readme else new_readme
 
 
@@ -411,7 +418,7 @@ if __name__ == '__main__':
     logger.debug('Initialize WakaReadme')
     wk_c = WakaConstants()
     wk_i = WakaInput()
-    if not wk_i.validate_input():
+    if not (wk_i.validate_input() or wk_i.validate_constants()):
         logger.error('Environment variables are misconfigured')
         sys.exit(1)
     logger.debug('Input validation complete')

@@ -34,6 +34,11 @@ inputs:
     default: "false"
     required: false
 
+  SECTION_NAME:
+    description: "Section name for data to appear in readme"
+    required: false
+    default: "waka"
+
   BLOCKS:
     description: "Add the progress blocks of your choice"
     default: "░▒▓█"
