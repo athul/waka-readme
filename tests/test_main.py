@@ -25,9 +25,9 @@ class TestData:
     """Test Data"""
     # for future tests
     # waka_json: dict | None = None
-    bar_percent: tuple[float] | None = None
-    graph_blocks: tuple[str] | None = None
-    waka_graphs: tuple[list[str]] | None = None
+    bar_percent: tuple[int | float, ...] | None = None
+    graph_blocks: tuple[str, ...] | None = None
+    waka_graphs: tuple[list[str], ...] | None = None
     dummy_readme: str = ''
 
     def populate(self) -> None:
@@ -98,6 +98,9 @@ class TestMain(unittest.TestCase):
 
     def test_make_graph(self) -> None:
         """Test graph maker"""
+        if not tds.graph_blocks or not tds.waka_graphs or not tds.bar_percent:
+            raise AssertionError('Data population failed')
+
         for (idx, grb), (jdy, bpc) in product(
             enumerate(tds.graph_blocks), enumerate(tds.bar_percent)
         ):

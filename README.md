@@ -4,13 +4,17 @@
 
 </center>
 
-# Dev Metrics in Readme [![Build Status](https://travis-ci.com/athul/waka-readme.svg?branch=master)](https://travis-ci.com/athul/waka-readme)
+# Dev Metrics in Readme [![UnitTests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg)](https://github.com/athul/waka-readme/actions/workflows/testing.yml)
+
+<center>
 
 [WakaTime](https://wakatime.com) weekly metrics on your profile readme.
 
 ![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
 
 :speech_balloon: **Forum** | [GitHub discussions][gh_discuss]
+
+</center>
 
 ## New to WakaTime?
 
@@ -32,43 +36,43 @@ A GitHub repository and a README file is required. We'll be making use of readme
 
 - Save the README file after copy-pasting the following special comments. Your dev-metics will show up in between. `waka` here can be replaced by any string as long as you set the `SECTION_NAME` environment variable [as per the Tweaks section](tweaks).
 
-    ```md
+  ```md
+  <!--START_SECTION:waka-->
+  <!--END_SECTION:waka-->
+  ```
 
-    <!--START_SECTION:waka-->
-    <!--END_SECTION:waka-->
+- Navigate to your repo's `Settings > Secrets` and add a new secret _named_ `WAKATIME_API_KEY` with your API key as it's _value_.
 
-    ```
+  > Or use the url <https://github.com/USERNAME/USERNAME/settings/secrets/actions/new> by replacing the `USERNAME` with your own username.
+  >
+  > ![new_secrets_actions][new_secrets_actions]
 
-- Navigate to your repo's `Settings > Secrets` and add a new secret *named* `WAKATIME_API_KEY` with your API key as it's *value*.
-    > Or use the url <https://github.com/USERNAME/USERNAME/settings/secrets/actions/new> by replacing the `USERNAME` with your own username.
-    > ![new_secrets_actions][new_secrets_actions]
+  - If you're not using [profile repository][profile_readme], add another secret _named_ `GH_TOKEN` and insert your [GitHub token][gh_access_token]\* in place of _value_.
 
-  - If you're not using [profile repository][profile_readme], add another secret *named* `GH_TOKEN` and insert your [GitHub token][gh_access_token]\* in place of *value*.
-
-- Create a new workflow file (`waka-readme.yml`) inside `.github/workflows/` folder of your repository. You can create it from a template using the *actions tab* of your repository too.
+- Create a new workflow file (`waka-readme.yml`) inside `.github/workflows/` folder of your repository. You can create it from a template using the _actions tab_ of your repository too.
 - Clear any existing contents, add the following lines and save the file.
 
-    ```yml
-    name: Waka Readme
+  ```yml
+  name: Waka Readme
 
-    on:
-      workflow_dispatch: # for manual workflow trigger
-      schedule:
-        - cron: '0 0 * * *' # runs at every 12AM UTC
+  on:
+    workflow_dispatch: # for manual workflow trigger
+    schedule:
+      - cron: "0 0 * * *" # runs at every 12AM UTC
 
-    jobs:
-      update-readme:
-        name: WakaReadme DevMetrics
-        runs-on: ubuntu-latest
-        steps:
-          - uses: athul/waka-readme@master
-            with:
-              WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-              # following flags are required, only if this is not on
-              # profile readme, remove the leading `#` to use them
-              #GH_TOKEN: ${{ secrets.GH_TOKEN }}
-              #REPOSITORY: <gh_username/gh_username>
-    ```
+  jobs:
+    update-readme:
+      name: WakaReadme DevMetrics
+      runs-on: ubuntu-latest
+      steps:
+        - uses: athul/waka-readme@master
+          with:
+            WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+            # following flags are required, only if this is not on
+            # profile readme, remove the leading `#` to use them
+            #GH_TOKEN: ${{ secrets.GH_TOKEN }}
+            #REPOSITORY: <gh_username/gh_username>
+  ```
 
 ## Tweaks
 
@@ -78,10 +82,10 @@ There are many flags that you can tweak to suit your taste!
 | ------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `API_BASE_URL`     | `https://wakatime.com/api`                   | `https://wakatime.com/api`, `https://wakapi.dev/api`, `https://hakatime.mtx-dev.xyz/api` | Integration with WakaTime compatible services like [Wakapi][wakapi] & [Hakatime][hakatime] are possible |
 | `REPOSITORY`       | `<gh_username>/<gh_username>`                | `<gh_username>/<repo_name>`                                                              | Waka-readme stats will appear on the provided repository                                                |
-| `SECTION_NAME`       | `waka`                | `any string`                                                              | The generator will look for this section to fill up the readme.                                                |
-| `COMMIT_MESSAGE`   | `Updated waka-readme graph with new metrics` | anything else!                                                                           | Messaged used when committing updated stats                                                             |
+| `SECTION_NAME`     | `waka`                                       | Any alphanumeric string                                                                  | The generator will look for this section to fill up the readme.                                         |
+| `COMMIT_MESSAGE`   | `Updated waka-readme graph with new metrics` | Any string                                                                               | Messaged used when committing updated stats                                                             |
 | `SHOW_TITLE`       | `false`                                      | `false`, `true`                                                                          | Add title to waka-readme stats blob                                                                     |
-| `BLOCKS`           | `░▒▓█`                                       | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, you can be creative!                                           | Ascii art used to build stats graph                                                                     |
+| `BLOCKS`           | `░▒▓█`                                       | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, you can be creative!                                            | Ascii art used to build stats graph                                                                     |
 | `TIME_RANGE`       | `last_7_days`                                | `last_7_days`, `last_30_days`, `last_6_months`, `last_year`, `all_time`                  | String representing a dispensation from which stats are aggregated                                      |
 | `SHOW_TIME`        | `true`                                       | `false`, `true`                                                                          | Displays the amount of time spent for each language                                                     |
 | `SHOW_TOTAL`       | `false`                                      | `false`, `true`                                                                          | Show total coding time                                                                                  |
@@ -98,7 +102,7 @@ on:
   workflow_dispatch:
   schedule:
     # Runs at 12am UTC
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   update-readme:
@@ -132,14 +136,13 @@ Other              47 hrs 58 mins  >------------------------   03.05 %
 
 ## Why only the language stats (and not other data) from the API?
 
-I am a fan of minimal designs and the profile readme is a great way to show off your skills and interests. The WakaTime API, gets us a **lot of data** about a person's **coding activity including the editors and Operating Systems you used and the projects you worked on**. Some of these projects maybe secretive and should not be shown out to the public. Using up more data via the Wakatime API will clutter the profile readme and hinder your chances on displaying what you provide **value to the community** like the pinned Repositories. I believe that **Coding Stats is nerdiest of all** since you can tell the community that you are ***exercising these languages or learning a new language***, this will also show that you spend some amount of time to learn and exercise your development skills. That's what matters in the end :heart:
+I am a fan of minimal designs and the profile readme is a great way to show off your skills and interests. The WakaTime API, gets us a **lot of data** about a person's **coding activity including the editors and Operating Systems you used and the projects you worked on**. Some of these projects maybe secretive and should not be shown out to the public. Using up more data via the Wakatime API will clutter the profile readme and hinder your chances on displaying what you provide **value to the community** like the pinned Repositories. I believe that **Coding Stats is nerdiest of all** since you can tell the community that you are **_exercising these languages or learning a new language_**, this will also show that you spend some amount of time to learn and exercise your development skills. That's what matters in the end :heart:
 
 ---
 
-<sup>*</sup>`REPOSITORY` flag and `GH_TOKEN` secret are required you're not using profile readme.
+<sup>\*</sup>`REPOSITORY` flag and `GH_TOKEN` secret are required you're not using profile readme.
 
 [//]: #(Links)
-
 [wakapi]: https://wakapi.dev
 [hakatime]: https://github.com/mujx/hakatime
 [waka_plugins]: https://wakatime.com/plugins
