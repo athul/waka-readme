@@ -37,9 +37,9 @@
 
    where `WakaReadmeDev` is the docker container name. Then execute `bash` in the container:
 
-     ```console
-     $ docker exec -it 'WakaReadmeDev' bash
-     ```
+   ```console
+   $ docker exec -it 'WakaReadmeDev' bash
+   ```
 
 3. For development, you can attach code editor of your choice to this container.
 4. Export environnement variables with edits, as required:
@@ -58,7 +58,7 @@
    INPUT_REPOSITORY='<REPOSITORY SLUG>'
    INPUT_COMMIT_MESSAGE='<COMMIT MESSAGE>'
    INPUT_SHOW_TITLE='True'
-   INPUT_SECTION_NAME='wakacustom'
+   INPUT_SECTION_NAME='waka'
    INPUT_BLOCKS='->'
    INPUT_SHOW_TIME='True'
    INPUT_SHOW_TOTAL='True'
@@ -72,6 +72,7 @@
    # poetry shell
    # set -a && . ./.env && set +a # optional
    (venv)# python -m main --dev
+   (venv)# python -m unittest discover # run tests
    ```
 
 5. Later, to remove stop and remove the container:
@@ -93,7 +94,7 @@
 > ```json
 > {
 >   "terminal.integrated.commandsToSkipShell": [
->    "-workbench.action.quickOpenView"
+>     "-workbench.action.quickOpenView"
 >   ]
 > }
 > ```
@@ -124,6 +125,7 @@
    INPUT_REPOSITORY='<REPOSITORY SLUG>'
    INPUT_COMMIT_MESSAGE='<COMMIT MESSAGE>'
    INPUT_SHOW_TITLE='True'
+   INPUT_SECTION_NAME='waka'
    INPUT_BLOCKS='->'
    INPUT_SHOW_TIME='True'
    INPUT_SHOW_TOTAL='True'
@@ -136,4 +138,5 @@
    ```console
    $ set -a && . ./.env && set +a # optional
    (venv)$ python -m main --dev
+   (venv)$ python -m unittest discover # run tests
    ```

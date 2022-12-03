@@ -11,11 +11,11 @@ readme = "README.md"
 python = "^3.11"
 requests = "^2.28.1"
 PyGithub = "^1.57"
-Faker = "^15.3.2"
+Faker = "^15.3.3"
 
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.0.0"
-pylint = "^2.15.6"
+pylint = "^2.15.7"
 python-dotenv = "^0.21.0"
 loguru = "^0.6.0"
 bandit = "^1.7.4"
