@@ -154,6 +154,7 @@ class WakaInput:
     show_time: str | bool = os.getenv('INPUT_SHOW_TIME') or False
     show_total_time: str | bool = os.getenv('INPUT_SHOW_TOTAL') or False
     show_masked_time: str | bool = os.getenv('INPUT_SHOW_MASKED_TIME') or False
+    language_count: str | bool = os.getenv('INPUT_LANGUAGE_COUNT') or "5"
 
     def validate_input(self) -> bool:
         """
@@ -252,7 +253,7 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = '', /
     return graph_bar
 
 
-def prep_content(stats: dict[Any, Any], /) -> str:
+def prep_content(stats: dict[Any, Any], language_count: str = 5, /) -> str:
     """
     WakaReadme Prepare Markdown
     ---------------------------
@@ -304,7 +305,7 @@ def prep_content(stats: dict[Any, Any], /) -> str:
             f'{lang_time: <16}{lang_bar}   ' +
             f'{lang_ratio:.2f}'.zfill(5) + ' %\n'
         )
-        if idx >= 5 or lang_name == 'Other':
+        if idx >= int(language_count) or lang_name == 'Other':
             break
 
     logger.debug('Contents were made\n')
@@ -373,7 +374,7 @@ def churn(old_readme: str, /) -> str | None:
         sys.exit(1)
     # processing content
     try:
-        generated_content = prep_content(waka_stats)
+        generated_content = prep_content(waka_stats, wk_i.language_count)
     except AttributeError as err:
         logger.error(f'Unable to read API data | {err}\n')
         sys.exit(1)
