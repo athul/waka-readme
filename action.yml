@@ -49,6 +49,11 @@ inputs:
     default: "last_7_days"
     required: false
 
+  LANG_COUNT:
+    description: "Maximum number of languages to be shown"
+    default: "5"
+    required: false
+
   SHOW_TIME:
     description: "Displays the amount of time spent for each language"
     default: "true"

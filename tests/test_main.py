@@ -1,12 +1,15 @@
-'''
+"""
 Tests for the main.py
-'''
+"""
 
+# standard
 from importlib import import_module
-from dataclasses import dataclass
+from dataclasses import dataclass  # , field
 from itertools import product
+# from pathlib import Path
 # from inspect import cleandoc
-# from json import loads
+# from typing import Any
+# from json import load
 import unittest
 import sys
 import os
@@ -24,7 +27,9 @@ except ImportError as err:
 class TestData:
     """Test Data"""
     # for future tests
-    # waka_json: dict | None = None
+    # waka_json: dict[str, dict[str, Any]] = field(
+    #     default_factory=lambda: {}
+    # )
     bar_percent: tuple[int | float, ...] | None = None
     graph_blocks: tuple[str, ...] | None = None
     waka_graphs: tuple[list[str], ...] | None = None
@@ -33,8 +38,12 @@ class TestData:
     def populate(self) -> None:
         """Populate Test Data"""
         # for future tests
-        # with open(file='tests/sample_data.json', mode='rt', encoding='utf-8') as wkf:
-        #     self.waka_json = loads(wkf.read())
+        # with open(
+        #     file=Path(__file__).parent / 'sample_data.json',
+        #     encoding='utf-8',
+        #     mode='rt',
+        # ) as wkf:
+        #     self.waka_json = load(wkf)
 
         self.bar_percent = (
             0, 100, 49.999, 50, 25, 75, 3.14, 9.901, 87.334, 87.333, 4.666, 4.667
@@ -116,11 +125,14 @@ class TestMain(unittest.TestCase):
             r'From: \d{2} \w{3,9} \d{4} - To: \d{2} \w{3,9} \d{4}'
         )
 
-    # Known test limits
-    # # prep_content() and churn():
-    # requires additional modifications such as changing
-    # globally passed values to parametrically passing them
-    # # fetch_stats(): would required HTTP Authentication
+    def test_strtobool(self) -> None:
+        """Test string to bool"""
+        self.assertTrue(prime.strtobool('Yes'))
+        self.assertFalse(prime.strtobool('nO'))
+        self.assertTrue(prime.strtobool(True))
+        self.assertRaises(AttributeError, prime.strtobool, None)
+        self.assertRaises(ValueError, prime.strtobool, 'yo!')
+        self.assertRaises(AttributeError, prime.strtobool, 20.5)
 
 
 tds = TestData()

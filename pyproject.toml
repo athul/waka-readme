@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "waka-readme"
 version = "0.1.7"
-description = "Wakatime Weekly Metrics on your Profile Readme."
+description = "Wakatime Weekly Metrics on your Profile Readme"
 authors = ["Athul Cyriac Ajay <athul8720@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -9,14 +9,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "^2.28.1"
-PyGithub = "^1.57"
-Faker = "^15.3.3"
+faker = "^16.6.1"
+requests = "^2.28.2"
+pygithub = "^1.57"
 
 [tool.poetry.group.dev.dependencies]
-autopep8 = "^2.0.0"
-pylint = "^2.15.7"
-python-dotenv = "^0.21.0"
+autopep8 = "^2.0.1"
+pylint = "^2.16.1"
+python-dotenv = "^0.21.1"
 loguru = "^0.6.0"
 bandit = "^1.7.4"
 
