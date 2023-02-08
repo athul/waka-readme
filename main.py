@@ -154,7 +154,7 @@ class WakaInput:
     show_time: str | bool = os.getenv('INPUT_SHOW_TIME') or False
     show_total_time: str | bool = os.getenv('INPUT_SHOW_TOTAL') or False
     show_masked_time: str | bool = os.getenv('INPUT_SHOW_MASKED_TIME') or False
-    language_count: str | bool = os.getenv('INPUT_LANGUAGE_COUNT') or "5"
+    language_count: str | int = os.getenv('INPUT_LANG_COUNT') or 5
 
     def validate_input(self) -> bool:
         """
@@ -178,7 +178,7 @@ class WakaInput:
             self.show_time = strtobool(self.show_time)
             self.show_total_time = strtobool(self.show_total_time)
             self.show_masked_time = strtobool(self.show_masked_time)
-        except ValueError as err:
+        except (ValueError, AttributeError) as err:
             logger.error(err)
             return False
 
@@ -201,6 +201,11 @@ class WakaInput:
             logger.warning('Invalid time range')
             logger.debug('Using default time range: last_7_days')
             self.time_range = 'last_7_days'
+
+        if not str(self.language_count).isnumeric():
+            logger.warning('Invalid language count')
+            logger.debug('Using default language count: 5')
+            self.language_count = 5
 
         logger.debug('Input validation complete\n')
         return True
@@ -249,11 +254,11 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = '', /
     graph_bar += block_style[remainder_block] if remainder_block > 0 else ''
     graph_bar += block_style[0] * (gr_len - len(graph_bar))
 
-    logger.debug(f'{lg_nm or "..."} graph generated')
+    logger.debug(f'"{lg_nm or "..."}" graph generated')
     return graph_bar
 
 
-def prep_content(stats: dict[Any, Any], language_count: str = 5, /) -> str:
+def prep_content(stats: dict[str, Any], language_count: int = 5, /) -> str:
     """
     WakaReadme Prepare Markdown
     ---------------------------
@@ -261,13 +266,8 @@ def prep_content(stats: dict[Any, Any], language_count: str = 5, /) -> str:
     Prepared markdown content from the fetched statistics
     ```
     """
+    logger.debug('Making contents')
     contents = ''
-
-    # Check if any data exists
-    if not (lang_info := stats.get('languages')):
-        logger.debug('The data seems to be empty, please wait for a day')
-        contents += 'No activity tracked'
-        return contents
 
     # make title
     if wk_i.show_title:
@@ -284,19 +284,26 @@ def prep_content(stats: dict[Any, Any], language_count: str = 5, /) -> str:
     ):
         contents += f'Total Time: {total_time}\n\n'
 
-    # make content
-    logger.debug('Making contents')
+    lang_info: list[dict[str, int | float | str]] | None = []
+
+    # Check if any language data exists
+    if not (lang_info := stats.get('languages')):
+        logger.debug('The API data seems to be empty, please wait for a day')
+        contents += 'No activity tracked'
+        return contents
+
+    # make lang content
     pad_len = len(
         # comment if it feels way computationally expensive
-        max((l.get('name') for l in lang_info), key=len)
+        max((str(lng['name']) for lng in lang_info), key=len)
         # and then don't for get to set pad_len to say 13 :)
     )
     for idx, lang in enumerate(lang_info):
-        lang_name = lang.get('name')
+        lang_name = str(lang['name'])
         # >>> add languages to filter here <<<
         # if lang_name in {...}: continue
-        lang_time = lang.get('text') if wk_i.show_time else ''
-        lang_ratio = lang.get('percent')
+        lang_time = str(lang['text']) if wk_i.show_time else ''
+        lang_ratio = float(lang['percent'])
         lang_bar = make_graph(
             wk_i.block_style, lang_ratio, wk_i.graph_length, lang_name
         )
@@ -305,14 +312,14 @@ def prep_content(stats: dict[Any, Any], language_count: str = 5, /) -> str:
             f'{lang_time: <16}{lang_bar}   ' +
             f'{lang_ratio:.2f}'.zfill(5) + ' %\n'
         )
-        if idx >= int(language_count) or lang_name == 'Other':
+        if idx >= language_count or lang_name == 'Other':
             break
 
     logger.debug('Contents were made\n')
     return contents.rstrip('\n')
 
 
-def fetch_stats() -> dict[Any, Any] | None:
+def fetch_stats() -> dict[str, Any] | None:
     """
     WakaReadme Fetch Stats
     ----------------------
@@ -320,7 +327,7 @@ def fetch_stats() -> dict[Any, Any] | None:
     Returns statistics as JSON string
     """
     attempts = 4
-    statistic: dict[str, dict[Any, Any]] = {}
+    statistic: dict[str, dict[str, Any]] = {}
     encoded_key = str(
         b64encode(bytes(str(wk_i.waka_key), 'utf-8')), 'utf-8'
     )
@@ -341,7 +348,7 @@ def fetch_stats() -> dict[Any, Any] | None:
             timeout=30 * (5 - attempts)
         )).status_code != 200:
             resp_message += f' • {conn_info}' if (
-                conn_info := resp.json().get("message")
+                conn_info := resp.json().get('message')
             ) else ''
         logger.debug(
             f'API response #{5 - attempts}: {resp.status_code} • {resp.reason}{resp_message}'
@@ -374,8 +381,8 @@ def churn(old_readme: str, /) -> str | None:
         sys.exit(1)
     # processing content
     try:
-        generated_content = prep_content(waka_stats, wk_i.language_count)
-    except AttributeError as err:
+        generated_content = prep_content(waka_stats, int(wk_i.language_count))
+    except (AttributeError, KeyError, ValueError) as err:
         logger.error(f'Unable to read API data | {err}\n')
         sys.exit(1)
     print(generated_content, '\n', sep='')

@@ -4,17 +4,13 @@
 
 </center>
 
-# Dev Metrics in Readme [![UnitTests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg)](https://github.com/athul/waka-readme/actions/workflows/testing.yml)
-
-<center>
+# Dev Metrics in Readme [![Unit Tests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg?branch=master)](https://github.com/athul/waka-readme/actions/workflows/testing.yml) ![Python Version](https://img.shields.io/badge/python-v3.11-blue)
 
 [WakaTime](https://wakatime.com) weekly metrics on your profile readme.
 
 ![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
 
 :speech_balloon: **Forum** | [GitHub discussions][gh_discuss]
-
-</center>
 
 ## New to WakaTime?
 
@@ -32,14 +28,16 @@ Alternatively, you can also fetch data from WakaTime compatible services like [W
 
 ## Prep Work
 
-A GitHub repository and a README file is required. We'll be making use of readme in the [profile repository][profile_readme]\*.
+A GitHub repository and a `README.md` file is required. We'll be making use of readme in the [profile repository][profile_readme]\*.
 
-- Save the README file after copy-pasting the following special comments. Your dev-metics will show up in between. `waka` here can be replaced by any string as long as you set the `SECTION_NAME` environment variable [as per the Tweaks section](tweaks).
+- Save the `README.md` file after copy-pasting the following special comments. Your dev-metics will show up in between.
 
   ```md
   <!--START_SECTION:waka-->
   <!--END_SECTION:waka-->
   ```
+
+  "`waka`" can be replaced by any alphanumeric string with the `SECTION_NAME` environment variable. See the [#tweaks](#tweaks) section for more.
 
 - Navigate to your repo's `Settings > Secrets` and add a new secret _named_ `WAKATIME_API_KEY` with your API key as it's _value_.
 
@@ -90,6 +88,7 @@ There are many flags that you can tweak to suit your taste!
 | `SHOW_TIME`        | `true`                                       | `false`, `true`                                                                          | Displays the amount of time spent for each language                                                     |
 | `SHOW_TOTAL`       | `false`                                      | `false`, `true`                                                                          | Show total coding time                                                                                  |
 | `SHOW_MASKED_TIME` | `false`                                      | `false`, `true`                                                                          | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`)                       |
+| `LANG_COUNT`       | `5`                                          | Any reasonable number                                                                    | Number of languages to be displayed                                                                     |
 
 # Example
 
@@ -117,6 +116,7 @@ jobs:
           TIME_RANGE: all_time
           SHOW_TIME: true
           SHOW_MASKED_TIME: true
+          LANG_COUNT: 10
 ```
 
 **`README.md`**
