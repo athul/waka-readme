@@ -375,6 +375,12 @@ def churn(old_readme: str, /) -> str | None:
 
     Composes WakaTime stats within markdown code snippet
     """
+    # check if placeholder pattern exists in readme
+    if not re.findall(wk_i.waka_block_pattern, old_readme):
+        logger.warning(
+            f'Can\'t find `{wk_i.waka_block_pattern}` pattern in readme'
+        )
+        return None
     # getting content
     if not (waka_stats := fetch_stats()):
         logger.error('Unable to fetch data, please rerun workflow\n')
