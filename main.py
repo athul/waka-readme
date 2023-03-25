@@ -90,7 +90,7 @@ except ImportError as im_err:
 ################### lib-func ###################
 
 
-def strtobool(val: str | bool) -> bool:
+def strtobool(val: str | bool):
     """
     strtobool
     ---------
@@ -100,8 +100,8 @@ def strtobool(val: str | bool) -> bool:
 
     Converts a string representation of truth to True or False.
 
-    - True values are `'y', 'yes', 't', 'true', 'on', and '1'`
-    - False values are `'n', 'no', 'f', 'false', 'off', and '0'`
+    - True values are `'y', 'yes', 't', 'true', 'on', and '1'`.
+    - False values are `'n', 'no', 'f', 'false', 'off', and '0'`.
     - Raises `ValueError` if `val` is anything else.
     """
     if isinstance(val, bool):
@@ -156,7 +156,7 @@ class WakaInput:
     show_masked_time: str | bool = os.getenv('INPUT_SHOW_MASKED_TIME') or False
     language_count: str | int = os.getenv('INPUT_LANG_COUNT') or 5
 
-    def validate_input(self) -> bool:
+    def validate_input(self):
         """
         Validate Input Env Variables
         ----------------------------
@@ -214,7 +214,7 @@ class WakaInput:
 ################### logic ###################
 
 
-def make_title(dawn: str | None, dusk: str | None, /) -> str:
+def make_title(dawn: str | None, dusk: str | None, /):
     """
     WakaReadme Title
     ----------------
@@ -237,7 +237,7 @@ def make_title(dawn: str | None, dusk: str | None, /) -> str:
     return f'From: {start_date} - To: {end_date}'
 
 
-def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = '', /) -> str:
+def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = '', /):
     """
     WakaReadme Graph
     ----------------
@@ -258,12 +258,12 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = '', /
     return graph_bar
 
 
-def prep_content(stats: dict[str, Any], language_count: int = 5, /) -> str:
+def prep_content(stats: dict[str, Any], language_count: int = 5, /):
     """
     WakaReadme Prepare Markdown
     ---------------------------
 
-    Prepared markdown content from the fetched statistics
+    Prepared markdown content from the fetched statistics.
     ```
     """
     logger.debug('Making contents')
@@ -319,12 +319,12 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, /) -> str:
     return contents.rstrip('\n')
 
 
-def fetch_stats() -> dict[str, Any] | None:
+def fetch_stats():
     """
     WakaReadme Fetch Stats
     ----------------------
 
-    Returns statistics as JSON string
+    Returns statistics as JSON string.
     """
     attempts = 4
     statistic: dict[str, dict[str, Any]] = {}
@@ -368,12 +368,12 @@ def fetch_stats() -> dict[str, Any] | None:
     return statistic.get('data')
 
 
-def churn(old_readme: str, /) -> str | None:
+def churn(old_readme: str, /):
     """
     WakaReadme Churn
     ----------------
 
-    Composes WakaTime stats within markdown code snippet
+    Composes WakaTime stats within markdown code snippet.
     """
     # check if placeholder pattern exists in readme
     if not re.findall(wk_i.waka_block_pattern, old_readme):
@@ -406,8 +406,11 @@ def churn(old_readme: str, /) -> str | None:
     return None if new_readme == old_readme else new_readme
 
 
-def genesis() -> None:
-    """Run Program"""
+def genesis():
+    """
+    Run Program
+    -----------
+    """
     logger.debug('Connecting to GitHub')
     gh_connect = Github(wk_i.gh_token)
     # since a validator is being used casting to string here is okay

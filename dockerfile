@@ -9,7 +9,7 @@ ENV PYTHONFAULTHANDLER=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
     # poetry:
-    # POETRY_VERSION=1.1.14 \
+    # POETRY_VERSION= \
     POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR=/var/cache/pypoetry \
     PATH=${PATH}:/root/.local/bin
