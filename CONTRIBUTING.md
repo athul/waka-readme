@@ -1,6 +1,6 @@
 # Contributing
 
-![python_ver](https://img.shields.io/badge/python-%5E3.10-blue.svg)
+![python_ver](https://img.shields.io/badge/Python-%5E3.11-blue.svg)
 
 > First off, thank you! Please follow along.
 
@@ -71,8 +71,8 @@
    ```console
    # poetry shell
    # set -a && . ./.env && set +a # optional
-   (venv)# python -m main --dev
-   (venv)# python -m unittest discover # run tests
+   (waka-readme-py3_11)# python -m main --dev
+   (waka-readme-py3_11)# python -m unittest discover # run tests
    ```
 
 5. Later, to remove stop and remove the container:
@@ -111,7 +111,7 @@
 
    ```console
    $ poetry shell
-   (venv)$ poetry install
+   (waka-readme-py3_11)$ poetry install
    ```
 
    to create and activate a virtual environnement and install dependencies.
@@ -136,7 +136,7 @@
 3. Execute program in development mode with:
 
    ```console
-   $ set -a && . ./.env && set +a # optional
-   (venv)$ python -m main --dev
-   (venv)$ python -m unittest discover # run tests
+   (waka-readme-py3_11)$ set -a && . ./.env && set +a # optional
+   (waka-readme-py3_11)$ python -m main --dev
+   (waka-readme-py3_11)$ python -m unittest discover # run tests
    ```

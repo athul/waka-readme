@@ -4,7 +4,7 @@
 
 </center>
 
-# Dev Metrics in Readme [![Unit Tests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg?branch=master)](https://github.com/athul/waka-readme/actions/workflows/testing.yml) ![Python Version](https://img.shields.io/badge/python-v3.11-blue)
+# Dev Metrics in Readme [![Unit Tests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg?branch=master)](https://github.com/athul/waka-readme/actions/workflows/testing.yml) ![Python Version](https://img.shields.io/badge/Python-^3.11-blue)
 
 [WakaTime](https://wakatime.com) weekly metrics on your profile readme.
 
@@ -37,7 +37,7 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
   <!--END_SECTION:waka-->
   ```
 
-  "`waka`" can be replaced by any alphanumeric string with the `SECTION_NAME` environment variable. See the [#tweaks](#tweaks) section for more.
+  `<!--START_SECTION: -->` and `<!--END_SECTION: -->` are placeholders and must be retained as is. Whereas "`waka`" can be replaced by any alphanumeric string. See [#Tweaks](#tweaks) section for more.
 
 - Navigate to your repo's `Settings > Secrets` and add a new secret _named_ `WAKATIME_API_KEY` with your API key as it's _value_.
 
