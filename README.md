@@ -89,6 +89,7 @@ There are many flags that you can tweak to suit your taste!
 | `SHOW_TOTAL`       | `false`                                      | `false`, `true`                                                                          | Show total coding time                                                                                  |
 | `SHOW_MASKED_TIME` | `false`                                      | `false`, `true`                                                                          | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`)                       |
 | `LANG_COUNT`       | `5`                                          | Any reasonable number                                                                    | Number of languages to be displayed                                                                     |
+| `STOP_AT_OTHER`    | `false`                                      | `false`, `true`                                                                          | Stop when language marked as `Other` is retrieved (overrides: `LANG_COUNT`)                             |
 
 # Example
 

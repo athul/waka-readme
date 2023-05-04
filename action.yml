@@ -68,6 +68,11 @@ inputs:
     description: "Displays total coding time including unclassified languages"
     default: "false"
     required: false
+  
+  STOP_AT_OTHER:
+    description: "Stop data retrieval when language marked 'Other' is reached"
+    default: "false"
+    required: false
 
 runs:
   using: "docker"
