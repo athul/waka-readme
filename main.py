@@ -155,6 +155,7 @@ class WakaInput:
     show_total_time: str | bool = os.getenv('INPUT_SHOW_TOTAL') or False
     show_masked_time: str | bool = os.getenv('INPUT_SHOW_MASKED_TIME') or False
     language_count: str | int = os.getenv('INPUT_LANG_COUNT') or 5
+    stop_at_other: str | bool = os.getenv('INPUT_STOP_AT_OTHER') or False
 
     def validate_input(self):
         """
@@ -178,6 +179,7 @@ class WakaInput:
             self.show_time = strtobool(self.show_time)
             self.show_total_time = strtobool(self.show_total_time)
             self.show_masked_time = strtobool(self.show_masked_time)
+            self.stop_at_other = strtobool(self.stop_at_other)
         except (ValueError, AttributeError) as err:
             logger.error(err)
             return False
@@ -202,7 +204,11 @@ class WakaInput:
             logger.debug('Using default time range: last_7_days')
             self.time_range = 'last_7_days'
 
-        if not str(self.language_count).isnumeric():
+        try:
+            self.language_count = int(self.language_count)
+            if self.language_count < -1:
+                raise ValueError
+        except ValueError:
             logger.warning('Invalid language count')
             logger.debug('Using default language count: 5')
             self.language_count = 5
@@ -258,7 +264,7 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = '', /
     return graph_bar
 
 
-def prep_content(stats: dict[str, Any], language_count: int = 5, /):
+def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: bool = False, /):
     """
     WakaReadme Prepare Markdown
     ---------------------------
@@ -290,7 +296,7 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, /):
     if not (lang_info := stats.get('languages')):
         logger.debug('The API data seems to be empty, please wait for a day')
         contents += 'No activity tracked'
-        return contents
+        return contents.rstrip('\n')
 
     # make lang content
     pad_len = len(
@@ -298,6 +304,13 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, /):
         max((str(lng['name']) for lng in lang_info), key=len)
         # and then don't for get to set pad_len to say 13 :)
     )
+    if language_count == 0 and not stop_at_other:
+        logger.debug(
+            'Set INPUT_LANG_COUNT to -1 to retrieve all language'
+            + ' or specify a positive number (ie. above 0)'
+        )
+        return contents.rstrip('\n')
+
     for idx, lang in enumerate(lang_info):
         lang_name = str(lang['name'])
         # >>> add languages to filter here <<<
@@ -312,7 +325,11 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, /):
             f'{lang_time: <16}{lang_bar}   ' +
             f'{lang_ratio:.2f}'.zfill(5) + ' %\n'
         )
-        if idx >= language_count or lang_name == 'Other':
+        if language_count == -1:
+            continue
+        if stop_at_other and (lang_name == 'Other'):
+            break
+        if idx+1 >= language_count > 0:  # idx starts at 0
             break
 
     logger.debug('Contents were made\n')
@@ -381,17 +398,20 @@ def churn(old_readme: str, /):
             f'Can\'t find `{wk_i.waka_block_pattern}` pattern in readme'
         )
         return None
-    # getting content
+    # getting contents
     if not (waka_stats := fetch_stats()):
         logger.error('Unable to fetch data, please rerun workflow\n')
         sys.exit(1)
-    # processing content
+    # preparing contents
     try:
-        generated_content = prep_content(waka_stats, int(wk_i.language_count))
+        generated_content = prep_content(waka_stats, int(
+            wk_i.language_count), bool(wk_i.stop_at_other)
+        )
     except (AttributeError, KeyError, ValueError) as err:
         logger.error(f'Unable to read API data | {err}\n')
         sys.exit(1)
     print(generated_content, '\n', sep='')
+    # substituting old contents
     new_readme = re.sub(
         pattern=wk_i.waka_block_pattern,
         repl=f'{wk_i.start_comment}\n\n```text\n{generated_content}\n```\n\n{wk_i.end_comment}',
