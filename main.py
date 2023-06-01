@@ -143,6 +143,7 @@ class WakaInput:
     commit_message: str = os.getenv(
         'INPUT_COMMIT_MESSAGE', 'Updated WakaReadme graph with new metrics'
     )
+    code_lang: str = os.getenv('CODE_LANG', 'txt')
     _section_name: str = os.getenv('INPUT_SECTION_NAME', 'waka')
     start_comment: str = f'<!--START_SECTION:{_section_name}-->'
     end_comment: str = f'<!--END_SECTION:{_section_name}-->'
@@ -414,7 +415,7 @@ def churn(old_readme: str, /):
     # substituting old contents
     new_readme = re.sub(
         pattern=wk_i.waka_block_pattern,
-        repl=f'{wk_i.start_comment}\n\n```text\n{generated_content}\n```\n\n{wk_i.end_comment}',
+        repl=f'{wk_i.start_comment}\n\n```{wk_i.code_lang}\n{generated_content}\n```\n\n{wk_i.end_comment}',
         string=old_readme
     )
     if len(sys.argv) == 2 and sys.argv[1] == '--dev':
