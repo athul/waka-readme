@@ -44,6 +44,11 @@ inputs:
     default: "░▒▓█"
     required: false
 
+  CODE_LANG:
+    description: "Add syntax formatter for generated code"
+    default: "txt"
+    required: false
+
   TIME_RANGE:
     description: "Time range of the queried statistics"
     default: "last_7_days"
