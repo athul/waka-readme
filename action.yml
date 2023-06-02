@@ -45,7 +45,7 @@ inputs:
     required: false
 
   CODE_LANG:
-    description: "Add syntex formatter for generated code"
+    description: "Add syntax formatter for generated code"
     default: "txt"
     required: false
 
