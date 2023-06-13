@@ -1,25 +1,20 @@
-"""
-WakaReadme : WakaTime progress visualizer
-=========================================
+"""WakaReadme : WakaTime progress visualizer.
 
 Wakatime Metrics on your Profile Readme.
 
 Title:
-------
 
 ```txt
 From: 15 February, 2022 - To: 22 February, 2022
 ````
 
 Byline:
--------
 
 ```txt
 Total: 34 hrs 43 mins
 ```
 
 Body:
------
 
 ```txt
 Python     27 hrs 29 mins  ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣀⣀⣀⣀⣀   77.83 %
@@ -29,7 +24,7 @@ TOML       1 hr 48 mins    ⣿⣤⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀�
 Other      35 mins         ⣦⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀   01.68 %
 ```
 
-#### Contents = Title + Byline + Body
+Contents := Title + Byline + Body
 """
 
 # standard
@@ -85,18 +80,25 @@ except ImportError as im_err:
 
 
 def strtobool(val: str | bool):
-    """
-    strtobool
-    ---------
+    """Strtobool.
 
-        PEP 632 https://www.python.org/dev/peps/pep-0632/ is depreciating distutils.
-        This is from the official source code with slight modifications.
+    PEP 632 https://www.python.org/dev/peps/pep-0632/ is depreciating distutils.
+    This is from the official source code with slight modifications.
 
-    Converts a string representation of truth to True or False.
+    Converts a string representation of truth to `True` or `False`.
 
-    - True values are `'y', 'yes', 't', 'true', 'on', and '1'`.
-    - False values are `'n', 'no', 'f', 'false', 'off', and '0'`.
-    - Raises `ValueError` if `val` is anything else.
+    Args:
+        val:
+            Value to be converted to bool.
+
+    Returns:
+        (Literal[True]):
+            If `val` is any of 'y', 'yes', 't', 'true', 'on', or '1'.
+        (Literal[False]):
+            If `val` is any of 'n', 'no', 'f', 'false', 'off', and '0'.
+
+    Raises:
+        ValueError: If `val` is anything else.
     """
     if isinstance(val, bool):
         return val
@@ -117,10 +119,7 @@ def strtobool(val: str | bool):
 
 @dataclass(slots=True)
 class WakaInput:
-    """
-    WakaReadme Input Env Variables
-    ------------------------------
-    """
+    """WakaReadme Input Env Variables."""
 
     # constants
     prefix_length: int = 16
@@ -152,10 +151,7 @@ class WakaInput:
     stop_at_other: str | bool = os.getenv("INPUT_STOP_AT_OTHER") or False
 
     def validate_input(self):
-        """
-        Validate Input Env Variables
-        ----------------------------
-        """
+        """Validate Input Env Variables."""
         logger.debug("Validating input variables")
         if not self.gh_token or not self.waka_key or not self.api_base_url or not self.repository:
             logger.error("Invalid inputs")
@@ -217,9 +213,7 @@ class WakaInput:
 
 
 def make_title(dawn: str | None, dusk: str | None, /):
-    """
-    WakaReadme Title
-    ----------------
+    """WakaReadme Title.
 
     Makes title for WakaReadme.
     """
@@ -240,9 +234,7 @@ def make_title(dawn: str | None, dusk: str | None, /):
 
 
 def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /):
-    """
-    WakaReadme Graph
-    ----------------
+    """WakaReadme Graph.
 
     Makes time graph from the API's data.
     """
@@ -259,9 +251,7 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /
 
 
 def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: bool = False, /):
-    """
-    WakaReadme Prepare Markdown
-    ---------------------------
+    """WakaReadme Prepare Markdown.
 
     Prepared markdown content from the fetched statistics.
     ```
@@ -328,9 +318,7 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: 
 
 
 def fetch_stats():
-    """
-    WakaReadme Fetch Stats
-    ----------------------
+    """WakaReadme Fetch Stats.
 
     Returns statistics as JSON string.
     """
@@ -371,9 +359,7 @@ def fetch_stats():
 
 
 def churn(old_readme: str, /):
-    """
-    WakaReadme Churn
-    ----------------
+    """WakaReadme Churn.
 
     Composes WakaTime stats within markdown code snippet.
     """
@@ -410,10 +396,7 @@ def churn(old_readme: str, /):
 
 
 def genesis():
-    """
-    Run Program
-    -----------
-    """
+    """Run Program."""
     logger.debug("Connecting to GitHub")
     gh_connect = Github(wk_i.gh_token)
     # since a validator is being used casting to string here is okay

@@ -1,6 +1,4 @@
-"""
-Tests for the main.py
-"""
+"""Unit Tests."""
 
 # standard
 from importlib import import_module
@@ -26,7 +24,7 @@ except ImportError as err:
 
 @dataclass
 class TestData:
-    """Test Data"""
+    """Test Data."""
 
     # for future tests
     # waka_json: dict[str, dict[str, Any]] = field(
@@ -38,7 +36,7 @@ class TestData:
     dummy_readme: str = ""
 
     def populate(self) -> None:
-        """Populate Test Data"""
+        """Populate Test Data."""
         # for future tests
         # with open(
         #     file=Path(__file__).parent / "sample_data.json",
@@ -105,10 +103,10 @@ class TestData:
 
 
 class TestMain(unittest.TestCase):
-    """Testing Main Module"""
+    """Testing Main Module."""
 
     def test_make_graph(self) -> None:
-        """Test graph maker"""
+        """Test graph maker."""
         if not tds.graph_blocks or not tds.waka_graphs or not tds.bar_percent:
             raise AssertionError("Data population failed")
 
@@ -118,14 +116,14 @@ class TestMain(unittest.TestCase):
             self.assertEqual(prime.make_graph(grb, bpc, 25), tds.waka_graphs[idx][jdy])
 
     def test_make_title(self) -> None:
-        """Test title maker"""
+        """Test title maker."""
         self.assertRegex(
             prime.make_title("2022-01-11T23:18:19Z", "2021-12-09T10:22:06Z"),
             r"From: \d{2} \w{3,9} \d{4} - To: \d{2} \w{3,9} \d{4}",
         )
 
     def test_strtobool(self) -> None:
-        """Test string to bool"""
+        """Test string to bool."""
         self.assertTrue(prime.strtobool("Yes"))
         self.assertFalse(prime.strtobool("nO"))
         self.assertTrue(prime.strtobool(True))
