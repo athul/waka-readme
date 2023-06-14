@@ -113,6 +113,7 @@ celerybeat.pid
 
 # Environments
 *.env
+env.sh
 .venv
 env/
 venv/
@@ -156,3 +157,6 @@ cython_debug/
 
 # asdf
 .tool-versions
+
+# ruff
+.ruff_cache

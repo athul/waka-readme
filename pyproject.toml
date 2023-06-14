@@ -1,27 +1,68 @@
+####################
+#     Metadata     #
+####################
+
 [tool.poetry]
 name = "waka-readme"
-version = "0.2.0"
+version = "0.2.1"
 description = "Wakatime Weekly Metrics on your Profile Readme."
 authors = ["Athul Cyriac Ajay <athul8720@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
+
+####################
+#   Dependencies   #
+####################
+
 [tool.poetry.dependencies]
 python = "^3.11"
-faker = "^18.6.2"
-pygithub = "^1.58.1"
+faker = "^18.10.1"
+pygithub = "^1.58.2"
 requests = "^2.31.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-autopep8 = "^2.0.2"
-bandit = "^1.7.5"
 loguru = "^0.7.0"
-pylint = "^2.17.3"
 python-dotenv = "^1.0.0"
+
+[tool.poetry.group.tooling]
+optional = true
+
+[tool.poetry.group.tooling.dependencies]
+bandit = "^1.7.5"
+black = "^23.3.0"
+ruff = "^0.0.272"
+
+
+####################
+#   Build System   #
+####################
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+####################
+#  Configurations  #
+####################
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.bandit]
+exclude_dirs = [".github", ".pytest_cache", ".tox", ".vscode", "site", "tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.ruff.isort]
+force-sort-within-sections = true
+relative-imports-order = "closest-to-furthest"
