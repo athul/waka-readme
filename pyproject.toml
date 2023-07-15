@@ -2,49 +2,37 @@
 #     Metadata     #
 ####################
 
-[tool.poetry]
+[project]
 name = "waka-readme"
 version = "0.2.1"
 description = "Wakatime Weekly Metrics on your Profile Readme."
-authors = ["Athul Cyriac Ajay <athul8720@gmail.com>"]
-license = "MIT"
+license = { text = "MIT" }
 readme = "README.md"
+keywords = ["readme", "profile-page", "wakatime"]
+authors = [{ name = "Athul Cyriac Ajay", email = "athul8720@gmail.com" }]
+maintainers = [{ name = "Jovial Joe Jayarson" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Typing :: Typed",
+]
+requires-python = ">=3.11"
+dependencies = ["faker>=19.1.0", "pygithub>=1.59.0", "requests>=2.31.0"]
+
+[project.urls]
+Homepage = "https://github.com/athul/waka-readme"
+Documentation = "https://github.com/athul/waka-readme#readme"
+Repository = "https://github.com/athul/waka-readme"
+Changelog = "https://github.com/athul/waka-readme/commits/master"
 
 
-####################
-#   Dependencies   #
-####################
+#############################
+#   Optional Dependencies   #
+#############################
 
-[tool.poetry.dependencies]
-python = "^3.11"
-faker = "^18.10.1"
-pygithub = "^1.58.2"
-requests = "^2.31.0"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-loguru = "^0.7.0"
-python-dotenv = "^1.0.0"
-
-[tool.poetry.group.tooling]
-optional = true
-
-[tool.poetry.group.tooling.dependencies]
-bandit = "^1.7.5"
-black = "^23.3.0"
-ruff = "^0.0.272"
-
-
-####################
-#   Build System   #
-####################
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+[project.optional-dependencies]
+dev = ["loguru>=0.7.0", "python-dotenv>=1.0.0"]
+tooling = ["bandit>=1.7.5", "black>=23.7.0", "ruff>=0.0.278"]
 
 ####################
 #  Configurations  #
