@@ -30,6 +30,7 @@ Contents := Title + Byline + Body
 # standard
 from dataclasses import dataclass
 from random import SystemRandom
+from functools import partial
 from datetime import datetime
 from base64 import b64encode
 import logging as logger
@@ -40,9 +41,9 @@ import re
 import os
 
 # external
+from github import ContentFile, Github, GithubException, InputGitAuthor, Repository
 from requests.exceptions import RequestException
 from requests import get as rq_get
-from github import GithubException, Github
 from faker import Faker
 
 
@@ -149,6 +150,13 @@ class WakaInput:
     show_masked_time: str | bool = os.getenv("INPUT_SHOW_MASKED_TIME") or False
     language_count: str | int = os.getenv("INPUT_LANG_COUNT") or 5
     stop_at_other: str | bool = os.getenv("INPUT_STOP_AT_OTHER") or False
+    # # optional meta
+    target_branch: str = os.getenv("INPUT_TARGET_BRANCH", "NOT_SET")
+    target_path: str = os.getenv("INPUT_TARGET_PATH", "NOT_SET")
+    committer_name: str = os.getenv("INPUT_COMMITTER_NAME", "NOT_SET")
+    committer_email: str = os.getenv("INPUT_COMMITTER_EMAIL", "NOT_SET")
+    author_name: str = os.getenv("INPUT_AUTHOR_NAME", "NOT_SET")
+    author_email: str = os.getenv("INPUT_AUTHOR_EMAIL", "NOT_SET")
 
     def validate_input(self):
         """Validate Input Env Variables."""
@@ -204,6 +212,19 @@ class WakaInput:
             logger.warning("Invalid language count")
             logger.debug("Using default language count: 5")
             self.language_count = 5
+
+        for option in (
+            "target_branch",
+            "target_path",
+            "committer_name",
+            "committer_email",
+            "author_name",
+            "author_email",
+        ):
+            if not getattr(self, option):
+                logger.warning(f"Improper '{option}' configuration")
+                logger.debug(f"Using default '{option}'")
+                setattr(self, option, "NOT_SET")
 
         logger.debug("Input validation complete\n")
         return True
@@ -284,7 +305,7 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: 
     pad_len = len(
         # comment if it feels way computationally expensive
         max((str(lng["name"]) for lng in lang_info), key=len)
-        # and then don't for get to set pad_len to say 13 :)
+        # and then do not for get to set `pad_len` to say 13 :)
     )
     if language_count == 0 and not stop_at_other:
         logger.debug(
@@ -365,7 +386,7 @@ def churn(old_readme: str, /):
     """
     # check if placeholder pattern exists in readme
     if not re.findall(wk_i.waka_block_pattern, old_readme):
-        logger.warning(f"Can't find `{wk_i.waka_block_pattern}` pattern in readme")
+        logger.warning(f"Cannot find `{wk_i.waka_block_pattern}` pattern in readme")
         return None
     # getting contents
     if not (waka_stats := fetch_stats()):
@@ -389,33 +410,86 @@ def churn(old_readme: str, /):
     if len(sys.argv) == 2 and sys.argv[1] == "--dev":
         logger.debug("Detected run in `dev` mode.")
         # to avoid accidentally writing back to Github
-        # when developing and testing WakaReadme
+        # when developing or testing waka-readme
         return None
 
     return None if new_readme == old_readme else new_readme
+
+
+def qualify_target(gh_repo: Repository.Repository):
+    """Qualify target repository defaults."""
+
+    @dataclass
+    class TargetRepository:
+        this: ContentFile.ContentFile
+        path: str
+        commit_message: str
+        sha: str
+        branch: str
+        committer: InputGitAuthor | None
+        author: InputGitAuthor | None
+
+    gh_branch = gh_repo.default_branch
+    if wk_i.target_branch != "NOT_SET":
+        gh_branch = gh_repo.get_branch(wk_i.target_branch)
+
+    target = gh_repo.get_readme()
+    if wk_i.target_path != "NOT_SET":
+        target = gh_repo.get_contents(
+            path=wk_i.target_path,
+            ref=gh_branch if isinstance(gh_branch, str) else gh_branch.commit.sha,
+        )
+
+    if isinstance(target, list):
+        raise RuntimeError("Cannot handle multiple files.")
+
+    committer, author = None, None
+    if wk_i.committer_name != "NOT_SET" and wk_i.committer_email != "NOT_SET":
+        committer = InputGitAuthor(name=wk_i.committer_name, email=wk_i.committer_email)
+    if wk_i.author_name != "NOT_SET" and wk_i.author_email != "NOT_SET":
+        author = InputGitAuthor(name=wk_i.author_name, email=wk_i.author_email)
+
+    return TargetRepository(
+        this=target,
+        path=target.path,
+        commit_message=wk_i.commit_message,
+        sha=target.sha,
+        branch=gh_branch if isinstance(gh_branch, str) else gh_branch.name,
+        committer=committer,
+        author=author,
+    )
 
 
 def genesis():
     """Run Program."""
     logger.debug("Connecting to GitHub")
     gh_connect = Github(wk_i.gh_token)
-    # since a validator is being used casting to string here is okay
+    # since a validator is being used earlier, casting
+    # `wk_i.ENV_VARIABLE` to a string here, is okay
     gh_repo = gh_connect.get_repo(str(wk_i.repository))
-    readme_file = gh_repo.get_readme()
+    target = qualify_target(gh_repo)
     logger.debug("Decoding readme contents\n")
-    readme_contents = str(readme_file.decoded_content, encoding="utf-8")
-    if new_content := churn(readme_contents):
-        logger.debug("WakaReadme stats has changed")
-        gh_repo.update_file(
-            path=readme_file.path,
-            message=wk_i.commit_message,
-            content=new_content,
-            sha=readme_file.sha,
-        )
-        logger.info("Stats updated successfully")
+
+    readme_contents = str(target.this.decoded_content, encoding="utf-8")
+    if not (new_content := churn(readme_contents)):
+        logger.info("WakaReadme was not updated")
         return
 
-    logger.info("WakaReadme was not updated")
+    logger.debug("WakaReadme stats has changed")
+    update_metric = partial(
+        gh_repo.update_file,
+        path=target.path,
+        message=target.commit_message,
+        content=new_content,
+        sha=target.sha,
+        branch=target.branch,
+    )
+    if target.committer:
+        update_metric = partial(update_metric, committer=target.committer)
+    if target.author:
+        update_metric = partial(update_metric, author=target.author)
+    update_metric()
+    logger.info("Stats updated successfully")
 
 
 ################### driver ###################
@@ -438,8 +512,11 @@ if __name__ == "__main__":
     try:
         genesis()
     except KeyboardInterrupt:
-        print()
+        print("\r", end=" ")
         logger.error("Interrupt signal received\n")
+        sys.exit(1)
+    except RuntimeError as err:
+        logger.error(f"{type(err).__name__}: {err}\n")
         sys.exit(1)
     except (GithubException, RequestException) as rq_exp:
         logger.critical(f"{rq_exp}\n")

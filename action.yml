@@ -1,82 +1,96 @@
 name: "Waka - Readme"
-author: Athul Cyriac Ajay
-description: "Add a Wakatime Coding Activity graph in your Readme"
+author: "Athul Cyriac Ajay"
+description: "WakaTime coding activity graph in your profile readme"
 
 inputs:
   GH_TOKEN:
     description: "GitHub access token with Repo scope"
     default: ${{ github.token }}
     required: true
-
   WAKATIME_API_KEY:
     description: "Your Wakatime/Wakapi/Hakatime API Key"
     required: true
 
+  # meta tweaks
   API_BASE_URL:
     description: "Alternative API base URL when using a third-party WakaTime-ish backend"
     default: "https://wakatime.com/api"
     required: false
-
   REPOSITORY:
     description: "Your GitHub repository"
     default: ${{ github.repository }}
     required: false
 
-  COMMIT_MESSAGE:
-    description: "Add a commit message of your choice"
-    default: "Updated waka-readme graph with new metrics"
-    required: false
-
   # content tweaks
-
   SHOW_TITLE:
     description: "Displays the week number and days in Readme as title"
     default: "false"
     required: false
-
   SECTION_NAME:
     description: "Section name for data to appear in readme"
     required: false
     default: "waka"
-
   BLOCKS:
     description: "Add the progress blocks of your choice"
     default: "░▒▓█"
     required: false
-
   CODE_LANG:
     description: "Add syntax formatter for generated code"
     default: "txt"
     required: false
-
   TIME_RANGE:
     description: "Time range of the queried statistics"
     default: "last_7_days"
     required: false
-
   LANG_COUNT:
     description: "Maximum number of languages to be shown"
     default: "5"
     required: false
-
   SHOW_TIME:
     description: "Displays the amount of time spent for each language"
     default: "true"
     required: false
-
   SHOW_TOTAL:
     description: "Displays total coding time"
     default: "false"
     required: false
-
   SHOW_MASKED_TIME:
     description: "Displays total coding time including unclassified languages"
     default: "false"
     required: false
-  
   STOP_AT_OTHER:
     description: "Stop data retrieval when language marked 'Other' is reached"
     default: "false"
+    required: false
+
+  # commit tweaks
+  COMMIT_MESSAGE:
+    description: "Add a commit message of your choice"
+    default: "Updated waka-readme graph with new metrics"
+    required: false
+  TARGET_BRANCH:
+    description: "Target branch"
+    default: "NOT_SET"
+    required: false
+  TARGET_PATH:
+    description: "Target file path"
+    default: "NOT_SET"
+    required: false
+  COMMITTER_NAME:
+    description: "Committer name"
+    default: "NOT_SET"
+    required: false
+  COMMITTER_EMAIL:
+    description: "Committer email"
+    default: "NOT_SET"
+    required: false
+  AUTHOR_NAME:
+    description: "Author name"
+    default: "NOT_SET"
+    required: false
+  AUTHOR_EMAIL:
+    description: "Author email"
+    default: "NOT_SET"
     required: false
 
 runs:

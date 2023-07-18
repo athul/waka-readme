@@ -28,7 +28,7 @@ Alternatively, you can also fetch data from WakaTime compatible services like [W
 
 ## Prep Work
 
-A GitHub repository and a `README.md` file is required. We'll be making use of readme in the [profile repository][profile_readme]\*.
+A GitHub repository and a `README.md` file is required. We'll be making use of readme in the [profile repository][profile_readme].
 
 - Save the `README.md` file after copy-pasting the following special comments. Your dev-metics will show up in between.
 
@@ -48,7 +48,7 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
   - If you're not using [profile repository][profile_readme], add another secret _named_ `GH_TOKEN` and insert your [GitHub token][gh_access_token]\* in place of _value_.
 
 - Create a new workflow file (`waka-readme.yml`) inside `.github/workflows/` folder of your repository. You can create it from a template using the _actions tab_ of your repository too.
-- Clear any existing contents, add the following lines and save the file.
+- Clear any existing contents, add the following lines and save the `waka-readme.yml` workflow file.
 
   ```yml
   name: Waka Readme
@@ -72,25 +72,47 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
             #REPOSITORY: <gh_username/gh_username>
   ```
 
+  Refer [#Example](#example) section for a full blown workflow file.
+
 ## Tweaks
 
-There are many flags that you can tweak to suit your taste!
+There are many flags that you can tweak as you wish!
 
-| Flag               | Default                                      | Options                                                                                  | Meaning                                                                                                 |
-| ------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `API_BASE_URL`     | `https://wakatime.com/api`                   | `https://wakatime.com/api`, `https://wakapi.dev/api`, `https://hakatime.mtx-dev.xyz/api` | Integration with WakaTime compatible services like [Wakapi][wakapi] & [Hakatime][hakatime] are possible |
-| `REPOSITORY`       | `<gh_username>/<gh_username>`                | `<gh_username>/<repo_name>`                                                              | Waka-readme stats will appear on the provided repository                                                |
-| `SECTION_NAME`     | `waka`                                       | Any alphanumeric string                                                                  | The generator will look for this section to fill up the readme.                                         |
-| `COMMIT_MESSAGE`   | `Updated waka-readme graph with new metrics` | Any string                                                                               | Messaged used when committing updated stats                                                             |
-| `CODE_LANG`   | `txt` | `python` `ruby` `json` , you can use other languages also                                                                               | Language syntax to format the generated text, to get colored text.                                                             |
-| `SHOW_TITLE`       | `false`                                      | `false`, `true`                                                                          | Add title to waka-readme stats blob                                                                     |
-| `BLOCKS`           | `░▒▓█`                                       | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, you can be creative!                                            | Ascii art used to build stats graph                                                                     |
-| `TIME_RANGE`       | `last_7_days`                                | `last_7_days`, `last_30_days`, `last_6_months`, `last_year`, `all_time`                  | String representing a dispensation from which stats are aggregated                                      |
-| `SHOW_TIME`        | `true`                                       | `false`, `true`                                                                          | Displays the amount of time spent for each language                                                     |
-| `SHOW_TOTAL`       | `false`                                      | `false`, `true`                                                                          | Show total coding time                                                                                  |
-| `SHOW_MASKED_TIME` | `false`                                      | `false`, `true`                                                                          | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`)                       |
-| `LANG_COUNT`       | `5`                                          | Any reasonable number                                                                    | Number of languages to be displayed                                                                     |
-| `STOP_AT_OTHER`    | `false`                                      | `false`, `true`                                                                          | Stop when language marked as `Other` is retrieved (overrides: `LANG_COUNT`)                             |
+### Meta Tweaks
+
+| Environment flag | Options (`Default`, `Other`, ...)                                                        | Description                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `API_BASE_URL`   | `https://wakatime.com/api`, `https://wakapi.dev/api`, `https://hakatime.mtx-dev.xyz/api` | Use WakaTime compatible services like [Wakapi][wakapi] & [Hakatime][hakatime] |
+| `REPOSITORY`     | `<gh_username>/<gh_username>`, `<gh_username>/<repo_name>`                               | Waka-readme stats will appear on the provided repository                      |
+
+### Content Tweaks
+
+| Environment flag   | Options (`Default`, `Other`, ...)                                       | Description                                                                       |
+| ------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `SHOW_TITLE`       | `false`, `true`                                                         | Add title to waka-readme stats blob                                               |
+| `SECTION_NAME`     | `waka`, any alphanumeric string                                         | The generator will look for section name to fill up the readme.                   |
+| `BLOCKS`           | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, `=>`, you can be creative                      | Ascii art used to build stats graph                                               |
+| `CODE_LANG`        | `txt`, `python` `ruby` `json` , you can use other languages also        | Language syntax based highlighted text                                            |
+| `TIME_RANGE`       | `last_7_days`, `last_30_days`, `last_6_months`, `last_year`, `all_time` | String representing a dispensation from which stats are aggregated                |
+| `LANG_COUNT`       | `5`, any plausible number                                               | Number of languages to be displayed                                               |
+| `SHOW_TIME`        | `true`, `false`                                                         | Displays the amount of time spent for each language                               |
+| `SHOW_TOTAL`       | `false`, `true`                                                         | Show total coding time                                                            |
+| `SHOW_MASKED_TIME` | `false`, `true`                                                         | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`) |
+| `STOP_AT_OTHER`    | `false`, `true`                                                         | Stop when language marked as `Other` is retrieved (overrides: `LANG_COUNT`)       |
+
+### Commit Tweaks
+
+| Environment flag  | Options (`Default`, `Other`, ...)                                    |
+| ----------------- | -------------------------------------------------------------------- |
+| `COMMIT_MESSAGE`  | `Updated waka-readme graph with new metrics`, any reasonable message |
+| `TARGET_BRANCH`   | `NOT_SET`, target branch name                                        |
+| `TARGET_PATH`     | `NOT_SET`, `/path/to/target/file`                                    |
+| `COMMITTER_NAME`  | `NOT_SET`, committer name                                            |
+| `COMMITTER_EMAIL` | `NOT_SET`, committer email                                           |
+| `AUTHOR_NAME`     | `NOT_SET`, author name                                               |
+| `AUTHOR_EMAIL`    | `NOT_SET`, author email                                              |
+
+All of these flags are _optional_.
 
 # Example
 
@@ -112,14 +134,39 @@ jobs:
     steps:
       - uses: athul/waka-readme@master
         with:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          # meta
+          API_BASE_URL: https://wakatime.com/api
+          REPOSITORY: athul/athul
+          # content
           SHOW_TITLE: true
+          SECTION_NAME: waka
           BLOCKS: ->
-          TIME_RANGE: all_time
-          SHOW_TIME: true
-          SHOW_MASKED_TIME: true
+          CODE_LANG: all_time 
+          TIME_RANGE: true
           LANG_COUNT: 10
+          SHOW_TIME: true
+          SHOW_TOTAL: true
+          SHOW_MASKED_TIME: false
+          STOP_AT_OTHER: true
+          # commit
+          COMMIT_MESSAGE: Updated waka-readme graph with new metrics
+          TARGET_BRANCH: master
+          TARGET_PATH: README.md
+          COMMITTER_NAME: GitHubActionBot
+          COMMITTER_EMAIL: action-bot@github.org
+          AUTHOR_NAME: Athul
+          AUTHOR_EMAIL: athul@example.org
+          # you can populate email-id with secretes instead
 ```
+
+> Note:
+>
+> - Flags `REPOSITORY` and `GH_TOKEN` are required, ONLY if you're NOT using [profile readme][profile_readme].
+> - `WAKATIME_API_KEY` is a required secret.
+> - Every other environment variables is optional.
+> - The above example does not show proper default values, refer [#Tweaks](#tweaks) for the same.
 
 **`README.md`**
 
@@ -139,10 +186,6 @@ Other              47 hrs 58 mins  >------------------------   03.05 %
 ## Why only the language stats (and not other data) from the API?
 
 I am a fan of minimal designs and the profile readme is a great way to show off your skills and interests. The WakaTime API, gets us a **lot of data** about a person's **coding activity including the editors and Operating Systems you used and the projects you worked on**. Some of these projects maybe secretive and should not be shown out to the public. Using up more data via the Wakatime API will clutter the profile readme and hinder your chances on displaying what you provide **value to the community** like the pinned Repositories. I believe that **Coding Stats is nerdiest of all** since you can tell the community that you are **_exercising these languages or learning a new language_**, this will also show that you spend some amount of time to learn and exercise your development skills. That's what matters in the end :heart:
-
----
-
-<sup>\*</sup>`REPOSITORY` flag and `GH_TOKEN` secret are required you're not using profile readme.
 
 [//]: #(Links)
 [wakapi]: https://wakapi.dev

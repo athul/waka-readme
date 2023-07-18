@@ -4,7 +4,7 @@
 
 [project]
 name = "waka-readme"
-version = "0.2.1"
+version = "0.2.2"
 description = "Wakatime Weekly Metrics on your Profile Readme."
 license = { text = "MIT" }
 readme = "README.md"
