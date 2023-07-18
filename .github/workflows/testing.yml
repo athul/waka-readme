@@ -18,9 +18,7 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python -
-          export PATH="$HOME/.poetry/bin:${PATH}"
-          poetry install
+          python -m pip install --user --no-cache-dir -r requirements.txt
       - name: Run unit tests
         run: |
-          poetry run python -m unittest discover
+          python -m unittest discover

@@ -1,0 +1,9 @@
+services:
+  waka-readme:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: waka-readme:dev
+    container_name: WakaReadmeDev
