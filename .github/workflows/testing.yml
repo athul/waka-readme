@@ -1,4 +1,4 @@
-name: UnitTests
+name: WakaReadme CI
 
 on:
   push:
@@ -8,17 +8,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  UnitTests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
+      - name: Build docker image
         run: |
-          python -m pip install --user --no-cache-dir -r requirements.txt
-      - name: Run unit tests
-        run: |
-          python -m unittest discover
+          # Clear existing cache
+          docker builder prune --force
+
+          # Build and run container (executes unit tests)
+          docker compose -p waka-readme -f ./compose.yml up --no-color --pull always --build --force-recreate
+
+          # Cleanup
+          docker compose -p waka-readme -f ./compose.yml down --rmi all
