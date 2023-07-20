@@ -1,0 +1,11 @@
+# for CI testing
+services:
+  waka-readme:
+    env_file:
+      - .env.template
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: waka-readme:testing
+    container_name: WakaReadmeTesting
+    command: python -m unittest discover

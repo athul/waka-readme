@@ -38,10 +38,10 @@ ENV PATH="${PATH}:/root/.local/bin" \
     PIP_DEFAULT_TIMEOUT=100
 
 # copy project files
-COPY --chown=root:root requirements.txt main.py /app/
+COPY --chown=root:root pyproject.toml main.py /app/
 
 # install dependencies
-RUN python -m pip install -r /app/requirements.txt
+RUN python -m pip install /app/
 
 # execute program
 CMD python /app/main.py

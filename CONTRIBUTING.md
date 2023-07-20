@@ -4,7 +4,7 @@
 
 > First off, thank you! Please follow along.
 
-**You need to _`fork`_ this repository and _`clone`_ it onto your system.** Inside the cloned folder, create a `.env` file with the following contents (without `# comments`):
+**You need to _`fork`_ this repository & _`clone`_ it onto your system.** Inside the cloned folder, create a `.env` file with the following contents (without `# comments`):
 
 ```ini
 INPUT_GH_TOKEN=EXAMPLE_GITHUB_PAT # required (for development)
@@ -44,26 +44,23 @@ $ podman-compose -p waka-readme -f ./docker-compose.yml down
 
 ## Using virtual environments
 
-> Assumes you've already installed & configured latest version of [python](https://www.python.org/) and [pdm](https://pdm.fming.dev/latest/).
+> Assumes you've already installed & configured latest version of [python](https://www.python.org/).
 
 1. Inside the cloned folder run the following commands to install dependencies
 
    ```console
-   $ pdm install
-   $ eval $(pdm venv activate)
+   $ python -m venv .venv
+   $ . ./.venv/bin/activate
+   $ python -m pip install .
    ```
 
-   in a virtual environnement and activate it. In windows use the following
-
-   ```ps1
-   > Invoke-Expression (pdm venv activate)
-   ```
-
-   to activate virtual environment.
+   to activate virtual environment & install dependencies.
 
 2. To test or execute the program in development, run:
 
    ```console
-   (waka-readme-py3_11)$ python -m unittest discover # run tests
-   (waka-readme-py3_11)$ python -m main --dev # execute program in dev mode
+   (.venv)$ python -m unittest discover # run tests
+   (.venv)$ python -m main --dev # execute program in dev mode
    ```
+
+> You can use any other virtual environment & dependency manager as well.
