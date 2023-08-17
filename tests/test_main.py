@@ -1,12 +1,12 @@
 """Unit Tests."""
 
 # standard
-from importlib import import_module
 from dataclasses import dataclass  # , field
+from importlib import import_module
 from itertools import product
-import unittest
-import sys
 import os
+import sys
+import unittest
 
 # from pathlib import Path
 # from inspect import cleandoc

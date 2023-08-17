@@ -1,22 +1,33 @@
-<center>
+<p align="center">
+  <img
+    src="https://socialify.git.ci/athul/waka-readme/image?description=1&font=Source%20Code%20Pro&forks=1&issues=1&name=1&owner=1&pulls=1&stargazers=1&theme=Auto"
+    alt="waka-readme"
+    width="640"
+    height="320"
+  />
+</p>
 
-![waka-readme](https://socialify.git.ci/athul/waka-readme/image?description=1&forks=1&name=1&pulls=1&stargazers=1&theme=Light)
+# Dev Metrics in Readme [![Unit Tests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg?branch=master)](https://github.com/athul/waka-readme/actions/workflows/testing.yml)
 
-</center>
+[WakaTime](https://wakatime.com) coding metrics on your profile readme.
 
-# Dev Metrics in Readme [![Unit Tests](https://github.com/athul/waka-readme/actions/workflows/testing.yml/badge.svg?branch=master)](https://github.com/athul/waka-readme/actions/workflows/testing.yml) ![Python Version](https://img.shields.io/badge/Python-^3.11-blue)
-
-[WakaTime](https://wakatime.com) weekly metrics on your profile readme.
-
-![Project Preview](https://user-images.githubusercontent.com/8397274/87243943-e6b45c00-c457-11ea-94c9-2aa0bf241be8.png)
+<!-- prettier-ignore-start -->
+<picture>
+  <source srcset="https://github.com/athul/waka-readme/assets/38415384/60a6bcd0-01f8-421a-8730-7e872d216e09"
+    media="(prefers-color-scheme: dark)" />
+  <img src="https://github.com/athul/waka-readme/assets/38415384/29541cbc-0e39-47c4-93c2-514032b47276"
+    alt="new_secrets_actions" />
+</picture>
+<!-- prettier-ignore-end -->
 
 :speech_balloon: **Forum** | [GitHub discussions][gh_discuss]
 
 ## New to WakaTime?
 
-> Nope? Skip to [prep work](#prep-work).
+> Nope? Skip to [#Prep work](#prep-work).
 
-WakaTime gives you an idea of the time you spent on coding. This helps you boost your productivity and competitive edge.
+WakaTime gives you an idea of the time you spent on coding.
+This helps you boost your productivity and competitive edge (aka _flex_ :muscle:).
 
 1. Head over to <https://wakatime.com/> and create an account.
 2. After logging in get your WakaTime API Key from <https://wakatime.com/api-key/>.
@@ -24,7 +35,7 @@ WakaTime gives you an idea of the time you spent on coding. This helps you boost
 4. Paste in your API key to start telemetry.
 
 :information_source: **Info** | You can read [WakaTime help][waka_help] to know more about configurations.
-Alternatively, you can also fetch data from WakaTime compatible services like [Wakapi][wakapi] or [Hakatime][hakatime].
+Alternatively, you can fetch data from WakaTime compatible services such as [Wakapi][wakapi] or [Hakatime][hakatime].
 
 ## Prep Work
 
@@ -39,24 +50,43 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
 
   `<!--START_SECTION: -->` and `<!--END_SECTION: -->` are placeholders and must be retained as is. Whereas "`waka`" can be replaced by any alphanumeric string. See [#Tweaks](#tweaks) section for more.
 
-- Navigate to your repo's `Settings > Secrets` and add a new secret _named_ `WAKATIME_API_KEY` with your API key as it's _value_.
+- Navigate to your repo's `Settings`:
+  - Go to `Secrets` (at `https://github.com/USERNAME/USERNAME/settings/secrets/actions/new` by replacing the `USERNAME` with your own username) and add a new secret "_Named_" `WAKATIME_API_KEY` with your API key as it's "_Secret_".
 
-  > Or use the url <https://github.com/USERNAME/USERNAME/settings/secrets/actions/new> by replacing the `USERNAME` with your own username.
-  >
-  > ![new_secrets_actions][new_secrets_actions]
+    <!-- prettier-ignore-start -->
+    <picture>
+      <source srcset="https://github.com/athul/waka-readme/assets/38415384/04dee9dc-65a1-43f9-9df4-7545646b9a72"
+        media="(prefers-color-scheme: dark)" />
+      <img src="https://github.com/athul/waka-readme/assets/38415384/9110cc3e-66cc-46ed-89d4-36644aa258e1"
+        alt="new_secrets_actions" />
+    </picture>
+    <!-- prettier-ignore-end -->
 
-  - If you're not using [profile repository][profile_readme], add another secret _named_ `GH_TOKEN` and insert your [GitHub token][gh_access_token]\* in place of _value_.
+    > If you're not using [profile repository][profile_readme], add another secret "_Named_" `GH_TOKEN` and in place of "_Secret_" insert your [GitHub token][gh_access_token].
 
-- Create a new workflow file (`waka-readme.yml`) inside `.github/workflows/` folder of your repository. You can create it from a template using the _actions tab_ of your repository too.
-- Clear any existing contents, add the following lines and save the `waka-readme.yml` workflow file.
+  - Go to `Workflow permissions` under `Actions` (at `https://github.com/USERNAME/USERNAME/settings/actions` by replacing the `USERNAME` with your own username) and set `Read and write permissions`.
+
+    <!-- prettier-ignore-start -->
+    <picture>
+      <source srcset="https://github.com/athul/waka-readme/assets/38415384/a1b86a0b-4065-4ff1-847b-b52e681bf247"
+        media="(prefers-color-scheme: dark)" />
+      <img src="https://github.com/athul/waka-readme/assets/38415384/de9cb7d0-fd40-43cf-8fed-7c6f57207788"
+        alt="new_secrets_actions" />
+    </picture>
+    <!-- prettier-ignore-end -->
+
+- Create a new workflow file named `waka-readme.yml` inside `.github/workflows/` folder of your repository.
+- Clear all existing contents, add following lines and save the file.
 
   ```yml
   name: Waka Readme
 
   on:
-    workflow_dispatch: # for manual workflow trigger
+    # for manual workflow trigger
+    workflow_dispatch:
     schedule:
-      - cron: "0 0 * * *" # runs at every 12AM UTC
+      # runs at 12 AM UTC (5:30 AM IST)
+      - cron: "0 0 * * *"
 
   jobs:
     update-readme:
@@ -66,17 +96,13 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
         - uses: athul/waka-readme@master
           with:
             WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-            # following flags are required, only if this is not on
-            # profile readme, remove the leading `#` to use them
-            #GH_TOKEN: ${{ secrets.GH_TOKEN }}
-            #REPOSITORY: <gh_username/gh_username>
   ```
 
   Refer [#Example](#example) section for a full blown workflow file.
 
 ## Tweaks
 
-There are many flags that you can tweak as you wish!
+There are many flags that you can modify as you see fit.
 
 ### Meta Tweaks
 
@@ -112,9 +138,9 @@ There are many flags that you can tweak as you wish!
 | `AUTHOR_NAME`     | `NOT_SET`, author name                                               |
 | `AUTHOR_EMAIL`    | `NOT_SET`, author email                                              |
 
-All of these flags are _optional_.
+The first option is the _default_ value of the _flag_, subsequent options are valid values available for the _flag_.
 
-# Example
+## Example
 
 **`waka-readme.yml`**
 
@@ -122,9 +148,10 @@ All of these flags are _optional_.
 name: Waka Readme
 
 on:
+  # for manual workflow trigger
   workflow_dispatch:
   schedule:
-    # Runs at 12am UTC
+    # runs at 12 AM UTC (5:30 AM IST)
     - cron: "0 0 * * *"
 
 jobs:
@@ -134,43 +161,38 @@ jobs:
     steps:
       - uses: athul/waka-readme@master
         with:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          # meta
-          API_BASE_URL: https://wakatime.com/api
-          REPOSITORY: athul/athul
-          # content
-          SHOW_TITLE: true
-          SECTION_NAME: waka
-          BLOCKS: ->
-          CODE_LANG: all_time 
-          TIME_RANGE: true
-          LANG_COUNT: 10
-          SHOW_TIME: true
-          SHOW_TOTAL: true
-          SHOW_MASKED_TIME: false
-          STOP_AT_OTHER: true
-          # commit
-          COMMIT_MESSAGE: Updated waka-readme graph with new metrics
-          TARGET_BRANCH: master
-          TARGET_PATH: README.md
-          COMMITTER_NAME: GitHubActionBot
-          COMMITTER_EMAIL: action-bot@github.org
-          AUTHOR_NAME: Athul
-          AUTHOR_EMAIL: athul@example.org
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # optional if on profile readme
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }} # required
+          ### meta
+          API_BASE_URL: https://wakatime.com/api # optional
+          REPOSITORY: YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME # optional
+          ### content
+          SHOW_TITLE: true # optional
+          SECTION_NAME: waka # optional
+          BLOCKS: -> # optional
+          CODE_LANG: rust # optional
+          TIME_RANGE: all_time # optional
+          LANG_COUNT: 10 # optional
+          SHOW_TIME: true # optional
+          SHOW_TOTAL: true # optional
+          SHOW_MASKED_TIME: false # optional
+          STOP_AT_OTHER: true # optional
+          ### commit
+          COMMIT_MESSAGE: Updated waka-readme graph with new metrics # optional
+          TARGET_BRANCH: master # optional
+          TARGET_PATH: README.md # optional
+          COMMITTER_NAME: GitHubActionBot # optional
+          COMMITTER_EMAIL: action-bot@github.com # optional
+          AUTHOR_NAME: YOUR_NAME # optional
+          AUTHOR_EMAIL: YOUR@EMAIL.com # optional
           # you can populate email-id with secretes instead
 ```
 
-> Note:
->
-> - Flags `REPOSITORY` and `GH_TOKEN` are required, ONLY if you're NOT using [profile readme][profile_readme].
-> - `WAKATIME_API_KEY` is a required secret.
-> - Every other environment variables is optional.
-> - The above example does not show proper default values, refer [#Tweaks](#tweaks) for the same.
+_Rendered `markdown`:_
 
-**`README.md`**
+<!-- prettier-ignore-start -->
 
-```md
+```rust
 From: 10 July 2020 - To: 06 August 2022
 
 Total Time: 1,464 hrs 54 mins
@@ -183,6 +205,15 @@ Nim                64 hrs 31 mins  >------------------------   04.11 %
 Other              47 hrs 58 mins  >------------------------   03.05 %
 ```
 
+<!-- prettier-ignore-end -->
+
+## Notes
+
+- Flags `REPOSITORY` and `GH_TOKEN` are required ONLY if, you are NOT using [profile readme][profile_readme].
+- If you are using `GH_TOKEN`, make sure set the [fine grained token](https://github.com/settings/tokens?type=beta) scope to repository contents with `read-and-write` access. See [#141 (comment)](https://github.com/athul/waka-readme/issues/141#issuecomment-1679831949).
+- `WAKATIME_API_KEY` is a **required** secret. All other environment variables are optional.
+- The above example does NOT show proper default values, refer [#Tweaks](#tweaks) for the same.
+
 ## Why only the language stats (and not other data) from the API?
 
 I am a fan of minimal designs and the profile readme is a great way to show off your skills and interests. The WakaTime API, gets us a **lot of data** about a person's **coding activity including the editors and Operating Systems you used and the projects you worked on**. Some of these projects maybe secretive and should not be shown out to the public. Using up more data via the Wakatime API will clutter the profile readme and hinder your chances on displaying what you provide **value to the community** like the pinned Repositories. I believe that **Coding Stats is nerdiest of all** since you can tell the community that you are **_exercising these languages or learning a new language_**, this will also show that you spend some amount of time to learn and exercise your development skills. That's what matters in the end :heart:
@@ -193,6 +224,5 @@ I am a fan of minimal designs and the profile readme is a great way to show off 
 [waka_plugins]: https://wakatime.com/plugins
 [waka_help]: https://wakatime.com/help/editors
 [profile_readme]: https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme
-[new_secrets_actions]: https://user-images.githubusercontent.com/52720626/151221742-bc37d139-2bb3-4554-b27c-46b107d1f408.png
 [gh_access_token]: https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token
 [gh_discuss]: https://github.com/athul/waka-readme/discussions

@@ -1,6 +1,4 @@
-"""
-Initialize test module
-"""
+"""Initialize test module."""
 
 # standard
 import logging

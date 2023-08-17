@@ -28,24 +28,23 @@ Contents := Title + Byline + Body
 """
 
 # standard
-from dataclasses import dataclass
-from random import SystemRandom
-from functools import partial
-from datetime import datetime
 from base64 import b64encode
+from dataclasses import dataclass
+from datetime import datetime
+from functools import partial
 import logging as logger
+import os
+from random import SystemRandom
+import re
+import sys
 from time import sleep
 from typing import Any
-import sys
-import re
-import os
 
 # external
-from github import ContentFile, Github, GithubException, InputGitAuthor, Repository
-from requests.exceptions import RequestException
-from requests import get as rq_get
 from faker import Faker
-
+from github import ContentFile, Github, GithubException, InputGitAuthor, Repository
+from requests import get as rq_get
+from requests.exceptions import RequestException
 
 ################### setup ###################
 
