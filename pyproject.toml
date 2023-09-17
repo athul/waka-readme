@@ -4,7 +4,7 @@
 
 [project]
 name = "waka-readme"
-version = "0.2.4"
+version = "0.2.5"
 description = "Wakatime Weekly Metrics on your Profile Readme."
 authors = [{ name = "Athul Cyriac Ajay", email = "athul8720@gmail.com" }]
 license = { text = "MIT" }
@@ -16,7 +16,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 requires-python = ">=3.11"
-dependencies = ["faker>=19.3.0", "pygithub>=1.59.1", "requests>=2.31.0"]
+dependencies = ["faker>=19.6.1", "pygithub>=1.59.1", "requests>=2.31.0"]
 
 [project.urls]
 Homepage = "https://github.com/athul/waka-readme"
@@ -29,12 +29,18 @@ Changelog = "https://github.com/athul/waka-readme/commits/master"
 #############################
 
 [project.optional-dependencies]
-dev = ["loguru>=0.7.0", "python-dotenv>=1.0.0"]
+extra = ["loguru>=0.7.2", "python-dotenv>=1.0.0"]
+
+#############################
+# Development Dependencies  #
+#############################
+
+[tool.pdm.dev-dependencies]
 tooling = [
     "bandit>=1.7.5",
-    "black>=23.7.0",
-    "ruff>=0.0.284",
-    "pyright>=1.1.323",
+    "black>=23.9.1",
+    "ruff>=0.0.290",
+    "pyright>=1.1.327",
 ]
 
 ####################

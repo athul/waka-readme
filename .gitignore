@@ -107,6 +107,7 @@ poetry.lock
 #   However, this project does not rely on pdm for production.
 pdm.lock
 .pdm-python
+.pdm-build
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
