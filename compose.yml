@@ -5,7 +5,6 @@ services:
       - .env.template
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: containerfile
     image: waka-readme:testing
     container_name: WakaReadmeTesting
-    command: python -m unittest discover
