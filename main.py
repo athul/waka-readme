@@ -328,8 +328,8 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: 
         )
         if language_count == -1:
             continue
-        if stop_at_other and (lang_name == "Other"):
-            break
+        # if stop_at_other and (lang_name == "Other"):
+            # break
         if idx + 1 >= language_count > 0:  # idx starts at 0
             break
 
