@@ -214,6 +214,7 @@ Other              47 hrs 58 mins  >------------------------   03.05 %
 - If you are using `GH_TOKEN`, make sure set the [fine grained token](https://github.com/settings/tokens?type=beta) scope to repository contents with `read-and-write` access. See [#141 (comment)](https://github.com/athul/waka-readme/issues/141#issuecomment-1679831949).
 - `WAKATIME_API_KEY` is a **required** secret. All other environment variables are optional.
 - The above example does NOT show proper default values, refer [#Tweaks](#tweaks) for the same.
+- `IGNORE_LANGUAGES` is recommended for those who uses [.NET](https://dotnet.microsoft.com/) as while debugging WakaTime thinks you're using Binary.
 
 ## Why only the language stats (and not other data) from the API?
 
