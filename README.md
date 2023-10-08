@@ -125,6 +125,7 @@ There are many flags that you can modify as you see fit.
 | `SHOW_TOTAL`       | `false`, `true`                                                         | Show total coding time                                                            |
 | `SHOW_MASKED_TIME` | `false`, `true`                                                         | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`) |
 | `STOP_AT_OTHER`    | `false`, `true`                                                         | Stop when language marked as `Other` is retrieved (overrides: `LANG_COUNT`)       |
+| `IGNORE_LANGUAGES` | `binary,json`                                                           | Hide any language you wouldn't like to show in your stats                         |
 
 ### Commit Tweaks
 
