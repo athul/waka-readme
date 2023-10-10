@@ -62,6 +62,10 @@ inputs:
     description: "Stop data retrieval when language marked 'Other' is reached"
     default: "false"
     required: false
+  IGNORED_LANGUAGES:
+    description: "Ignore space separated, listed languages"
+    default: ""
+    required: false
 
   # commit tweaks
   COMMIT_MESSAGE:

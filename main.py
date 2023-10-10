@@ -150,7 +150,7 @@ class WakaInput:
     show_masked_time: str | bool = os.getenv("INPUT_SHOW_MASKED_TIME") or False
     language_count: str | int = os.getenv("INPUT_LANG_COUNT") or 5
     stop_at_other: str | bool = os.getenv("INPUT_STOP_AT_OTHER") or False
-    ignore_languages: str = os.getenv("INPUT_IGNORE_LANGUAGES") or ""
+    ignored_languages: str = os.getenv("INPUT_IGNORED_LANGUAGES", "")
     # # optional meta
     target_branch: str = os.getenv("INPUT_TARGET_BRANCH", "NOT_SET")
     target_path: str = os.getenv("INPUT_TARGET_PATH", "NOT_SET")
@@ -272,7 +272,7 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /
     return graph_bar
 
 
-def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: bool = False, ignore_languages: List[str] = [], /):
+def prep_content(stats: dict[str, Any], /):
     """WakaReadme Prepare Markdown.
 
     Prepared markdown content from the fetched statistics.
@@ -308,18 +308,21 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: 
         max((str(lng["name"]) for lng in lang_info), key=len)
         # and then do not for get to set `pad_len` to say 13 :)
     )
-    if language_count == 0 and not stop_at_other:
+    language_count, stop_at_other = int(wk_i.language_count), bool(wk_i.stop_at_other)
+    if language_count == 0 and not wk_i.stop_at_other:
         logger.debug(
             "Set INPUT_LANG_COUNT to -1 to retrieve all language"
             + " or specify a positive number (ie. above 0)"
         )
         return contents.rstrip("\n")
 
-    idx = 0
-    for lang in lang_info:
+    ignored_languages = set[str](igl.lower() for igl in wk_i.ignored_languages.strip().split())
+    for idx, lang in enumerate(lang_info):
         lang_name = str(lang["name"])
         # >>> add languages to filter here <<<
         # if lang_name in {...}: continue
+        if (lang_name := str(lang["name"])).lower() in ignored_languages:
+            continue
         lang_time = str(lang["text"]) if wk_i.show_time else ""
         lang_ratio = float(lang["percent"])
 
@@ -333,7 +336,7 @@ def prep_content(stats: dict[str, Any], language_count: int = 5, stop_at_other: 
             + f"{lang_ratio:.2f}".zfill(5)
             + " %\n"
         )
-        if language_count == -1:
+        if wk_i.language_count == -1:
             continue
         if stop_at_other and (lang_name == "Other"):
             break
@@ -402,11 +405,7 @@ def churn(old_readme: str, /):
         sys.exit(1)
     # preparing contents
     try:
-        generated_content = prep_content(
-            waka_stats, int(wk_i.language_count),
-            bool(wk_i.stop_at_other),
-            ignore_languages = wk_i.ignore_languages.split(",")
-        )
+        generated_content = prep_content(waka_stats)
     except (AttributeError, KeyError, ValueError) as err:
         logger.error(f"Unable to read API data | {err}\n")
         sys.exit(1)
