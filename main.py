@@ -28,7 +28,6 @@ Contents := Title + Byline + Body
 """
 
 # standard
-from typing import List
 from base64 import b64encode
 from dataclasses import dataclass
 from datetime import datetime
@@ -319,16 +318,10 @@ def prep_content(stats: dict[str, Any], /):
     ignored_languages = set[str](igl.lower() for igl in wk_i.ignored_languages.strip().split())
     for idx, lang in enumerate(lang_info):
         lang_name = str(lang["name"])
-        # >>> add languages to filter here <<<
-        # if lang_name in {...}: continue
-        if (lang_name := str(lang["name"])).lower() in ignored_languages:
+        if ignored_languages and lang_name.lower() in ignored_languages:
             continue
         lang_time = str(lang["text"]) if wk_i.show_time else ""
         lang_ratio = float(lang["percent"])
-
-        if lang_name.lower() in ignore_languages:
-            continue
-
         lang_bar = make_graph(wk_i.block_style, lang_ratio, wk_i.graph_length, lang_name)
         contents += (
             f"{lang_name.ljust(pad_len)}   "
@@ -336,14 +329,12 @@ def prep_content(stats: dict[str, Any], /):
             + f"{lang_ratio:.2f}".zfill(5)
             + " %\n"
         )
-        if wk_i.language_count == -1:
+        if language_count == -1:
             continue
         if stop_at_other and (lang_name == "Other"):
             break
         if idx + 1 >= language_count > 0:  # idx starts at 0
             break
-
-        idx += 1
 
     logger.debug("Contents were made\n")
     return contents.rstrip("\n")

@@ -93,7 +93,7 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
       name: WakaReadme DevMetrics
       runs-on: ubuntu-latest
       steps:
-        - uses: athul/waka-readme@master
+        - uses: athul/waka-readme@master # this action name
           with:
             WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
   ```
@@ -113,19 +113,19 @@ There are many flags that you can modify as you see fit.
 
 ### Content Tweaks
 
-| Environment flag   | Options (`Default`, `Other`, ...)                                       | Description                                                                       |
-| ------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `SHOW_TITLE`       | `false`, `true`                                                         | Add title to waka-readme stats blob                                               |
-| `SECTION_NAME`     | `waka`, any alphanumeric string                                         | The generator will look for section name to fill up the readme.                   |
-| `BLOCKS`           | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, `=>`, you can be creative                      | Ascii art used to build stats graph                                               |
-| `CODE_LANG`        | `txt`, `python` `ruby` `json` , you can use other languages also        | Language syntax based highlighted text                                            |
-| `TIME_RANGE`       | `last_7_days`, `last_30_days`, `last_6_months`, `last_year`, `all_time` | String representing a dispensation from which stats are aggregated                |
-| `LANG_COUNT`       | `5`, any plausible number                                               | Number of languages to be displayed                                               |
-| `SHOW_TIME`        | `true`, `false`                                                         | Displays the amount of time spent for each language                               |
-| `SHOW_TOTAL`       | `false`, `true`                                                         | Show total coding time                                                            |
-| `SHOW_MASKED_TIME` | `false`, `true`                                                         | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`) |
-| `STOP_AT_OTHER`    | `false`, `true`                                                         | Stop when language marked as `Other` is retrieved (overrides: `LANG_COUNT`)       |
-| `IGNORE_LANGUAGES` | `binary,json`                                                           | Hide any language you wouldn't like to show in your stats                         |
+| Environment flag    | Options (`Default`, `Other`, ...)                                       | Description                                                                       |
+| ------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `SHOW_TITLE`        | `false`, `true`                                                         | Add title to waka-readme stats blob                                               |
+| `SECTION_NAME`      | `waka`, any alphanumeric string                                         | The generator will look for section name to fill up the readme.                   |
+| `BLOCKS`            | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, `=>`, you can be creative                      | Ascii art used to build stats graph                                               |
+| `CODE_LANG`         | `txt`, `python` `ruby` `json` , you can use other languages also        | Language syntax based highlighted text                                            |
+| `TIME_RANGE`        | `last_7_days`, `last_30_days`, `last_6_months`, `last_year`, `all_time` | String representing a dispensation from which stats are aggregated                |
+| `LANG_COUNT`        | `5`, any plausible number                                               | Number of languages to be displayed                                               |
+| `SHOW_TIME`         | `true`, `false`                                                         | Displays the amount of time spent for each language                               |
+| `SHOW_TOTAL`        | `false`, `true`                                                         | Show total coding time                                                            |
+| `SHOW_MASKED_TIME`  | `false`, `true`                                                         | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`) |
+| `STOP_AT_OTHER`     | `false`, `true`                                                         | Stop when language marked as `Other` is retrieved (overrides: `LANG_COUNT`)       |
+| `IGNORED_LANGUAGES` | <code> </code>, `Binary YAML JSON TOML`                                 | Hide languages from your stats                                                    |
 
 ### Commit Tweaks
 
@@ -160,7 +160,8 @@ jobs:
     name: WakaReadme DevMetrics
     runs-on: ubuntu-latest
     steps:
-      - uses: athul/waka-readme@master
+        # this action name
+      - uses: athul/waka-readme@master # do NOT replace with anything else
         with:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # optional if on profile readme
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }} # required
@@ -215,7 +216,7 @@ Other              47 hrs 58 mins  >------------------------   03.05 %
 - If you are using `GH_TOKEN`, make sure set the [fine grained token](https://github.com/settings/tokens?type=beta) scope to repository contents with `read-and-write` access. See [#141 (comment)](https://github.com/athul/waka-readme/issues/141#issuecomment-1679831949).
 - `WAKATIME_API_KEY` is a **required** secret. All other environment variables are optional.
 - The above example does NOT show proper default values, refer [#Tweaks](#tweaks) for the same.
-- `IGNORE_LANGUAGES` is recommended for those who uses [.NET](https://dotnet.microsoft.com/) as while debugging WakaTime thinks you're using Binary.
+- `IGNORED_LANGUAGES` is suggested for [.NET](https://dotnet.microsoft.com) users, as WakaTime assumes you're working with `Binary`, while debugging.
 
 ## Why only the language stats (and not other data) from the API?
 
