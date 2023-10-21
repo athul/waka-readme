@@ -21,6 +21,7 @@ INPUT_TIME_RANGE=last_7_days
 INPUT_SHOW_MASKED_TIME=false
 INPUT_LANG_COUNT=0
 INPUT_STOP_AT_OTHER=true
+INPUT_IGNORED_LANGUAGES=
 ```
 
 **NEVER commit this `.env` file!**
@@ -32,10 +33,8 @@ INPUT_STOP_AT_OTHER=true
 > Replace `podman` with `docker` everywhere, if you're using the latter.
 
 ```sh
-# Build
-$ podman-compose -p waka-readme -f ./docker-compose.yml up -d
-# Logs
-$ podman logs WakaReadmeDev
+# Build and watch logs
+$ podman-compose -p waka-readme -f ./docker-compose.yml up
 # Cleanup
 $ podman-compose -p waka-readme -f ./docker-compose.yml down
 ```
