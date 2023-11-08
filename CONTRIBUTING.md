@@ -1,6 +1,6 @@
 # Contributing
 
-![python_ver](https://img.shields.io/badge/Python-%3E%3D3.11-blue.svg)
+![python_ver](https://img.shields.io/badge/Python-%3E%3D3.12-blue.svg)
 
 > First off, thank you! Please follow along.
 
@@ -47,17 +47,18 @@ $ podman-compose -p waka-readme -f ./docker-compose.yml down
 
 1. Inside the cloned folder run the following commands to install dependencies
 
-   ```console
+   ```sh
    $ python -m venv .venv
    $ . ./.venv/bin/activate
    $ python -m pip install .
+   # ... install decencies ...
    ```
 
    to activate virtual environment & install dependencies.
 
 2. To test or execute the program in development, run:
 
-   ```console
+   ```sh
    (.venv)$ python -m unittest discover # run tests
    (.venv)$ python -m main --dev # execute program in dev mode
    ```

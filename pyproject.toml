@@ -15,8 +15,8 @@ classifiers = [
     "Programming Language :: Python",
     "Typing :: Typed",
 ]
-requires-python = ">=3.11"
-dependencies = ["faker>=19.11.0", "pygithub>=2.1.1", "requests>=2.31.0"]
+requires-python = ">=3.12"
+dependencies = ["faker>=19.13.0", "pygithub>=2.1.1", "requests>=2.31.0"]
 
 [project.urls]
 Homepage = "https://github.com/athul/waka-readme"
@@ -36,7 +36,7 @@ extra = ["loguru>=0.7.2", "python-dotenv>=1.0.0"]
 #############################
 
 [tool.pdm.dev-dependencies]
-tooling = ["bandit>=1.7.5", "black>=23.10.0", "ruff>=0.1.1", "pyright>=1.1.332"]
+tooling = ["bandit>=1.7.5", "black>=23.11.0", "ruff>=0.1.4", "pyright>=1.1.334"]
 
 ####################
 #  Configurations  #
@@ -47,11 +47,11 @@ exclude_dirs = [".github", "tests", ".venv", ".vscode"]
 
 [tool.black]
 line-length = 100
-target-version = ["py311"]
+target-version = ["py312"]
 
 [tool.pyright]
 exclude = ["**/__pycache__", ".venv/"]
-pythonVersion = "3.11"
+pythonVersion = "3.12"
 pythonPlatform = "All"
 typeCheckingMode = "strict"
 
@@ -72,7 +72,7 @@ select = [
     "D",
 ]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 extend-exclude = ["**/__pycache__"]
 
 [tool.ruff.isort]
