@@ -163,8 +163,9 @@ cython_debug/
 # VSCode
 .vscode/
 
-# asdf
+# asdf/rtx
 .tool-versions
+.rtx.toml
 
 # ruff
 .ruff_cache
