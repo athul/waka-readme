@@ -16,7 +16,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 requires-python = ">=3.12"
-dependencies = ["faker>=19.13.0", "pygithub>=2.1.1", "requests>=2.31.0"]
+dependencies = ["faker>=21.0.0", "pygithub>=2.1.1", "requests>=2.31.0"]
 
 [project.urls]
 Homepage = "https://github.com/athul/waka-readme"
@@ -36,7 +36,7 @@ extra = ["loguru>=0.7.2", "python-dotenv>=1.0.0"]
 #############################
 
 [tool.pdm.dev-dependencies]
-tooling = ["bandit>=1.7.5", "black>=23.11.0", "ruff>=0.1.4", "pyright>=1.1.334"]
+tooling = ["bandit>=1.7.6", "black>=23.12.1", "ruff>=0.1.9", "pyright>=1.1.342"]
 
 ####################
 #  Configurations  #
