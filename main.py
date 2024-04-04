@@ -271,6 +271,20 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /
     return graph_bar
 
 
+def _extract_ignored_languages():
+    if not wk_i.ignored_languages:
+        return False
+    temp = ""
+    for igl in wk_i.ignored_languages.strip().split():
+        if igl.startswith('"'):
+            temp = igl
+            continue
+        if igl.endswith('"'):
+            igl = f"{temp} {igl}"
+            temp = ""
+        yield igl
+
+
 def prep_content(stats: dict[str, Any], /):
     """WakaReadme Prepare Markdown.
 
@@ -315,7 +329,7 @@ def prep_content(stats: dict[str, Any], /):
         )
         return contents.rstrip("\n")
 
-    ignored_languages = set[str](igl.lower() for igl in wk_i.ignored_languages.strip().split())
+    ignored_languages = _extract_ignored_languages()
     for idx, lang in enumerate(lang_info):
         lang_name = str(lang["name"])
         if ignored_languages and lang_name.lower() in ignored_languages:
