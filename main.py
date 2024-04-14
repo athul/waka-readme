@@ -332,7 +332,7 @@ def prep_content(stats: dict[str, Any], /):
     ignored_languages = _extract_ignored_languages()
     for idx, lang in enumerate(lang_info):
         lang_name = str(lang["name"])
-        if ignored_languages and lang_name.lower() in ignored_languages:
+        if ignored_languages and lang_name in ignored_languages:
             continue
         lang_time = str(lang["text"]) if wk_i.show_time else ""
         lang_ratio = float(lang["percent"])
