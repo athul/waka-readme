@@ -166,6 +166,7 @@ cython_debug/
 # asdf/rtx
 .tool-versions
 .rtx.toml
+.mise.toml
 
 # ruff
 .ruff_cache
