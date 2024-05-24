@@ -188,7 +188,7 @@ jobs:
           COMMITTER_EMAIL: action-bot@github.com # optional
           AUTHOR_NAME: YOUR_NAME # optional
           AUTHOR_EMAIL: YOUR@EMAIL.com # optional
-          # you can populate email-id with secretes instead
+          # you can populate email-id with secrets instead
 ```
 
 _Rendered `markdown`:_
