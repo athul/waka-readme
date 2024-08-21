@@ -277,10 +277,10 @@ def _extract_ignored_languages():
     temp = ""
     for igl in wk_i.ignored_languages.strip().split():
         if igl.startswith('"'):
-            temp = igl
+            temp = igl.lstrip('"')
             continue
         if igl.endswith('"'):
-            igl = f"{temp} {igl}"
+            igl = f"{temp} {igl.rstrip('"')}"
             temp = ""
         yield igl
 
