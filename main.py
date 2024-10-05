@@ -273,14 +273,14 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /
 
 def _extract_ignored_languages():
     if not wk_i.ignored_languages:
-        return False
+        return ""
     temp = ""
     for igl in wk_i.ignored_languages.strip().split():
-        if igl.startswith('"'):
-            temp = igl.lstrip('"')
+        if igl.startswith(('"', "'")):
+            temp = igl.lstrip('"').lstrip("'")
             continue
-        if igl.endswith('"'):
-            igl = f"{temp} {igl.rstrip('"')}"
+        if igl.endswith(('"', "'")):
+            igl = f"{temp} {igl.rstrip('"').rstrip("'")}"
             temp = ""
         yield igl
 
@@ -329,10 +329,11 @@ def prep_content(stats: dict[str, Any], /):
         )
         return contents.rstrip("\n")
 
-    ignored_languages = _extract_ignored_languages()
+    ignored_languages = set(_extract_ignored_languages())
+    logger.debug(f"Ignoring {', '.join(ignored_languages)}")
     for idx, lang in enumerate(lang_info):
         lang_name = str(lang["name"])
-        if ignored_languages and lang_name in ignored_languages:
+        if lang_name in ignored_languages:
             continue
         lang_time = str(lang["text"]) if wk_i.show_time else ""
         lang_ratio = float(lang["percent"])
