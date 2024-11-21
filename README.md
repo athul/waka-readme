@@ -120,7 +120,7 @@ There are many flags that you can modify as you see fit.
 | `BLOCKS`            | `░▒▓█`, `⣀⣄⣤⣦⣶⣷⣿`, `-#`, `=>`, you can be creative                      | Ascii art used to build stats graph                                               |
 | `CODE_LANG`         | `txt`, `python` `ruby` `json` , you can use other languages also        | Language syntax based highlighted text                                            |
 | `TIME_RANGE`        | `last_7_days`, `last_30_days`, `last_6_months`, `last_year`, `all_time` | String representing a dispensation from which stats are aggregated                |
-| `LANG_COUNT`        | `5`, any plausible number                                               | Number of languages to be displayed                                               |
+| `LANG_COUNT`        | `10`, any plausible number                                               | Number of languages to be displayed                                               |
 | `SHOW_TIME`         | `true`, `false`                                                         | Displays the amount of time spent for each language                               |
 | `SHOW_TOTAL`        | `false`, `true`                                                         | Show total coding time                                                            |
 | `SHOW_MASKED_TIME`  | `false`, `true`                                                         | Adds total coding time including unclassified languages (overrides: `SHOW_TOTAL`) |
