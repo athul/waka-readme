@@ -242,11 +242,13 @@ def make_title(dawn: str | None, dusk: str | None, /):
     if not dawn or not dusk:
         logger.error("Cannot find start/end date\n")
         sys.exit(1)
-    api_dfm, msg_dfm = "%Y-%m-%dT%H:%M:%SZ", "%d %B %Y"
+
+    from dateutil import parser as date_parser
+    msg_dfm = "%d %B %Y"
     try:
-        start_date = datetime.strptime(dawn, api_dfm).strftime(msg_dfm)
-        end_date = datetime.strptime(dusk, api_dfm).strftime(msg_dfm)
-    except ValueError as err:
+        start_date = date_parser.parse(dawn).astimezone(None).strftime(msg_dfm)
+        end_date = date_parser.parse(dusk).astimezone(None).strftime(msg_dfm)
+    except (ValueError, TypeError) as err:
         logger.error(f"{err}\n")
         sys.exit(1)
 
