@@ -245,20 +245,8 @@ def make_title(dawn: str | None, dusk: str | None, /):
 
     msg_dfm = "%d %B %Y"
     try:
-        import re
-        from datetime import datetime
-        
-        def parse_iso_date(date_str: str) -> datetime:
-            """Parse ISO date string handling various timezone formats."""
-            clean_date: str = re.sub(r'([+-]\d{2}):?(\d{2})$|Z$', '', date_str)
-            if 'T' in clean_date:
-                return datetime.fromisoformat(clean_date)
-            else:
-                return datetime.strptime(clean_date, '%Y-%m-%d %H:%M:%S')
-        
         start_date = parse_iso_date(dawn).strftime(msg_dfm)
         end_date = parse_iso_date(dusk).strftime(msg_dfm)
-            
     except (ValueError, TypeError) as err:
         logger.error(f"{err}\n")
         sys.exit(1)
@@ -266,6 +254,13 @@ def make_title(dawn: str | None, dusk: str | None, /):
     logger.debug("Title was made\n")
     return f"From: {start_date} - To: {end_date}"
 
+def parse_iso_date(date_str: str) -> datetime:
+    """Parse ISO date string handling various timezone formats."""
+    clean_date: str = re.sub(r'([+-]\d{2}):?(\d{2})$|Z$', '', date_str)
+    if 'T' in clean_date:
+        return datetime.fromisoformat(clean_date)
+    else:
+        return datetime.strptime(clean_date, '%Y-%m-%d %H:%M:%S')
 
 def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /):
     """WakaReadme Graph.
