@@ -259,8 +259,7 @@ def parse_iso_date(date_str: str) -> datetime:
     clean_date: str = re.sub(r'([+-]\d{2}):?(\d{2})$|Z$', '', date_str)
     if 'T' in clean_date:
         return datetime.fromisoformat(clean_date)
-    else:
-        return datetime.strptime(clean_date, '%Y-%m-%d %H:%M:%S')
+    return datetime.strptime(clean_date, '%Y-%m-%d %H:%M:%S')
 
 def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /):
     """WakaReadme Graph.
