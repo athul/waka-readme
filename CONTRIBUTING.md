@@ -50,8 +50,7 @@ $ podman-compose -p waka-readme -f ./docker-compose.yml down
    ```sh
    $ python -m venv .venv
    $ . ./.venv/bin/activate
-   $ python -m pip install .
-   # ... install decencies ...
+   $ python -m pip install -r requirements.txt
    ```
 
    to activate virtual environment & install dependencies.
