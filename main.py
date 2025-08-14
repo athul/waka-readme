@@ -242,17 +242,24 @@ def make_title(dawn: str | None, dusk: str | None, /):
     if not dawn or not dusk:
         logger.error("Cannot find start/end date\n")
         sys.exit(1)
-    api_dfm, msg_dfm = "%Y-%m-%dT%H:%M:%SZ", "%d %B %Y"
+
+    msg_dfm = "%d %B %Y"
     try:
-        start_date = datetime.strptime(dawn, api_dfm).strftime(msg_dfm)
-        end_date = datetime.strptime(dusk, api_dfm).strftime(msg_dfm)
-    except ValueError as err:
+        start_date = parse_iso_date(dawn).strftime(msg_dfm)
+        end_date = parse_iso_date(dusk).strftime(msg_dfm)
+    except (ValueError, TypeError) as err:
         logger.error(f"{err}\n")
         sys.exit(1)
 
     logger.debug("Title was made\n")
     return f"From: {start_date} - To: {end_date}"
 
+def parse_iso_date(date_str: str) -> datetime:
+    """Parse ISO date string handling various timezone formats."""
+    clean_date: str = re.sub(r'([+-]\d{2}):?(\d{2})$|Z$', '', date_str)
+    if 'T' in clean_date:
+        return datetime.fromisoformat(clean_date)
+    return datetime.strptime(clean_date, '%Y-%m-%d %H:%M:%S')
 
 def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /):
     """WakaReadme Graph.
