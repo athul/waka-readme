@@ -287,7 +287,7 @@ def _extract_ignored_languages():
             temp = igl.lstrip('"').lstrip("'")
             continue
         if igl.endswith(('"', "'")):
-            igl = f"{temp} {igl.rstrip('"').rstrip("'")}"
+            igl = temp + " " + igl.rstrip('"\'')
             temp = ""
         yield igl
 
