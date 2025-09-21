@@ -42,7 +42,7 @@ from typing import Any
 
 # external
 from faker import Faker
-from github import ContentFile, Github, GithubException, InputGitAuthor, Repository
+from github import ContentFile, Github, GithubException, InputGitAuthor, Repository, Auth
 from requests import get as rq_get
 from requests.exceptions import RequestException
 
@@ -463,7 +463,10 @@ def qualify_target(gh_repo: Repository.Repository):
 def genesis():
     """Run Program."""
     logger.debug("Connecting to GitHub")
-    gh_connect = Github(wk_i.gh_token)
+    # Create an Auth.Token object with your token
+    auth = Auth.Token(wk_i.gh_token)
+    # Pass the auth object to the Github constructor
+    gh_connect = Github(auth=auth)
     # since a validator is being used earlier, casting
     # `wk_i.ENV_VARIABLE` to a string here, is okay
     gh_repo = gh_connect.get_repo(str(wk_i.repository))
