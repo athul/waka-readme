@@ -131,6 +131,87 @@ class TestMain(unittest.TestCase):
         self.assertRaises(ValueError, prime.strtobool, "yo!")
         self.assertRaises(AttributeError, prime.strtobool, 20.5)
 
+    def test_make_ai_code_stats(self) -> None:
+        """Test AI code graph and stats maker."""
+        stats = {
+            "ai_additions": 1200,
+            "ai_deletions": 300,
+            "human_additions": 450,
+            "human_deletions": 50,
+            "ai_input_tokens": 12345,
+            "ai_output_tokens": 678,
+            "ai_prompt_events": 42,
+            "ai_agent_breakdown": [
+                {"name": "Cursor", "lines": 1000},
+                {"name": "GitHub Copilot", "lines": 500},
+            ],
+        }
+        old_wk_i = getattr(prime, "wk_i", None)
+        prime.wk_i = prime.WakaInput(block_style="-#")
+
+        try:
+            self.assertEqual(
+                prime.make_ai_code_stats(stats, True, True),
+                "\n".join(
+                    (
+                        "AI Code      1,500 lines           ###################------   75.00 %",
+                        "Human Code   500 lines             ######-------------------   25.00 %",
+                        "",
+                        "AI Stats",
+                        "  Prompts      42",
+                        "  Tokens       12,345 in / 678 out",
+                        "",
+                        "AI Agents",
+                        "  Cursor         1,000 lines",
+                        "  GitHub Copilot 500 lines",
+                    )
+                ),
+            )
+        finally:
+            if old_wk_i is None:
+                del prime.wk_i
+            else:
+                prime.wk_i = old_wk_i
+
+    def test_make_ai_code_stats_without_fields(self) -> None:
+        """Test AI code stats maker skips older API responses."""
+        self.assertEqual(prime.make_ai_code_stats({"languages": []}), "")
+
+    def test_make_ai_code_stats_switches(self) -> None:
+        """Test AI code graph and statistics switches."""
+        stats = {
+            "ai_additions": 75,
+            "ai_deletions": 25,
+            "human_additions": 25,
+            "human_deletions": 25,
+            "ai_prompt_events": 2,
+            "ai_input_tokens": 1000,
+            "ai_output_tokens": 200,
+            "ai_agent_breakdown": [{"name": "Cursor", "lines": 100}],
+        }
+        old_wk_i = getattr(prime, "wk_i", None)
+        prime.wk_i = prime.WakaInput(block_style="-#")
+
+        try:
+            graph_only = prime.make_ai_code_stats(stats, True, False)
+            self.assertIn("AI Code", graph_only)
+            self.assertNotIn("AI Prompts", graph_only)
+
+            stats_only = prime.make_ai_code_stats(stats, False, True)
+            self.assertNotIn("AI Code", stats_only)
+            self.assertIn("AI Stats", stats_only)
+            self.assertIn("  Prompts      2", stats_only)
+            self.assertIn("  Tokens       1,000 in / 200 out", stats_only)
+            self.assertIn("AI Agents", stats_only)
+            self.assertIn("  Cursor 100 lines", stats_only)
+
+            self.assertEqual(prime.make_ai_code_stats(stats, False, False), "")
+        finally:
+            if old_wk_i is None:
+                del prime.wk_i
+            else:
+                prime.wk_i = old_wk_i
+
 
 tds = TestData()
 tds.populate()
