@@ -8,7 +8,7 @@
 
 ```ini
 INPUT_GH_TOKEN=EXAMPLE_GITHUB_PAT # required (for development)
-INPUT_WAKATIME_API_KEY=EXAMPLE-WAKATIME-API-KEY # required
+INPUT_WAKATIME_API_KEY=EXAMPLE-WAKATIME-API-KEY # required; WakaTime OAuth token, or a Wakapi/Hakatime API key
 INPUT_API_BASE_URL=https://wakatime.com/api # required
 INPUT_REPOSITORY=GITHUB_USERNAME/REPOSITORY_NAME # required
 INPUT_COMMIT_MESSAGE=Updated WakaReadme graph with new metrics

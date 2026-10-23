@@ -51,7 +51,7 @@ A GitHub repository and a `README.md` file is required. We'll be making use of r
   `<!--START_SECTION: -->` and `<!--END_SECTION: -->` are placeholders and must be retained as is. Whereas "`waka`" can be replaced by any alphanumeric string. See [#Tweaks](#tweaks) section for more.
 
 - Navigate to your repo's `Settings`:
-  - Go to `Secrets` (at `https://github.com/USERNAME/USERNAME/settings/secrets/actions/new` by replacing the `USERNAME` with your own username) and add a new secret "_Named_" `WAKATIME_API_KEY` with your API key as it's "_Secret_".
+  - Go to `Secrets` (at `https://github.com/USERNAME/USERNAME/settings/secrets/actions/new` by replacing the `USERNAME` with your own username) and add a new secret "_Named_" `WAKATIME_API_KEY`. For WakaTime, the value is an [OAuth token](https://wakatime.com/oauth), not a plugin API key. WakaTime API keys are write-only and cannot read stats. [Wakapi][wakapi] and [Hakatime][hakatime] still use an API key in this same secret.
 
     <!-- prettier-ignore-start -->
     <picture>
@@ -214,7 +214,7 @@ Other              47 hrs 58 mins  >------------------------   03.05 %
 
 - Flags `REPOSITORY` and `GH_TOKEN` are required ONLY if, you are NOT using [profile readme][profile_readme].
 - If you are using `GH_TOKEN`, make sure set the [fine grained token](https://github.com/settings/tokens?type=beta) scope to repository contents with `read-and-write` access. See [#141 (comment)](https://github.com/athul/waka-readme/issues/141#issuecomment-1679831949).
-- `WAKATIME_API_KEY` is a **required** secret. All other environment variables are optional.
+- `WAKATIME_API_KEY` is a **required** secret. For WakaTime, paste an [OAuth token](https://wakatime.com/oauth). Wakapi and Hakatime still use an API key. All other environment variables are optional.
 - The above example does NOT show proper default values, refer [#Tweaks](#tweaks) for the same.
 - `IGNORED_LANGUAGES` is suggested for [.NET](https://dotnet.microsoft.com) users, as WakaTime assumes you're working with `Binary`, while debugging.
 
