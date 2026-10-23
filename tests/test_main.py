@@ -122,6 +122,22 @@ class TestMain(unittest.TestCase):
             r"From: \d{2} \w{3,9} \d{4} - To: \d{2} \w{3,9} \d{4}",
         )
 
+    def test_is_wakatime_provider(self) -> None:
+        """Test which API hosts send the key as a query parameter."""
+        self.assertTrue(prime.is_wakatime_provider("https://wakatime.com/api"))
+        self.assertTrue(prime.is_wakatime_provider("https://api.wakatime.com/api/"))
+        self.assertFalse(prime.is_wakatime_provider("https://wakapi.dev/api"))
+        self.assertFalse(prime.is_wakatime_provider("https://hakatime.mtx-dev.xyz/api"))
+
+    def test_redact_secret(self) -> None:
+        """Test secret redaction in request errors."""
+        secret = "waka_tok_example"
+        self.assertEqual(
+            prime.redact_secret(f"url?api_key={secret}", secret),
+            "url?api_key=***",
+        )
+        self.assertEqual(prime.redact_secret("no secret here", secret), "no secret here")
+
     def test_strtobool(self) -> None:
         """Test string to bool."""
         self.assertTrue(prime.strtobool("Yes"))

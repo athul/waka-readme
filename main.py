@@ -39,6 +39,7 @@ import re
 import sys
 from time import sleep
 from typing import Any
+from urllib.parse import quote, urlsplit
 
 # external
 from faker import Faker
@@ -363,23 +364,50 @@ def prep_content(stats: dict[str, Any], /):
     return contents.rstrip("\n")
 
 
+def is_wakatime_provider(api_base_url: str) -> bool:
+    """Return whether the API base URL is the WakaTime provider."""
+    host = (urlsplit(api_base_url).hostname or "").lower()
+    return host == "wakatime.com" or host.endswith(".wakatime.com")
+
+
+def redact_secret(message: str, secret: str | None) -> str:
+    """Remove a secret from a message, including its URL-encoded form."""
+    if not secret:
+        return message
+    redacted = message.replace(secret, "***")
+    encoded = quote(secret, safe="")
+    if encoded != secret:
+        redacted = redacted.replace(encoded, "***")
+    return redacted
+
+
 def fetch_stats():
     """WakaReadme Fetch Stats.
 
     Returns statistics as JSON string.
+
+    WakaTime accepts the key as ``api_key``. Other providers keep HTTP Basic auth.
     """
     attempts = 4
     statistic: dict[str, dict[str, Any]] = {}
-    encoded_key = str(b64encode(bytes(str(wk_i.waka_key), "utf-8")), "utf-8")
+    stats_url = f"{str(wk_i.api_base_url).rstrip('/')}/v1/users/current/stats/{wk_i.time_range}"
+    query: dict[str, str] = {}
+    auth_header: dict[str, str] = {}
+    if is_wakatime_provider(str(wk_i.api_base_url)):
+        query["api_key"] = str(wk_i.waka_key)
+    else:
+        encoded_key = str(b64encode(bytes(str(wk_i.waka_key), "utf-8")), "utf-8")
+        auth_header["Authorization"] = f"Basic {encoded_key}"
     logger.debug(f"Pulling WakaTime stats from {' '.join(wk_i.time_range.split('_'))}")
     while attempts > 0:
         resp_message, fake_ua = "", cryptogenic.choice([str(fake.user_agent()) for _ in range(5)])
         # making a request
         if (
             resp := rq_get(
-                url=f"{str(wk_i.api_base_url).rstrip('/')}/v1/users/current/stats/{wk_i.time_range}",
+                url=stats_url,
+                params=query,
                 headers={
-                    "Authorization": f"Basic {encoded_key}",
+                    **auth_header,
                     "User-Agent": fake_ua,
                 },
                 timeout=(30.0 * (5 - attempts)),
@@ -545,6 +573,6 @@ if __name__ == "__main__":
         logger.error(f"{type(err).__name__}: {err}\n")
         sys.exit(1)
     except (GithubException, RequestException) as rq_exp:
-        logger.critical(f"{rq_exp}\n")
+        logger.critical(f"{redact_secret(str(rq_exp), wk_i.waka_key)}\n")
         sys.exit(1)
     print("\nThanks for using WakaReadme!\n")
