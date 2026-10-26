@@ -341,23 +341,24 @@ def make_ai_code_stats(
     human_deletions = _get_int(stats, "human_deletions")
     ai_input_tokens = _get_int(stats, "ai_input_tokens")
     ai_output_tokens = _get_int(stats, "ai_output_tokens")
-    ai_prompt_events = _get_int(stats, "ai_prompt_events")
+    ai_prompt_events = _get_int(stats, "ai_prompt_events_total")
+    ai_sessions = _get_int(stats, "ai_sessions")
+    ai_model_total_cost = stats.get("ai_model_total_cost")
 
-    has_ai_fields = any(
+    code_fields = ("ai_additions", "ai_deletions", "human_additions", "human_deletions")
+    has_code_fields = all(key in stats for key in code_fields)
+    if not has_code_fields and not any(
         key in stats
         for key in (
-            "ai_additions",
-            "ai_deletions",
-            "human_additions",
-            "human_deletions",
-            "ai_agent_line_changes",
-            "ai_agent_breakdown",
+            "ai_model_line_changes",
+            "ai_model_breakdown",
             "ai_input_tokens",
             "ai_output_tokens",
-            "ai_prompt_events",
+            "ai_prompt_events_total",
+            "ai_sessions",
+            "ai_model_total_cost",
         )
-    )
-    if not has_ai_fields:
+    ):
         logger.debug("WakaTime response does not include AI code fields")
         return ""
 
@@ -383,7 +384,7 @@ def make_ai_code_stats(
         waka_input, "block_style", WakaInput.__dataclass_fields__["block_style"].default
     )
     lines = []
-    if show_graph:
+    if show_graph and has_code_fields:
         lines.extend(
             (
                 _make_code_change_graph_line(
@@ -412,34 +413,38 @@ def make_ai_code_stats(
     stats_lines = []
     if show_stats and ai_prompt_events:
         stats_lines.append(f"  {'Prompts'.ljust(12)} {_format_number(ai_prompt_events)}")
+    if show_stats and ai_sessions:
+        stats_lines.append(f"  {'Sessions'.ljust(12)} {_format_number(ai_sessions)}")
     if show_stats and (ai_input_tokens or ai_output_tokens):
         stats_lines.append(
             f"  {'Tokens'.ljust(12)} "
             + f"{_format_number(ai_input_tokens)} in / {_format_number(ai_output_tokens)} out"
         )
+    if show_stats and ai_model_total_cost:
+        stats_lines.append(f"  {'Est. Cost'.ljust(12)} ${float(ai_model_total_cost):,.2f}")
     if stats_lines:
         if lines:
             lines.append("")
         lines.append("AI Stats")
         lines.extend(stats_lines)
 
-    agent_line_changes: dict[str, int] = {}
-    raw_agent_breakdown = stats.get("ai_agent_breakdown")
-    if isinstance(raw_agent_breakdown, list) and raw_agent_breakdown:
-        for agent in raw_agent_breakdown:
-            if not isinstance(agent, dict):
+    model_line_changes: dict[str, int] = {}
+    raw_model_breakdown = stats.get("ai_model_breakdown")
+    if isinstance(raw_model_breakdown, list) and raw_model_breakdown:
+        for model in raw_model_breakdown:
+            if not isinstance(model, dict):
                 continue
-            agent_line_changes[str(agent.get("name") or "Unknown")] = _get_int(agent, "lines")
-    elif isinstance(stats.get("ai_agent_line_changes"), dict):
-        agent_line_changes = stats["ai_agent_line_changes"]
+            model_line_changes[str(model.get("name") or "Unknown")] = _get_int(model, "lines")
+    elif isinstance(stats.get("ai_model_line_changes"), dict):
+        model_line_changes = stats["ai_model_line_changes"]
 
-    if show_stats and agent_line_changes:
+    if show_stats and model_line_changes:
         if stats_lines:
             lines.append("")
-        agent_pad_len = max(len(name) for name in agent_line_changes)
-        lines.append("AI Agents")
-        for name, line_changes in agent_line_changes.items():
-            lines.append(f"  {name.ljust(agent_pad_len)} {_format_number(int(line_changes))} lines")
+        model_pad_len = max(len(name) for name in model_line_changes)
+        lines.append("AI Models")
+        for name, line_changes in model_line_changes.items():
+            lines.append(f"  {name.ljust(model_pad_len)} {_format_number(int(line_changes))} lines")
 
     return "\n".join(lines)
 
