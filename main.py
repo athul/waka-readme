@@ -338,7 +338,8 @@ def prep_content(stats: dict[str, Any], /):
 
     ignored_languages = set(_extract_ignored_languages())
     logger.debug(f"Ignoring {', '.join(ignored_languages)}")
-    for idx, lang in enumerate(lang_info):
+    displayed_count = 0
+    for lang in lang_info:
         lang_name = str(lang["name"])
         if lang_name in ignored_languages:
             continue
@@ -352,11 +353,12 @@ def prep_content(stats: dict[str, Any], /):
             + f"{lang_ratio:.2f}".zfill(5)
             + " %\n"
         )
+        displayed_count += 1
+        if stop_at_other and lang_name == "Other":
+            break
         if language_count == -1:
             continue
-        if stop_at_other and (lang_name == "Other"):
-            break
-        if idx + 1 >= language_count > 0:  # idx starts at 0
+        if language_count > 0 and displayed_count >= language_count:
             break
 
     logger.debug("Contents were made\n")
