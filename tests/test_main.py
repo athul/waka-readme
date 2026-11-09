@@ -7,6 +7,7 @@ from itertools import product
 import os
 import sys
 import unittest
+from unittest.mock import Mock, patch
 
 # from pathlib import Path
 # from inspect import cleandoc
@@ -130,6 +131,74 @@ class TestMain(unittest.TestCase):
         self.assertRaises(AttributeError, prime.strtobool, None)
         self.assertRaises(ValueError, prime.strtobool, "yo!")
         self.assertRaises(AttributeError, prime.strtobool, 20.5)
+
+    def test_is_wakatime_provider(self) -> None:
+        """Test which API hosts send the token as a query parameter."""
+        self.assertTrue(prime.is_wakatime_provider("https://wakatime.com/api"))
+        self.assertTrue(prime.is_wakatime_provider("https://api.wakatime.com/api/"))
+        self.assertFalse(prime.is_wakatime_provider("https://wakapi.dev/api"))
+        self.assertFalse(prime.is_wakatime_provider("https://hakatime.mtx-dev.xyz/api"))
+
+    def test_redact_secret(self) -> None:
+        """Test that raw and URL-encoded secrets are removed from errors."""
+        secret = "oauth/token?value"
+        self.assertEqual(prime.redact_secret(f"url?api_key={secret}", secret), "url?api_key=***")
+        self.assertEqual(
+            prime.redact_secret("url?api_key=oauth%2Ftoken%3Fvalue", secret),
+            "url?api_key=***",
+        )
+
+    @patch.object(prime, "sleep")
+    @patch.object(prime, "rq_get")
+    def test_fetch_stats_uses_wakatime_query_auth(self, mock_get: Mock, _mock_sleep: Mock) -> None:
+        """WakaTime OAuth tokens are passed as api_key rather than Basic auth."""
+        response = Mock(status_code=200, reason="OK")
+        response.json.return_value = {"data": {"languages": []}}
+        mock_get.return_value = response
+        old_wk_i = getattr(prime, "wk_i", None)
+        prime.wk_i = prime.WakaInput(
+            waka_key="oauth-token",
+            api_base_url="https://wakatime.com/api",
+            time_range="last_7_days",
+        )
+
+        try:
+            self.assertEqual(prime.fetch_stats(), {"languages": []})
+            request = mock_get.call_args.kwargs
+            self.assertEqual(request["params"], {"api_key": "oauth-token"})
+            self.assertNotIn("Authorization", request["headers"])
+        finally:
+            if old_wk_i is None:
+                del prime.wk_i
+            else:
+                prime.wk_i = old_wk_i
+
+    @patch.object(prime, "sleep")
+    @patch.object(prime, "rq_get")
+    def test_fetch_stats_keeps_basic_auth_for_compatible_provider(
+        self, mock_get: Mock, _mock_sleep: Mock
+    ) -> None:
+        """Compatible providers continue to receive Basic API-key auth."""
+        response = Mock(status_code=200, reason="OK")
+        response.json.return_value = {"data": {"languages": []}}
+        mock_get.return_value = response
+        old_wk_i = getattr(prime, "wk_i", None)
+        prime.wk_i = prime.WakaInput(
+            waka_key="api-key",
+            api_base_url="https://wakapi.dev/api",
+            time_range="last_7_days",
+        )
+
+        try:
+            self.assertEqual(prime.fetch_stats(), {"languages": []})
+            request = mock_get.call_args.kwargs
+            self.assertEqual(request["params"], {})
+            self.assertEqual(request["headers"]["Authorization"], "Basic YXBpLWtleQ==")
+        finally:
+            if old_wk_i is None:
+                del prime.wk_i
+            else:
+                prime.wk_i = old_wk_i
 
     def test_make_ai_code_stats(self) -> None:
         """Test AI code graph and stats maker."""
