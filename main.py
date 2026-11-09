@@ -39,6 +39,7 @@ import re
 import sys
 from time import sleep
 from typing import Any
+from urllib.parse import quote, urlsplit
 
 # external
 from faker import Faker
@@ -147,6 +148,8 @@ class WakaInput:
     show_time: str | bool = os.getenv("INPUT_SHOW_TIME") or False
     show_total_time: str | bool = os.getenv("INPUT_SHOW_TOTAL") or False
     show_masked_time: str | bool = os.getenv("INPUT_SHOW_MASKED_TIME") or False
+    show_ai_code: str | bool = os.getenv("INPUT_SHOW_AI_CODE") or False
+    show_ai_stats: str | bool = os.getenv("INPUT_SHOW_AI_STATS") or False
     language_count: str | int = os.getenv("INPUT_LANG_COUNT") or 5
     stop_at_other: str | bool = os.getenv("INPUT_STOP_AT_OTHER") or False
     ignored_languages: str = os.getenv("INPUT_IGNORED_LANGUAGES", "")
@@ -175,6 +178,8 @@ class WakaInput:
             self.show_time = strtobool(self.show_time)
             self.show_total_time = strtobool(self.show_total_time)
             self.show_masked_time = strtobool(self.show_masked_time)
+            self.show_ai_code = strtobool(self.show_ai_code)
+            self.show_ai_stats = strtobool(self.show_ai_stats)
             self.stop_at_other = strtobool(self.stop_at_other)
         except (ValueError, AttributeError) as err:
             logger.error(err)
@@ -278,6 +283,173 @@ def make_graph(block_style: str, percent: float, gr_len: int, lg_nm: str = "", /
     return graph_bar
 
 
+def _get_int(stats: dict[str, Any], key: str, /) -> int:
+    value = stats.get(key)
+    if value is None:
+        return 0
+    return int(value)
+
+
+def _format_number(value: int | float, /) -> str:
+    return f"{value:,}"
+
+
+def _make_code_change_line(label: str, additions: int, deletions: int, /) -> str:
+    total = additions + deletions
+    return (
+        f"{label}: {_format_number(total)} lines "
+        + f"(+{_format_number(additions)} / -{_format_number(deletions)})"
+    )
+
+
+def _make_code_change_graph_line(
+    label: str,
+    additions: int,
+    deletions: int,
+    ratio: float,
+    pad_len: int,
+    prefix_length: int,
+    graph_length: int,
+    block_style: str,
+    /,
+) -> str:
+    total = additions + deletions
+    label_text = f"{label.ljust(pad_len)}   "
+    change_text = f"{_format_number(total)} lines".ljust(prefix_length)
+    graph_bar = make_graph(block_style, ratio, graph_length, label)
+    return (
+        label_text
+        + f"{change_text}{graph_bar}   "
+        + f"{ratio:.2f}".zfill(5)
+        + " %"
+    )
+
+
+def make_ai_code_stats(
+    stats: dict[str, Any],
+    show_graph: bool = True,
+    show_stats: bool = True,
+    pad_len: int | None = None,
+    /,
+) -> str:
+    """Make optional AI code statistics from WakaTime stats fields."""
+    if not show_graph and not show_stats:
+        return ""
+
+    ai_additions = _get_int(stats, "ai_additions")
+    ai_deletions = _get_int(stats, "ai_deletions")
+    human_additions = _get_int(stats, "human_additions")
+    human_deletions = _get_int(stats, "human_deletions")
+    ai_input_tokens = _get_int(stats, "ai_input_tokens")
+    ai_output_tokens = _get_int(stats, "ai_output_tokens")
+    ai_prompt_events = _get_int(stats, "ai_prompt_events_total")
+    ai_sessions = _get_int(stats, "ai_sessions")
+    ai_model_total_cost = stats.get("ai_model_total_cost")
+
+    code_fields = ("ai_additions", "ai_deletions", "human_additions", "human_deletions")
+    has_code_fields = all(key in stats for key in code_fields)
+    if not has_code_fields and not any(
+        key in stats
+        for key in (
+            "ai_model_line_changes",
+            "ai_model_breakdown",
+            "ai_input_tokens",
+            "ai_output_tokens",
+            "ai_prompt_events_total",
+            "ai_sessions",
+            "ai_model_total_cost",
+        )
+    ):
+        logger.debug("WakaTime response does not include AI code fields")
+        return ""
+
+    ai_total = ai_additions + ai_deletions
+    human_total = human_additions + human_deletions
+    total = ai_total + human_total
+    if total:
+        ai_ratio = ai_total / total * 100
+        human_ratio = human_total / total * 100
+    else:
+        ai_ratio = 0
+        human_ratio = 0
+
+    pad_len = max(pad_len or 0, len("AI Code"), len("Human Code"))
+    waka_input = globals().get("wk_i")
+    prefix_length = getattr(
+        waka_input, "prefix_length", WakaInput.__dataclass_fields__["prefix_length"].default
+    )
+    graph_length = getattr(
+        waka_input, "graph_length", WakaInput.__dataclass_fields__["graph_length"].default
+    )
+    block_style = getattr(
+        waka_input, "block_style", WakaInput.__dataclass_fields__["block_style"].default
+    )
+    lines = []
+    if show_graph and has_code_fields:
+        lines.extend(
+            (
+                _make_code_change_graph_line(
+                    "AI Code",
+                    ai_additions,
+                    ai_deletions,
+                    ai_ratio,
+                    pad_len,
+                    prefix_length,
+                    graph_length,
+                    block_style,
+                ),
+                _make_code_change_graph_line(
+                    "Human Code",
+                    human_additions,
+                    human_deletions,
+                    human_ratio,
+                    pad_len,
+                    prefix_length,
+                    graph_length,
+                    block_style,
+                ),
+            )
+        )
+
+    stats_lines = []
+    if show_stats and ai_prompt_events:
+        stats_lines.append(f"  {'Prompts'.ljust(12)} {_format_number(ai_prompt_events)}")
+    if show_stats and ai_sessions:
+        stats_lines.append(f"  {'Sessions'.ljust(12)} {_format_number(ai_sessions)}")
+    if show_stats and (ai_input_tokens or ai_output_tokens):
+        stats_lines.append(
+            f"  {'Tokens'.ljust(12)} "
+            + f"{_format_number(ai_input_tokens)} in / {_format_number(ai_output_tokens)} out"
+        )
+    if show_stats and ai_model_total_cost:
+        stats_lines.append(f"  {'Est. Cost'.ljust(12)} ${float(ai_model_total_cost):,.2f}")
+    if stats_lines:
+        if lines:
+            lines.append("")
+        lines.append("AI Stats")
+        lines.extend(stats_lines)
+
+    model_line_changes: dict[str, int] = {}
+    raw_model_breakdown = stats.get("ai_model_breakdown")
+    if isinstance(raw_model_breakdown, list) and raw_model_breakdown:
+        for model in raw_model_breakdown:
+            if not isinstance(model, dict):
+                continue
+            model_line_changes[str(model.get("name") or "Unknown")] = _get_int(model, "lines")
+    elif isinstance(stats.get("ai_model_line_changes"), dict):
+        model_line_changes = stats["ai_model_line_changes"]
+
+    if show_stats and model_line_changes:
+        if stats_lines:
+            lines.append("")
+        model_pad_len = max(len(name) for name in model_line_changes)
+        lines.append("AI Models")
+        for name, line_changes in model_line_changes.items():
+            lines.append(f"  {name.ljust(model_pad_len)} {_format_number(int(line_changes))} lines")
+
+    return "\n".join(lines)
+
+
 def _extract_ignored_languages():
     if not wk_i.ignored_languages:
         return ""
@@ -359,27 +531,65 @@ def prep_content(stats: dict[str, Any], /):
         if idx + 1 >= language_count > 0:  # idx starts at 0
             break
 
+    if (wk_i.show_ai_code or wk_i.show_ai_stats) and (
+        ai_code_stats := make_ai_code_stats(
+            stats,
+            bool(wk_i.show_ai_code),
+            bool(wk_i.show_ai_stats),
+            pad_len,
+        )
+    ):
+        contents += "\n" + ai_code_stats + "\n"
+
     logger.debug("Contents were made\n")
     return contents.rstrip("\n")
+
+
+def is_wakatime_provider(api_base_url: str) -> bool:
+    """Return whether the API base URL is the WakaTime provider."""
+    host = (urlsplit(api_base_url).hostname or "").lower()
+    return host == "wakatime.com" or host.endswith(".wakatime.com")
+
+
+def redact_secret(message: str, secret: str | None) -> str:
+    """Remove a secret from a message, including its URL-encoded form."""
+    if not secret:
+        return message
+    redacted = message.replace(secret, "***")
+    encoded = quote(secret, safe="")
+    if encoded != secret:
+        redacted = redacted.replace(encoded, "***")
+    return redacted
 
 
 def fetch_stats():
     """WakaReadme Fetch Stats.
 
     Returns statistics as JSON string.
+
+    WakaTime accepts the OAuth token as ``api_key``. Other providers keep
+    HTTP Basic auth.
     """
     attempts = 4
     statistic: dict[str, dict[str, Any]] = {}
-    encoded_key = str(b64encode(bytes(str(wk_i.waka_key), "utf-8")), "utf-8")
+    stats_url = f"{str(wk_i.api_base_url).rstrip('/')}/v1/users/current/stats/{wk_i.time_range}"
+    query: dict[str, str] = {}
+    auth_header: dict[str, str] = {}
+    if is_wakatime_provider(str(wk_i.api_base_url)):
+        query["api_key"] = str(wk_i.waka_key)
+    else:
+        encoded_key = str(b64encode(bytes(str(wk_i.waka_key), "utf-8")), "utf-8")
+        auth_header["Authorization"] = f"Basic {encoded_key}"
     logger.debug(f"Pulling WakaTime stats from {' '.join(wk_i.time_range.split('_'))}")
     while attempts > 0:
         resp_message, fake_ua = "", cryptogenic.choice([str(fake.user_agent()) for _ in range(5)])
         # making a request
         if (
             resp := rq_get(
-                url=f"{str(wk_i.api_base_url).rstrip('/')}/v1/users/current/stats/{wk_i.time_range}",
+                url=stats_url,
+                params=query,
                 headers={
-                    "Authorization": f"Basic {encoded_key}",
+                    **auth_header,
                     "User-Agent": fake_ua,
                 },
                 timeout=(30.0 * (5 - attempts)),
@@ -545,6 +755,6 @@ if __name__ == "__main__":
         logger.error(f"{type(err).__name__}: {err}\n")
         sys.exit(1)
     except (GithubException, RequestException) as rq_exp:
-        logger.critical(f"{rq_exp}\n")
+        logger.critical(f"{redact_secret(str(rq_exp), wk_i.waka_key)}\n")
         sys.exit(1)
     print("\nThanks for using WakaReadme!\n")

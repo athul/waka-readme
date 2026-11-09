@@ -58,6 +58,14 @@ inputs:
     description: "Displays total coding time including unclassified languages"
     default: "false"
     required: false
+  SHOW_AI_CODE:
+    description: "Displays AI and human code line graphs when returned by WakaTime"
+    default: "false"
+    required: false
+  SHOW_AI_STATS:
+    description: "Displays AI prompts, tokens, and agent statistics when returned by WakaTime"
+    default: "false"
+    required: false
   STOP_AT_OTHER:
     description: "Stop data retrieval when language marked 'Other' is reached"
     default: "false"
